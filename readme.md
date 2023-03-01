@@ -73,6 +73,6 @@ The subject contains a succinct description of the change:
 feat(moodleRequest): add json support
 ```
  
-## Author
+## Authors
 
 👤 **[Max Kiefer](https://github.com/Maxkie1), [Fabian Schneider](https://github.com/Fabian-Schneider01), [Gregor Boschmann](https://github.com/gregor434), [Laurin Tarta](https://github.com/lawrimon)**
