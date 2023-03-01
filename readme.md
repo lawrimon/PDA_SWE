@@ -8,7 +8,7 @@ Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
 
 ## Documentation
 
-- [Requirements Documentation](https://docs.google.com/document/d/1XM5byI64eKHCRa7sWAVpYF3cNTyOO1AmYaFOoii62lA/edit?usp=sharing)
+- Technical Documentation
 - ...
 
 ## Usage
