@@ -2,20 +2,20 @@
 
 > Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
   
-## Description
+# Description
 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
-## Documentation
+# Documentation
 
 - Technical Documentation
 - ...
 
-## Usage
+# Usage
 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
-## Installation
+# Installation
 
 The project requires the following libraries:
 
@@ -35,7 +35,22 @@ conda activate <thisproject>
 pip install -r requirements.txt
 ```
 
-## Commit Message Guidelines
+# Development Guidelines
+
+## Branching Model
+
+The branching model in this project is based on the [Feature Branch Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow). The main branch is called `main`. The `main` branch is protected and can only be changed by pull requests. For each feature-tagged issue, a new branch is created from `main`. The feature branch is named `feature/<issue-number>`. After the feature is implemented, a pull request is created to merge the feature branch into `main`. After the pull request is merged, the feature branch is deleted. The following image shows the branching model:
+<p align="center">
+<img src="https://wac-cdn.atlassian.com/dam/jcr:a905ddfd-973a-452a-a4ae-f1dd65430027/01%20Git%20branch.svg?cdnVersion=821" width="500">
+</p>
+
+## Code Review
+
+Each pull request must be reviewed by two developers. The reviewers must be different from the developer who created the pull request. The reviewers must approve the pull request before it can be merged. The following image shows the code review process:
+<p align="center">
+<img src="https://images.ctfassets.net/zsv3d0ugroxu/Z8dtCNdftgdcNAFQEnyYy/bc728a50ec535ed7ff5f062ef532efbd/PR_review_process" width="500">
+
+## Commit Messages
 
 Each commit message must conform to the [Commit Message Structure](#commit-structure) format.
 
@@ -78,6 +93,6 @@ The subject contains a succinct description of the change:
 feat(moodleRequest): add json support
 ```
  
-## Authors
+# Authors
 
 :busts_in_silhouette: **[Max Kiefer](https://github.com/Maxkie1), [Fabian Schneider](https://github.com/Fabian-Schneider01), [Gregor Boschmann](https://github.com/gregor434), [Laurin Tarta](https://github.com/lawrimon)**
