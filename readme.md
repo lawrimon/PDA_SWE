@@ -50,12 +50,6 @@ Each pull request must be reviewed by two developers. The reviewers must be diff
 <p align="center">
 <img src="https://images.ctfassets.net/zsv3d0ugroxu/Z8dtCNdftgdcNAFQEnyYy/bc728a50ec535ed7ff5f062ef532efbd/PR_review_process" width="500">
 
-## Style Guide
-
-### Python
-
-The Python code must conform to the [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html). Comments and docstrings must be written according to the respective guidelines contained therein. The remaining code is automatically formatted  using [yapf](https://github.com/google/yapf).
-
 ## Commit Messages
 
 Each commit message must conform to the [Commit Message Structure](#commit-structure) format.
@@ -98,6 +92,12 @@ The subject contains a succinct description of the change:
 ```
 feat(moodleRequest): add json support
 ```
+
+## Style Guide
+
+### Python
+
+The Python code must conform to the [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html). Comments and docstrings must be written according to the respective guidelines contained therein. The remaining code is automatically formatted  using [yapf](https://github.com/google/yapf).
  
 # Authors
 
