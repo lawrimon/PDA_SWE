@@ -97,7 +97,7 @@ feat(moodleRequest): add json support
 
 ### Python
 
-The Python code must conform to the [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html). Comments and docstrings must be written according to the respective guidelines contained therein. The remaining code is automatically formatted  using [yapf](https://github.com/google/yapf).
+The Python code must conform to the [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html). Comments and docstrings must be written according to the respective guidelines contained therein. The remaining code is automatically formatted using [YAPF](https://github.com/google/yapf).
  
 # Authors
 
