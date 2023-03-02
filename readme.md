@@ -39,12 +39,12 @@ pip install -r requirements.txt
 
 ## Branching Model
 
-The branching model in this project is based on the [Feature Branch Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow). The main branch is called `main`. The `main` branch is protected and can only be changed by pull requests. For each feature-tagged issue, a new branch is created from `main`. The feature branch is named `feature/<issue-number>`. After the feature is implemented, a pull request is created to merge the feature branch into `main`. After the pull request is merged, the feature branch is deleted. The following image shows the branching model:
+The branching model in this project is based on the [Feature Branch Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow). The main branch is called `main`. The `main` branch is protected and can only be changed by pull requests. For each feature-tagged issue, a new feature branch is created from `main`. The branch is named `feature/<issue-number>`. After the feature is implemented, a pull request is created to merge the feature branch into `main`. After the pull request is merged, the feature branch is deleted. The following image shows the branching model:
 <p align="center">
 <img src="https://wac-cdn.atlassian.com/dam/jcr:a905ddfd-973a-452a-a4ae-f1dd65430027/01%20Git%20branch.svg?cdnVersion=821" width="500">
 </p>
 
-## Code Review
+## Code Reviews
 
 Each pull request must be reviewed by two developers. The reviewers must be different from the developer who created the pull request. The reviewers must approve the pull request before it can be merged. The following image shows the code review process:
 <p align="center">
