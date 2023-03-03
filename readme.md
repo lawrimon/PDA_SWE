@@ -1,5 +1,13 @@
 <h1 align="center">Welcome to PDA :wave:</h1>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/code%20style-black-000000.svg" />
+  <a href="https://github.com/psf/black)" target="_blank">
+  <img src="https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white" />
+  <a href="https://conventionalcommits.org)" target="_blank">
+</p>
+
+
 > Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
   
 # Description
