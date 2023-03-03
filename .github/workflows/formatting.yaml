@@ -1,0 +1,29 @@
+name: Code Formatting
+
+on: [push, pull_request]
+
+permissions:
+  contents: write
+
+jobs:
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with: 
+          ref: ${{ github.head_ref }}
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - name: Install Black
+        run: pip install black
+      - name: Run Black
+        run: black .
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_options: '--no-verify'
+          commit_message: 'refactor: automatic black formatting'
+          commit_user_name: Black Formatting Bot
+          
