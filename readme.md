@@ -2,9 +2,9 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/code%20style-black-000000.svg" />
-  <a href="https://github.com/psf/black)" target="_blank">
+  <a href="https://github.com/psf/black)">
   <img src="https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white" />
-  <a href="https://conventionalcommits.org)" target="_blank">
+  <a href="https://conventionalcommits.org)">
 </p>
 
 
