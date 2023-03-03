@@ -1,6 +1,12 @@
-name: Python Code Formatting
+name: Python Formatting
 
-on: [push, pull_request]
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: write
