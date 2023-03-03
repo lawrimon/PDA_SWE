@@ -107,7 +107,7 @@ feat(moodleRequest): add json support
 
 ### Python
 
-Python code is automatically formatted using [Black](https://github.com/psf/black) and adheres accordingly to the [Black Code Style](https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html). Comments and docstrings must comform to the respective guidelines contained in the [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html).
+Python code is automatically formatted using [Black](https://github.com/psf/black) and adheres accordingly to the [Black Code Style](https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html). Comments and docstrings must comform to the guidelines contained in the [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html).
  
 # Authors
 
