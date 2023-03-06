@@ -49,7 +49,7 @@ pip install -r requirements.txt
 
 ## Branching Model
 
-The branching model in this project is based on the [Feature Branch Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow). The main branch is called `main`. The `main` branch is protected and can only be changed by pull requests. For each feature-tagged issue, a new feature branch is created from `main`. The branch is named `feature/<issue-number>`. After the feature is implemented, a pull request is created to merge the feature branch into `main`. After the pull request is merged, the feature branch is deleted. The following image shows the branching model:
+The branching model in this project is based on the [Feature Branch Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow). The main branch is called `main`. The `main` branch is protected and can only be changed by pull requests. For each feature-tagged issue, a new feature branch is created from `main`. The branch is named `feature/<issue-number>`, e.g. `feature/30`. After the feature is implemented, a pull request is created to merge the feature branch into `main`. After the pull request is merged, the feature branch is deleted. The following image shows the branching model:
 <p align="center">
 <img src="https://wac-cdn.atlassian.com/dam/jcr:a905ddfd-973a-452a-a4ae-f1dd65430027/01%20Git%20branch.svg?cdnVersion=821" width="500">
 </p>
@@ -62,7 +62,7 @@ Each pull request must be reviewed by two developers. The reviewers must be diff
 
 ## Commit Messages
 
-Each commit message must conform to the [Commit Message Structure](#commit-structure) format.
+Each commit message must conform to the [Commit Message Structure](#commit-structure) format which is based on the [Conventional Commits](https://conventionalcommits.org) specification.
 
 ### <a name="commit-structure"></a>Commit Message Structure
 ```
@@ -107,7 +107,7 @@ feat(moodleRequest): add json support
 
 ### Python
 
-Python code is automatically formatted using [Black](https://github.com/psf/black) and adheres accordingly to the [Black Code Style](https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html). Comments and docstrings must comform to the guidelines contained in the [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html).
+The Python code in this project is automatically formatted using [Black](https://github.com/psf/black) and adheres to the [Black Code Style](https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html). Comments and docstrings must comform to the guidelines contained in the [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html).
  
 # Authors
 
