@@ -11,6 +11,9 @@ on:
       - main
     paths:
       - '**.py'
+  [push, pull_request]:
+    paths:
+      - 'python_ci.yaml'
 
 permissions:
   contents: write
@@ -22,18 +25,20 @@ jobs:
       - uses: actions/checkout@v3
         with: 
           ref: ${{ github.head_ref }}
-      - name: Run Black formatter
-        uses: psf/black@stable
-        with:
-          options: ''
-      - name: Run Pytest
+      - name: Set up Python 3.10
         uses: actions/setup-python@v3
         with:
           python-version: 3.10
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r $(find . -name requirements.txt -type f -print | xargs dirname)/requirements.txt
-          pytest   
+          pip install -r $(find . -name requirements.txt -type f -print | xargs dirname)/requirements.txt 
+      - name: Run Black formatter
+        run: |
+          black .
+      - name: Run Pytest
+        run: |
+          pytest
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
