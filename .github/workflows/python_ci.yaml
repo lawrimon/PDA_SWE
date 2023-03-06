@@ -32,7 +32,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r $(find . -name requirements.txt -type f -print | xargs dirname)/requirements.txt 
+          pip install -r requirements.txt
       - name: Run Black formatter
         run: |
           black .
