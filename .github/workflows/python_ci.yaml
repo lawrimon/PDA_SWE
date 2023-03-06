@@ -15,6 +15,7 @@ on:
     paths:
       - '.github/workflows/python_ci.yaml'
 
+
 permissions:
   contents: write
 
