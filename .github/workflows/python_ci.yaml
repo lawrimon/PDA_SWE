@@ -1,6 +1,6 @@
 name: Python Continuous Integration
 
-on: 
+on:
   push:
     branches:
       - main
@@ -11,9 +11,12 @@ on:
       - main
     paths:
       - '**.py'
-  [push, pull_request]:
+  push: 
     paths:
-      - 'python_ci.yaml'
+      - '.github/workflows/python_ci.yaml'
+  pull_request:
+    paths:
+      - '.github/workflows/python_ci.yaml'
 
 permissions:
   contents: write
