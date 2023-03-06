@@ -4,17 +4,16 @@ on:
   push:
     branches:
       - main
+      - feature/30
     paths:
       - '**.py'
+      - '.github/workflows/python_ci.yaml'
   pull_request:
     branches:
       - main
     paths:
       - '**.py'
-  [push, pull_request]:
-    paths:
       - '.github/workflows/python_ci.yaml'
-
 
 permissions:
   contents: write
