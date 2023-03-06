@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/30
     paths:
       - '**.py'
       - '.github/workflows/python_ci.yaml'
@@ -44,4 +43,4 @@ jobs:
         with:
           commit_options: '--no-verify'
           commit_message: 'refactor: auto-format python code'
-          
+                   
