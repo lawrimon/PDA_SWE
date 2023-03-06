@@ -11,10 +11,7 @@ on:
       - main
     paths:
       - '**.py'
-  push: 
-    paths:
-      - '.github/workflows/python_ci.yaml'
-  pull_request:
+  [push, pull_request]:
     paths:
       - '.github/workflows/python_ci.yaml'
 
