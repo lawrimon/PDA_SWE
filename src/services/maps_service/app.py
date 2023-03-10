@@ -48,10 +48,10 @@ def get_route():
     Args:
         origin: The origin of the route as coordinates.
         destination: The destination of the route as coordinates.
-        mode: The mode of transportation. Can be 'driving', 'walking', 'bicycling' or 'transit'.
-
+        mode: The mode of transportation. Can be "driving", "walking", "bicycling" or "transit".
+        
     Returns:
-        The route information. This includes the navigation instructions, distance and duration.
+        The route information. This includes the navigation steps, distance and duration.
     """
 
     if missing_route_parameters(request.args):
@@ -112,13 +112,13 @@ def is_valid_coordinates_string(coordinates_string):
 
 
 def missing_route_parameters(args):
-    """Check if the route parameters are missing.
+    """Check if the required route parameters are missing.
 
     Args:
         args: The request arguments.
 
     Returns:
-        True if the parameters are missing, False otherwise.
+        True if a required parameter is missing, False otherwise.
     """
 
     if not args.get("origin") or not args.get("destination") or not args.get("mode"):
@@ -134,7 +134,7 @@ def invalid_route_parameters(args):
         args: The request arguments.
 
     Returns:
-        True if the parameters are invalid, False otherwise.
+        True if a parameter is invalid, False otherwise.
     """
 
     if (
