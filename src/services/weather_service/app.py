@@ -23,9 +23,9 @@ def get_weather():
     Returns:
         The weather information for the next day for the given location.
     """
-    
-    lat = 51.5074
-    lon = 0.1278
+
+    lat = request.args.get('lat')
+    lon = request.args.get('lon')
     cnt = 1
     units = 'metric'
     api_key = '10245a3d06eb6a826ddc1bfa3d943829'
@@ -48,6 +48,5 @@ def get_weather():
     print(data)
 
     return jsonify(data)
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()
