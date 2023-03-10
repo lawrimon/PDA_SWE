@@ -10,7 +10,8 @@ import requests
 
 app = Flask(__name__)
 
-API_KEY = "AIzaSyC80wcSrjcJ5GDSpX4TvD5zhv-Th1dzeDA"
+#TODO: add api key
+API_KEY = ""
 
 
 @app.route("/user_location")
