@@ -31,7 +31,8 @@ def get_weather():
     lon = request.args.get('lon')
     cnt = 1
     units = 'metric'
-    api_key = '10245a3d06eb6a826ddc1bfa3d943829'
+    #TODO: add api key
+    api_key = ''
 
     url = f'https://api.openweathermap.org/data/2.5/forecast/daily'
     params = {
