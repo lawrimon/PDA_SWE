@@ -24,6 +24,9 @@ def get_weather():
         The weather information for the next day for the given location.
     """
 
+    if not request.args.get('lat') or not request.args.get('lon'):
+        return jsonify({'error': 'Missing parameters'}), 400
+    
     lat = request.args.get('lat')
     lon = request.args.get('lon')
     cnt = 1
