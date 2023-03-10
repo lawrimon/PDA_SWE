@@ -13,6 +13,7 @@ on:
     paths:
       - '**.py'
       - '.github/workflows/python_ci.yaml'
+  workflow_dispatch:    
 
 permissions:
   contents: write
