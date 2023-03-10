@@ -1,4 +1,4 @@
-name: Python Continuous Integration
+name: Python CI
 
 on:
   push:
