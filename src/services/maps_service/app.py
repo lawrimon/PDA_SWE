@@ -10,9 +10,10 @@ import requests
 
 app = Flask(__name__)
 
-API_KEY = 'AIzaSyC80wcSrjcJ5GDSpX4TvD5zhv-Th1dzeDA'
+API_KEY = "AIzaSyC80wcSrjcJ5GDSpX4TvD5zhv-Th1dzeDA"
 
-@app.route('/user_location')
+
+@app.route("/user_location")
 def get_user_location():
     """User location endpoint.
 
@@ -22,21 +23,22 @@ def get_user_location():
         Latitude and longitude of the current user location.
     """
 
-    url = f'https://www.googleapis.com/geolocation/v1/geolocate'
+    url = f"https://www.googleapis.com/geolocation/v1/geolocate"
     params = {
-        'key': API_KEY,
+        "key": API_KEY,
     }
 
     response = requests.post(url, params=params)
     if response.status_code != 200:
-        jsonify({'error': 'Error getting user location information'}), 500
+        jsonify({"error": "Error getting user location information"}), 500
 
     data = response.json()
-    user_location = {'lat': data['location']['lat'], 'lon': data['location']['lng']}
+    user_location = {"lat": data["location"]["lat"], "lon": data["location"]["lng"]}
 
     return jsonify(user_location)
 
-@app.route('/route')
+
+@app.route("/route")
 def get_route():
     """Route endpoint.
 
@@ -52,35 +54,36 @@ def get_route():
     """
 
     if missing_route_parameters(request.args):
-        return jsonify({'error': 'Missing parameters'}), 400
-    
-    if invalid_route_parameters(request.args):
-        return jsonify({'error': 'Invalid parameters'}), 400
-    
-    origin = request.args.get('origin')
-    destination = request.args.get('destination')
-    mode = request.args.get('mode')
-    units = 'metric'
+        return jsonify({"error": "Missing parameters"}), 400
 
-    url = f'https://maps.googleapis.com/maps/api/directions/json'
+    if invalid_route_parameters(request.args):
+        return jsonify({"error": "Invalid parameters"}), 400
+
+    origin = request.args.get("origin")
+    destination = request.args.get("destination")
+    mode = request.args.get("mode")
+    units = "metric"
+
+    url = f"https://maps.googleapis.com/maps/api/directions/json"
     params = {
-        'origin': origin,
-        'destination': destination,
-        'mode': mode,
-        'units': units,
-        'key': API_KEY,
+        "origin": origin,
+        "destination": destination,
+        "mode": mode,
+        "units": units,
+        "key": API_KEY,
     }
 
     response = requests.get(url, params=params)
     if response.status_code != 200:
-        jsonify({'error': 'Error getting route information'}), 500
+        jsonify({"error": "Error getting route information"}), 500
 
     data = response.json()
 
-    route = data['routes'][0]['legs'][0]
+    route = data["routes"][0]["legs"][0]
 
     return jsonify(route)
-    
+
+
 def is_valid_coordinates_string(coordinates_string):
     """Check if a string is a valid coordinates string.
 
@@ -91,20 +94,21 @@ def is_valid_coordinates_string(coordinates_string):
         True if the string is a valid coordinates string, False otherwise.
     """
 
-    coordinates = coordinates_string.split(',')
+    coordinates = coordinates_string.split(",")
     if len(coordinates) != 2:
         return False
-    
+
     try:
         lat = float(coordinates[0])
         lon = float(coordinates[1])
     except ValueError:
         return False
-    
+
     if lat < -90 or lat > 90 or lon < -180 or lon > 180:
         return False
 
-    return True    
+    return True
+
 
 def missing_route_parameters(args):
     """Check if the route parameters are missing.
@@ -116,10 +120,11 @@ def missing_route_parameters(args):
         True if the parameters are missing, False otherwise.
     """
 
-    if not args.get('origin') or not args.get('destination') or not args.get('mode'):
+    if not args.get("origin") or not args.get("destination") or not args.get("mode"):
         return True
 
     return False
+
 
 def invalid_route_parameters(args):
     """Check if the route parameters are invalid.
@@ -131,7 +136,11 @@ def invalid_route_parameters(args):
         True if the parameters are invalid, False otherwise.
     """
 
-    if not is_valid_coordinates_string(args.get('origin')) or not is_valid_coordinates_string(args.get('destination')) or not args.get('mode') in ['driving', 'walking', 'bicycling', 'transit']:
+    if (
+        not is_valid_coordinates_string(args.get("origin"))
+        or not is_valid_coordinates_string(args.get("destination"))
+        or not args.get("mode") in ["driving", "walking", "bicycling", "transit"]
+    ):
         return True
 
     return False
