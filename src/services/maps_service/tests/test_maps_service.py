@@ -6,8 +6,7 @@ from src.app import app, is_valid_coordinates_string
 def client():
     """Create a test client for the app."""
 
-    with app.test_client() as client:
-        yield client
+    return app.test_client()
 
 
 def test_get_user_location(client):
