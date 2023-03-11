@@ -80,6 +80,8 @@ def get_route():
 
     data = response.json()
 
+    # TODO: add handling for empty routes
+
     route = data["routes"][0]["legs"][0]
 
     return jsonify(route)

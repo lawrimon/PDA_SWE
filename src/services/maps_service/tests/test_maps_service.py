@@ -1,5 +1,5 @@
 import pytest
-from src.app import app, is_valid_coordinates_string
+from app import app, is_valid_coordinates_string
 
 
 @pytest.fixture
