@@ -55,7 +55,13 @@ def test_get_user_location(client):
     ],
 )
 def test_get_route(
-    client, origin, destination, mode, arrival_time, expected_status_code, expected_error
+    client,
+    origin,
+    destination,
+    mode,
+    arrival_time,
+    expected_status_code,
+    expected_error,
 ):
     """Test the route endpoint.
 
@@ -65,7 +71,12 @@ def test_get_route(
 
     response = client.get(
         "/route",
-        query_string={"origin": origin, "destination": destination, "mode": mode, "arrival_time": arrival_time},
+        query_string={
+            "origin": origin,
+            "destination": destination,
+            "mode": mode,
+            "arrival_time": arrival_time,
+        },
     )
     assert response.status_code == expected_status_code
     if expected_error:

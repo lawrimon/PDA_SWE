@@ -16,6 +16,7 @@ app = Flask(__name__)
 dotenv.load_dotenv()
 MAPS_API_KEY = os.getenv("MAPS_API_KEY")
 
+
 @app.route("/user_location")
 def get_user_location():
     """User location endpoint.
@@ -52,7 +53,7 @@ def get_route():
         destination: The destination of the route as coordinates.
         mode: The mode of transportation. Can be "driving", "walking", "bicycling" or "transit".
         arrival_time (optional): The arrival time as Unix timestamp. Only used for "transit" mode.
-        
+
     Returns:
         The route information. This includes the navigation steps, distance and duration.
     """
@@ -151,7 +152,7 @@ def invalid_route_parameters(args):
         or not args.get("mode") in ["driving", "walking", "bicycling", "transit"]
     ):
         return True
-    
+
     if args.get("arrival_time"):
         try:
             arrival_time = int(args.get("arrival_time"))
@@ -159,7 +160,10 @@ def invalid_route_parameters(args):
             return True
 
         # arrival time must be in the future and not more than 30 days in the future
-        if arrival_time < int(time.time_ns() / 1e9) or arrival_time > int(time.time_ns() / 1e9) + 60 * 60 * 24 * 30:
+        if (
+            arrival_time < int(time.time_ns() / 1e9)
+            or arrival_time > int(time.time_ns() / 1e9) + 60 * 60 * 24 * 30
+        ):
             return True
 
     return False
