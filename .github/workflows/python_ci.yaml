@@ -18,6 +18,9 @@ on:
 permissions:
   contents: write
 
+env:
+  MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+
 jobs:
   ci:
     runs-on: ubuntu-latest
