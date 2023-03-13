@@ -73,7 +73,7 @@ Each commit message must conform to the [Commit Message Structure](#commit-struc
   │       │
   │       └─⫸ Component or service affected by the committed change.
   │
-  └─⫸ build|chore|ci|docs|feat|fix|perf|refactor
+  └─⫸ build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test
 ```
 The `<type>` and `<subject>` fields are mandatory, the `(<scope>)` field is optional.
 
@@ -88,6 +88,9 @@ Must be one of the following:
 * **fix**: A bug fix
 * **perf**: A code change that improves performance
 * **refactor**: A code change that neither fixes a bug nor adds a feature
+* **revert**: Reverting a previous commit
+* **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+* **test**: Adding missing tests or correcting existing tests
 
 #### Scope
 The scope should be the name of component or service affected by the committed change.
@@ -101,7 +104,7 @@ The subject contains a succinct description of the change:
 
 #### Example
 ```
-feat(moodleRequest): add json support
+feat(map_service): add user location functionality
 ```
 
 ## Style Guide
