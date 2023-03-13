@@ -25,27 +25,37 @@ def test_get_user_location(client):
 
 
 @pytest.mark.parametrize(
-    "origin,destination,mode,expected_status_code,expected_error",
+    "origin,destination,mode,arrival_time,expected_status_code,expected_error",
     [
         (
             "52.370216,4.895168",
             "53.23445344722573,5.622244185533128",
             "driving",
+            None,
             200,
             None,
         ),
-        (None, None, None, 400, "Missing parameters"),
+        (None, None, None, None, 400, "Missing parameters"),
         (
             "52.370216,4.895168",
             "53.23445344722573,5.622244185533128",
-            "invalid",
+            "transit",
+            "100",
             400,
             "Invalid parameters",
+        ),
+        (
+            "52.370216,4.895168",
+            "53.466571, 4.830137",
+            "driving",
+            None,
+            500,
+            "No route found",
         ),
     ],
 )
 def test_get_route(
-    client, origin, destination, mode, expected_status_code, expected_error
+    client, origin, destination, mode, arrival_time, expected_status_code, expected_error
 ):
     """Test the route endpoint.
 
@@ -55,7 +65,7 @@ def test_get_route(
 
     response = client.get(
         "/route",
-        query_string={"origin": origin, "destination": destination, "mode": mode},
+        query_string={"origin": origin, "destination": destination, "mode": mode, "arrival_time": arrival_time},
     )
     assert response.status_code == expected_status_code
     if expected_error:
