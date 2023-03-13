@@ -7,12 +7,14 @@ The functionality is based on the Google Maps Platform.
 
 from flask import Flask, jsonify, request
 import requests
+import dotenv
+import time
+import os
 
 app = Flask(__name__)
 
-#TODO: add api key
-API_KEY = ""
-
+dotenv.load_dotenv()
+MAPS_API_KEY = os.getenv("MAPS_API_KEY")
 
 @app.route("/user_location")
 def get_user_location():
@@ -26,7 +28,7 @@ def get_user_location():
 
     url = f"https://www.googleapis.com/geolocation/v1/geolocate"
     params = {
-        "key": API_KEY,
+        "key": MAPS_API_KEY,
     }
 
     response = requests.post(url, params=params)
@@ -49,6 +51,7 @@ def get_route():
         origin: The origin of the route as coordinates.
         destination: The destination of the route as coordinates.
         mode: The mode of transportation. Can be "driving", "walking", "bicycling" or "transit".
+        arrival_time (optional): The arrival time as Unix timestamp. Only used for "transit" mode.
         
     Returns:
         The route information. This includes the navigation steps, distance and duration.
@@ -63,6 +66,7 @@ def get_route():
     origin = request.args.get("origin")
     destination = request.args.get("destination")
     mode = request.args.get("mode")
+    arrival_time = request.args.get("arrival_time")
     units = "metric"
 
     url = f"https://maps.googleapis.com/maps/api/directions/json"
@@ -70,8 +74,9 @@ def get_route():
         "origin": origin,
         "destination": destination,
         "mode": mode,
+        "arrival_time": arrival_time,
         "units": units,
-        "key": API_KEY,
+        "key": MAPS_API_KEY,
     }
 
     response = requests.get(url, params=params)
@@ -80,7 +85,8 @@ def get_route():
 
     data = response.json()
 
-    # TODO: add handling for empty routes
+    if not data["routes"]:
+        return jsonify({"error": "No route found"}), 500
 
     route = data["routes"][0]["legs"][0]
 
@@ -145,5 +151,15 @@ def invalid_route_parameters(args):
         or not args.get("mode") in ["driving", "walking", "bicycling", "transit"]
     ):
         return True
+    
+    if args.get("arrival_time"):
+        try:
+            arrival_time = int(args.get("arrival_time"))
+        except ValueError:
+            return True
+
+        # arrival time must be in the future and not more than 30 days in the future
+        if arrival_time < int(time.time_ns() / 1e9) or arrival_time > int(time.time_ns() / 1e9) + 60 * 60 * 24 * 30:
+            return True
 
     return False
