@@ -46,6 +46,22 @@ def test_get_user_location(client):
         ),
         (
             "52.370216,4.895168",
+            "53.23445344722573,5.622244185533128",
+            "transit",
+            "wrong",
+            400,
+            "Invalid parameters",
+        ),
+        (
+            "52.370216,4.895168",
+            "wrong",
+            "driving",
+            None,
+            400,
+            "Invalid parameters",
+        ),
+        (
+            "52.370216,4.895168",
             "53.466571, 4.830137",
             "driving",
             None,
