@@ -86,6 +86,7 @@ def get_route():
 
     data = response.json()
 
+    # If the coordinates are valid but no route is found, the Directions API returns an empty list.
     if not data["routes"]:
         return jsonify({"error": "No route found"}), 500
 
@@ -159,7 +160,7 @@ def invalid_route_parameters(args):
         except ValueError:
             return True
 
-        # arrival time must be in the future and not more than 30 days in the future
+        # The arrival time must be in the next 30 days.
         if (
             arrival_time < int(time.time_ns() / 1e9)
             or arrival_time > int(time.time_ns() / 1e9) + 60 * 60 * 24 * 30

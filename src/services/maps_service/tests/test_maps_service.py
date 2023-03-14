@@ -1,5 +1,5 @@
 import pytest
-from app import app, is_valid_coordinates_string
+from maps_service.app import app, is_valid_coordinates_string
 
 
 @pytest.fixture
