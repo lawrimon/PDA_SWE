@@ -1,11 +1,13 @@
 import pytest
 from stock_market_service.app import app
 
+
 @pytest.fixture
 def client():
     """Create a test client for the app."""
 
     return app.test_client()
+
 
 @pytest.mark.parametrize(
     "symbols,expected_status_code,expected_error",
@@ -37,6 +39,7 @@ def test_get_quotes(client, symbols, expected_status_code, expected_error):
         assert "bid_price" in data["IBM"]
         assert "ask_price" in data["IBM"]
 
+
 @pytest.mark.parametrize(
     "symbols,expected_status_code,expected_error",
     [
@@ -62,4 +65,4 @@ def test_get_news(client, symbols, expected_status_code, expected_error):
         data = response.json
         assert "IBM" in data
         assert "MSFT" in data
-        assert "GOOG" in data  
+        assert "GOOG" in data

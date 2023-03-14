@@ -17,6 +17,7 @@ dotenv.load_dotenv()
 STOCK_MARKET_API_KEY = os.getenv("STOCK_MARKET_API_KEY")
 STOCK_MARKET_SECRET_KEY = os.getenv("STOCK_MARKET_SECRET_KEY")
 
+
 @app.route("/quotes")
 def get_quotes():
     """Quotes endpoint.
@@ -32,7 +33,7 @@ def get_quotes():
 
     if request.args.get("symbols") is None:
         return jsonify({"error": "Missing parameters"}), 400
-    
+
     # check if symbols is a list of comma separated symbols
     if not request.args.get("symbols").replace(",", "").isalpha():
         return jsonify({"error": "Invalid parameters"}), 400
@@ -69,23 +70,24 @@ def get_quotes():
 
     return jsonify(quotes)
 
+
 # get the latest news of a list of symbols
 @app.route("/news")
 def get_news():
     """News endpoint.
-    
+
     This endpoint provides the latest news of a list of symbols.
-    
+
     Args:
         symbols: A list of symbols (e.g. "IBM,MSFT,GOOG").
-        
+
     Returns:
         A list of the latest news of the symbols.
     """
 
     if request.args.get("symbols") is None:
         return jsonify({"error": "Missing parameters"}), 400
-    
+
     if not request.args.get("symbols").replace(",", "").isalpha():
         return jsonify({"error": "Invalid parameters"}), 400
 
@@ -123,12 +125,8 @@ def get_news():
                         "url": item["url"],
                         "source": item["source"],
                         "author": item["author"],
-                        "created_at": item["created_at"]
+                        "created_at": item["created_at"],
                     }
                     news[symbol].append(article)
 
     return jsonify(news)
-    
-
-       
-
