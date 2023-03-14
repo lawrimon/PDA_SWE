@@ -88,7 +88,7 @@ def get_route():
 
     # If the coordinates are valid but no route is found, the Directions API returns an empty list.
     if not data["routes"]:
-        return jsonify({"error": "No route found"}), 500
+        return jsonify({"error": "No route found for the given coordinates"}), 404
 
     route = data["routes"][0]["legs"][0]
 

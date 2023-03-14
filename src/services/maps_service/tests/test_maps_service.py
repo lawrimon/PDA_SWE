@@ -65,8 +65,8 @@ def test_get_user_location(client):
             "53.466571, 4.830137",
             "driving",
             None,
-            500,
-            "No route found",
+            404,
+            "No route found for the given coordinates",
         ),
     ],
 )
