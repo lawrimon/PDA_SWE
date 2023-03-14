@@ -1,5 +1,5 @@
 import pytest
-from app import app, is_valid_coordinates_string
+from maps_service.app import app, is_valid_coordinates_string
 
 
 @pytest.fixture
@@ -41,6 +41,22 @@ def test_get_user_location(client):
             "53.23445344722573,5.622244185533128",
             "transit",
             "100",
+            400,
+            "Invalid parameters",
+        ),
+        (
+            "52.370216,4.895168",
+            "53.23445344722573,5.622244185533128",
+            "transit",
+            "wrong",
+            400,
+            "Invalid parameters",
+        ),
+        (
+            "52.370216,4.895168",
+            "wrong",
+            "driving",
+            None,
             400,
             "Invalid parameters",
         ),
