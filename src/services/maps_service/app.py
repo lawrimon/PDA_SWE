@@ -24,7 +24,10 @@ def get_user_location():
     This endpoint provides the current user location.
 
     Returns:
-        Latitude and longitude of the current user location.
+        The latitude and longitude of the current user location.
+
+    Raises:
+        500: If the user location could not be retrieved.
     """
 
     url = f"https://www.googleapis.com/geolocation/v1/geolocate"
@@ -55,7 +58,8 @@ def get_route():
         arrival_time (optional): The arrival time as Unix timestamp. Only used for "transit" mode.
 
     Returns:
-        The route information. This includes the navigation steps, distance and duration.
+        The route information including the distance, duration and steps.
+
     """
 
     if missing_route_parameters(request.args):
