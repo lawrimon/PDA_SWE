@@ -34,7 +34,6 @@ def get_quotes():
     if request.args.get("symbols") is None:
         return jsonify({"error": "Missing parameters"}), 400
 
-    # check if symbols is a list of comma separated symbols
     if not request.args.get("symbols").replace(",", "").isalpha():
         return jsonify({"error": "Invalid parameters"}), 400
 
@@ -71,7 +70,6 @@ def get_quotes():
     return jsonify(quotes)
 
 
-# get the latest news of a list of symbols
 @app.route("/news")
 def get_news():
     """News endpoint.
