@@ -104,7 +104,7 @@ The subject contains a succinct description of the change:
 
 #### Example
 ```
-feat(map_service): add user location functionality
+feat(maps_service): add user location endpoint
 ```
 
 ## Style Guide
