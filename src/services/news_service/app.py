@@ -32,18 +32,14 @@ def get_tagesschau():
     Returns:
         The news information that are currently available
     """
-    if (
-        not request.args.get("regions")
-        or not request.args.get("ressort")
-    ):
+    if not request.args.get("regions") or not request.args.get("ressort"):
         return jsonify({"error": "Missing parameters"}), 400
-    
+
     if (
-        not request.args.get("regions").isdigit() 
-        or not request.args.get("ressort").isalpha() 
+        not request.args.get("regions").isdigit()
+        or not request.args.get("ressort").isalpha()
     ):
         return jsonify({"error": "Invalid parameters"}), 400
-    
 
     regions = request.args.get("regions")
     ressort = request.args.get("ressort")
@@ -98,15 +94,14 @@ def get_NY_Times():
     https://api.nytimes.com/svc/topstories/v2/us.json?api-key=yourkey
     https://api.nytimes.com/svc/topstories/v2/world.json?api-key=yourkey
     """
-    possible_categorys = ["arts","home","science","us","world"]
-    
+    possible_categorys = ["arts", "home", "science", "us", "world"]
+
     if request.args.get("category") is None:
         return jsonify({"error": "Missing parameters"}), 400
 
     if request.args.get("category") not in possible_categorys:
         return jsonify({"error": "Invalid parameters"}), 400
 
-    
     category = request.args.get("category")
 
     api_key = NYTimes_API_KEY

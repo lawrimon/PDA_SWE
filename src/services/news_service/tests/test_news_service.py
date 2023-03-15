@@ -12,12 +12,11 @@ def client():
 @pytest.mark.parametrize(
     "ressort,regions,expected_status_code, expected_error",
     [
-        ("ausland" ,"1", 200, None),
+        ("ausland", "1", 200, None),
         (None, None, 400, "Missing parameters"),
-        ("BRO" ,"Bo", 400, "Invalid parameters"),
+        ("BRO", "Bo", 400, "Invalid parameters"),
     ],
 )
-
 def test_get_tagesschau(client, ressort, regions, expected_status_code, expected_error):
     """Test the quotes endpoint.
 
@@ -25,7 +24,9 @@ def test_get_tagesschau(client, ressort, regions, expected_status_code, expected
     If status code is 200, it also checks if the response contains the correct data.
     """
 
-    response = client.get("/news/tagesschau/here", query_string={"regions": regions, "ressort":ressort})
+    response = client.get(
+        "/news/tagesschau/here", query_string={"regions": regions, "ressort": ressort}
+    )
     assert response.status_code == expected_status_code
     if expected_error:
         data = response.json
