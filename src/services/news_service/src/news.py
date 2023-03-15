@@ -7,6 +7,11 @@
 
 from flask import Flask, jsonify, request
 import requests
+import dotenv
+import os
+
+dotenv.load_dotenv()
+NYTimes_API_KEY = os.getenv("NYTIMES_API_KEY")
 
 app = Flask(__name__)
 
@@ -26,8 +31,13 @@ def get_tagesschau():
     Returns:
         The news information that are currently available
     """
-    regions = "1"
-    ressort = "Ausland"
+    if request.args.get("regions").isdigit() is None or request.args.get("ressort").isalpha() is None:
+             return jsonify({"error": "Missing parameters"}), 400
+    
+
+    regions = request.args.get("regions")
+    ressort =  request.args.get("ressort")
+
     url = f'https://www.tagesschau.de/api2/news/?"regions"={regions}&ressort={ressort}'
     response = requests.get(url)
     if response.status_code != 200:
@@ -82,7 +92,7 @@ def get_NY_Times():
     
     category = request.args.get("category")
 
-    api_key = 'zcAgtPo653gyfbJmFljdNWPtZsHlFZwb'
+    api_key = NYTimes_API_KEY
     url = f'https://api.nytimes.com/svc/topstories/v2/{category}.json?api-key=.{api_key}'
     response = requests.get(url)
     if response.status_code != 200:
