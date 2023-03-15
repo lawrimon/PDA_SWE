@@ -15,7 +15,8 @@ NYTimes_API_KEY = os.getenv("NYTIMES_API_KEY")
 
 app = Flask(__name__)
 
-@app.route('/news/tagesschau/here')
+
+@app.route("/news/tagesschau/here")
 def get_tagesschau():
     """Weather information endpoint.
 
@@ -31,47 +32,50 @@ def get_tagesschau():
     Returns:
         The news information that are currently available
     """
-    if request.args.get("regions").isdigit() is None or request.args.get("ressort").isalpha() is None:
-             return jsonify({"error": "Missing parameters"}), 400
-    
+    if (
+        request.args.get("regions").isdigit() is None
+        or request.args.get("ressort").isalpha() is None
+    ):
+        return jsonify({"error": "Missing parameters"}), 400
 
     regions = request.args.get("regions")
-    ressort =  request.args.get("ressort")
+    ressort = request.args.get("ressort")
 
     url = f'https://www.tagesschau.de/api2/news/?"regions"={regions}&ressort={ressort}'
     response = requests.get(url)
     if response.status_code != 200:
-        jsonify({'error': 'Error getting weather information'}), 500
+        jsonify({"error": "Error getting weather information"}), 500
 
     data = response.json()
 
     return jsonify(data)
 
-@app.route('/news/tagesschau/homepage')
+
+@app.route("/news/tagesschau/homepage")
 def get_tagesschau_homepage():
     """News information endpoint.
 
     This endpoint provides news information from the Tagesschau homepage.
 
     Args:
-        
+
     Returns:
         The news information that are currently available
     """
-     
-    url = 'https://www.tagesschau.de/api2/homepage/'
+
+    url = "https://www.tagesschau.de/api2/homepage/"
     response = requests.get(url)
     if response.status_code != 200:
-        jsonify({'error': 'Error getting news information'}), 500
+        jsonify({"error": "Error getting news information"}), 500
 
     data = response.json()
 
     return jsonify(data)
 
-@app.route('/news/nytimes')
 
+@app.route("/news/nytimes")
 def get_NY_Times():
-    '''
+    """
     News information endpoint.
 
     This endpoint provides news information from the New York Times homepage.
@@ -86,23 +90,24 @@ def get_NY_Times():
     https://api.nytimes.com/svc/topstories/v2/science.json?api-key=yourkey
     https://api.nytimes.com/svc/topstories/v2/us.json?api-key=yourkey
     https://api.nytimes.com/svc/topstories/v2/world.json?api-key=yourkey
-    '''
+    """
     if request.args.get("category") is None:
-         return jsonify({"error": "Missing parameters"}), 400
-    
+        return jsonify({"error": "Missing parameters"}), 400
+
     category = request.args.get("category")
 
     api_key = NYTimes_API_KEY
-    url = f'https://api.nytimes.com/svc/topstories/v2/{category}.json?api-key=.{api_key}'
+    url = (
+        f"https://api.nytimes.com/svc/topstories/v2/{category}.json?api-key=.{api_key}"
+    )
     response = requests.get(url)
     if response.status_code != 200:
-        jsonify({'error': 'Error getting news information'}), 500
+        jsonify({"error": "Error getting news information"}), 500
 
     data = response.json()
 
     return jsonify(data)
 
-   
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()
