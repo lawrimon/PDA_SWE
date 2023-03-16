@@ -27,7 +27,7 @@ def test_get_tagesschau_here(
     """
 
     response = client.get(
-        "/news/tagesschau/here", query_string={"regions": regions, "topic": topic}
+        "/news/tagesschau/news", query_string={"regions": regions, "topic": topic}
     )
     assert response.status_code == expected_status_code
     if expected_error:
