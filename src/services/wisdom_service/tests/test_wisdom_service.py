@@ -41,9 +41,9 @@ def test_get_quotes(client):
     assert isinstance(data[0]["author"], str)
 
 def test_get_apod(client):
-    """Test the apod endpoint.
+    """Test the astronomy picture of the day endpoint.
 
-    This test checks if the apod endpoint returns a status code 200 and the correct data.
+    This test checks if the astronomy picture of the day endpoint returns a status code 200 and the correct data.
     """
 
     response = client.get("/wisdom/apod")

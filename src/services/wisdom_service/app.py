@@ -2,6 +2,12 @@
 
 The wisdom service is a service that provides wisdom information like quotes, random facts and astronomy picture of the day.
 The quotes and random facts are based on API Ninjas. The astronomy picture of the day is based on the NASA API.
+
+Typical endpoints usage:
+
+    GET /wisdom/random_facts
+    GET /wisdom/quotes
+    GET /wisdom/apod
 """
 
 from flask import Flask, jsonify, request

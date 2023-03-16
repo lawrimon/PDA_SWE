@@ -1,7 +1,13 @@
 """This application is the news service.
 
  The news service is a service that provides news information.
- The functionality is based on the Tagesschau API and the New York Times API.
+ The functionality is based on the Tagesschau API and the NY Times API.
+
+Typical endpoints usage:
+
+    GET /news/tagesschau/news?regions=1,2,3&topic=inland
+    GET /news/tagesschau/homepage
+    GET /news/nytimes?topic=business
  """
 
 from flask import Flask, jsonify, request
@@ -56,7 +62,7 @@ def get_tagesschau_here():
 def get_tagesschau_homepage():
     """Tagesschau homepage endpoint.
 
-    This endpoint provides newss from the Tagesschau homepage.
+    This endpoint provides news from the Tagesschau homepage.
 
     Returns:
         The current news from the Tagesschau homepage.
@@ -74,15 +80,15 @@ def get_tagesschau_homepage():
 
 @app.route("/news/nytimes")
 def get_nytimes():
-    """New York Times news endpoint.
+    """NY Times news endpoint.
 
-    This endpoint provides news from the New York Times top stories.
+    This endpoint provides news from the NY Times top stories.
 
     Args:
         topic: The topic of the news. Only one topic can be selected. Can be "arts", "automobiles", "books", "business", "fashion", "food", "health", "home", "insider", "magazine", "movies", "nyregion", "obituaries", "opinion", "politics", "realestate", "science", "sports", "sundayreview", "technology", "theater", "t-magazine", "travel", "upshot", "us", "world".
 
     Returns:
-        The current news from the New York Times top stories based on the topic.
+        The current news from the NY Times top stories based on the topic.
     """
 
     if request.args.get("topic") is None:

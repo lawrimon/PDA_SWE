@@ -21,7 +21,7 @@ def client():
 def test_get_tagesschau_here(
     client, regions, topic, expected_status_code, expected_error
 ):
-    """Test the tagesschau news endpoint.
+    """Test the Tagesschau news endpoint.
 
     This test checks if the tagesschau news endpoint returns the correct status code and error message.
     """
@@ -37,7 +37,7 @@ def test_get_tagesschau_here(
 
 
 def test_get_tagesschau_homepage(client):
-    """Test the tagesschau homepage endpoint.
+    """Test the Tagesschau homepage endpoint.
 
     This test checks if the tagesschau homepage endpoint returns the correct status code and error message.
     """
@@ -55,9 +55,9 @@ def test_get_tagesschau_homepage(client):
     ],
 )
 def test_get_nytimes(client, topic, expected_status_code, expected_error):
-    """Test the nytimes endpoint.
+    """Test the NY Times endpoint.
 
-    This test checks if the nytimes endpoint returns the correct status code and error message.
+    This test checks if the NY Times endpoint returns the correct status code and error message.
     """
 
     response = client.get("/news/nytimes", query_string={"topic": topic})
