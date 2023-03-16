@@ -18,7 +18,9 @@ def client():
         ("1", "wrong", 400, "Invalid parameters"),
     ],
 )
-def test_get_tagesschau_here(client, topics, regions, expected_status_code, expected_error):
+def test_get_tagesschau_here(
+    client, topics, regions, expected_status_code, expected_error
+):
     """Test the tagesschau news endpoint.
 
     This test checks if the tagesschau news endpoint returns the correct status code and error message.
@@ -31,7 +33,7 @@ def test_get_tagesschau_here(client, topics, regions, expected_status_code, expe
     if expected_error:
         data = response.json
         assert "error" in data
-        assert data["error"] == expected_error 
+        assert data["error"] == expected_error
 
 
 def test_get_tagesschau_homepage(client):

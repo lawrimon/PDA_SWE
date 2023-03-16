@@ -79,7 +79,7 @@ def get_nytimes():
     This endpoint provides news information from the New York Times homepage.
 
     Args:
-        The category of the news. Can be "arts", "home", "science", "us" or "world". 
+        The category of the news. Can be "arts", "home", "science", "us" or "world".
 
     Returns:
         The current news from the New York Times homepage based on the category.
@@ -87,7 +87,7 @@ def get_nytimes():
 
     if request.args.get("category") is None:
         return jsonify({"error": "Missing parameters"}), 400
-    
+
     if request.args.get("category") not in ["arts", "home", "science", "us", "world"]:
         return jsonify({"error": "Invalid parameters"}), 400
 
@@ -121,11 +121,36 @@ def invalid_tagesschau_parameters(args):
     topics = args.get("topics")
 
     for region in regions.split(","):
-        if region not in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"]:
+        if region not in [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+        ]:
             return True
 
     for topic in topics.split(","):
-        if topic not in ["inland", "ausland", "wirtschaft", "sport", "video", "investigativ", "faktenfinder"]:
+        if topic not in [
+            "inland",
+            "ausland",
+            "wirtschaft",
+            "sport",
+            "video",
+            "investigativ",
+            "faktenfinder",
+        ]:
             return True
 
     return False
