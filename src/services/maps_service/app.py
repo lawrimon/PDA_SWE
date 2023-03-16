@@ -25,9 +25,6 @@ def get_user_location():
 
     Returns:
         The latitude and longitude of the current user location.
-
-    Raises:
-        500: If the user location could not be retrieved.
     """
 
     url = f"https://www.googleapis.com/geolocation/v1/geolocate"
@@ -59,7 +56,6 @@ def get_route():
 
     Returns:
         The route information including the distance, duration and steps.
-
     """
 
     if missing_route_parameters(request.args):

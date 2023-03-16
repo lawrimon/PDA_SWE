@@ -10,30 +10,38 @@ def client():
 
 
 @pytest.mark.parametrize(
-    "ressort,regions,expected_status_code, expected_error",
+    "regions, topics, expected_status_code, expected_error",
     [
-        ("ausland", "1", 200, None),
+        ("1", "ausland", 200, None),
         (None, None, 400, "Missing parameters"),
-        ("BRO", "Bo", 400, "Invalid parameters"),
+        ("wrong", "ausland", 400, "Invalid parameters"),
+        ("1", "wrong", 400, "Invalid parameters"),
     ],
 )
-def test_get_tagesschau(client, ressort, regions, expected_status_code, expected_error):
-    """Test the quotes endpoint.
+def test_get_tagesschau_here(client, topics, regions, expected_status_code, expected_error):
+    """Test the tagesschau news endpoint.
 
-    This test checks if the quotes endpoint returns the correct status code and error message.
-    If status code is 200, it also checks if the response contains the correct data.
+    This test checks if the tagesschau news endpoint returns the correct status code and error message.
     """
 
     response = client.get(
-        "/news/tagesschau/here", query_string={"regions": regions, "ressort": ressort}
+        "/news/tagesschau/here", query_string={"regions": regions, "topics": topics}
     )
     assert response.status_code == expected_status_code
     if expected_error:
         data = response.json
         assert "error" in data
-        assert data["error"] == expected_error
-    else:
-        pass
+        assert data["error"] == expected_error 
+
+
+def test_get_tagesschau_homepage(client):
+    """Test the tagesschau homepage endpoint.
+
+    This test checks if the tagesschau homepage endpoint returns the correct status code and error message.
+    """
+
+    response = client.get("/news/tagesschau/homepage")
+    assert response.status_code == 200
 
 
 @pytest.mark.parametrize(
@@ -45,10 +53,9 @@ def test_get_tagesschau(client, ressort, regions, expected_status_code, expected
     ],
 )
 def test_get_nytimes(client, category, expected_status_code, expected_error):
-    """Test the news endpoint.
+    """Test the nytimes endpoint.
 
-    This test checks if the news endpoint returns the correct status code and error message.
-    If status code is 200, it also checks if the response contains the correct data.
+    This test checks if the nytimes endpoint returns the correct status code and error message.
     """
 
     response = client.get("/news/nytimes", query_string={"category": category})

@@ -1,8 +1,7 @@
 """This application is news service.
 
- The news service is a service that provides news information for a given location.
- It provides an endpoint to get the news information for a given location for the next day.
- The functionality is based in the Tagesschau API.
+ The news service is a service that provides news information.
+ The functionality is based on the Tagesschau API and the New York Times API.
  """
 
 from flask import Flask, jsonify, request
@@ -11,41 +10,40 @@ import dotenv
 import os
 
 dotenv.load_dotenv()
-NYTimes_API_KEY = os.getenv("NYTIMES_API_KEY")
+NYTIMES_API_KEY = os.getenv("NYTIMES_API_KEY")
 
 app = Flask(__name__)
 
 
 @app.route("/news/tagesschau/here")
-def get_tagesschau():
-    """Weather information endpoint.
+def get_tagesschau_here():
+    """Tagesschau news endpoint.
 
-    This endpoint provides news information for a given location for the current moment.
+    This endpoint provides current news from tagesschau.de.
 
     Args:
-        regions: The region inside germany for the news
-            Bundesland - 1=Baden-Württemberg, 2=Bayern, 3=Berlin, 4=Brandenburg, 5=Bremen, 6=Hamburg, 7=Hessen, 8=Mecklenburg-Vorpommern, 9=Niedersachsen, 10=Nordrhein-Westfalen, 11=Rheinland-Pfalz, 12=Saarland, 13=Sachsen, 14=Sachsen-Anhalt, 15=Schleswig-Holstein, 16=Thüringen. Mehrere Komma-getrennte Angaben möglich (z.B. regions=1,2).
-            Available values : 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
-        ressorts: The topic of the news
-            Available values : inland, ausland, wirtschaft, sport, video, investigativ, faktenfinder
+        regions: The german states the news are from. Can be 1=Baden-Württemberg, 2=Bayern, 3=Berlin, 4=Brandenburg, 5=Bremen, 6=Hamburg, 7=Hessen, 8=Mecklenburg-Vorpommern, 9=Niedersachsen, 10=Nordrhein-Westfalen, 11=Rheinland-Pfalz, 12=Saarland, 13=Sachsen, 14=Sachsen-Anhalt, 15=Schleswig-Holstein, 16=Thüringen.
+        topics: The topics of the news. Can be "inland", "ausland", "wirtschaft", "sport", "video", "investigativ" or "faktenfinder".
 
     Returns:
-        The news information that are currently available
+        The available news based on the regions and topics.
     """
-    if not request.args.get("regions") or not request.args.get("ressort"):
+
+    if not request.args.get("regions") or not request.args.get("topics"):
         return jsonify({"error": "Missing parameters"}), 400
 
-    if (
-        not request.args.get("regions").isdigit()
-        or not request.args.get("ressort").isalpha()
-    ):
+    if invalid_tagesschau_parameters(request.args):
         return jsonify({"error": "Invalid parameters"}), 400
 
     regions = request.args.get("regions")
-    ressort = request.args.get("ressort")
+    topics = request.args.get("topics")
 
-    url = f'https://www.tagesschau.de/api2/news/?"regions"={regions}&ressort={ressort}'
-    response = requests.get(url)
+    url = f"https://www.tagesschau.de/api2/news"
+    params = {
+        "regions": regions,
+        "topic": topics,
+    }
+    response = requests.get(url, params=params)
     if response.status_code != 200:
         jsonify({"error": "Error getting weather information"}), 500
 
@@ -56,17 +54,15 @@ def get_tagesschau():
 
 @app.route("/news/tagesschau/homepage")
 def get_tagesschau_homepage():
-    """News information endpoint.
+    """Tagesschau homepage endpoint.
 
     This endpoint provides news information from the Tagesschau homepage.
 
-    Args:
-
     Returns:
-        The news information that are currently available
+        The current news from the Tagesschau homepage.
     """
 
-    url = "https://www.tagesschau.de/api2/homepage/"
+    url = "https://www.tagesschau.de/api2/homepage"
     response = requests.get(url)
     if response.status_code != 200:
         jsonify({"error": "Error getting news information"}), 500
@@ -77,38 +73,32 @@ def get_tagesschau_homepage():
 
 
 @app.route("/news/nytimes")
-def get_NY_Times():
-    """
-    News information endpoint.
+def get_nytimes():
+    """New York Times news endpoint.
 
     This endpoint provides news information from the New York Times homepage.
 
     Args:
-        api_key =
-        category = possible options: arts,home,science,us,world
+        The category of the news. Can be "arts", "home", "science", "us" or "world". 
+
     Returns:
-        The news information that are currently available
-    https://api.nytimes.com/svc/topstories/v2/arts.json?api-key=yourkey
-    https://api.nytimes.com/svc/topstories/v2/home.json?api-key=yourkey
-    https://api.nytimes.com/svc/topstories/v2/science.json?api-key=yourkey
-    https://api.nytimes.com/svc/topstories/v2/us.json?api-key=yourkey
-    https://api.nytimes.com/svc/topstories/v2/world.json?api-key=yourkey
+        The current news from the New York Times homepage based on the category.
     """
-    possible_categorys = ["arts", "home", "science", "us", "world"]
 
     if request.args.get("category") is None:
         return jsonify({"error": "Missing parameters"}), 400
-
-    if request.args.get("category") not in possible_categorys:
+    
+    if request.args.get("category") not in ["arts", "home", "science", "us", "world"]:
         return jsonify({"error": "Invalid parameters"}), 400
 
     category = request.args.get("category")
 
-    api_key = NYTimes_API_KEY
-    url = (
-        f"https://api.nytimes.com/svc/topstories/v2/{category}.json?api-key=.{api_key}"
-    )
-    response = requests.get(url)
+    url = f"https://api.nytimes.com/svc/topstories/v2/{category}.json"
+    params = {
+        "api-key": NYTIMES_API_KEY,
+    }
+
+    response = requests.get(url, params=params)
     if response.status_code != 200:
         jsonify({"error": "Error getting news information"}), 500
 
@@ -117,5 +107,25 @@ def get_NY_Times():
     return jsonify(data)
 
 
-if __name__ == "__main__":
-    app.run()
+def invalid_tagesschau_parameters(args):
+    """Check if the tagesschau parameters are invalid.
+
+    Args:
+        arg: The request arguments.
+
+    Returns:
+        True if a parameter is invalid, False otherwise.
+    """
+
+    regions = args.get("regions")
+    topics = args.get("topics")
+
+    for region in regions.split(","):
+        if region not in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"]:
+            return True
+
+    for topic in topics.split(","):
+        if topic not in ["inland", "ausland", "wirtschaft", "sport", "video", "investigativ", "faktenfinder"]:
+            return True
+
+    return False
