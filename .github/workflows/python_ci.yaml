@@ -22,6 +22,7 @@ env:
   MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
   STOCK_MARKET_API_KEY: ${{ secrets.STOCK_MARKET_API_KEY }}
   STOCK_MARKET_SECRET_KEY: ${{ secrets.STOCK_MARKET_SECRET_KEY }}
+  NYTIMES_API_KEY: ${{ secrets.NYTIMES_API_KEY }}
 
 jobs:
   ci:
