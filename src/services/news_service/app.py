@@ -22,26 +22,26 @@ def get_tagesschau_here():
     This endpoint provides current news from tagesschau.de.
 
     Args:
-        regions: The german states the news are from. Can be 1=Baden-Württemberg, 2=Bayern, 3=Berlin, 4=Brandenburg, 5=Bremen, 6=Hamburg, 7=Hessen, 8=Mecklenburg-Vorpommern, 9=Niedersachsen, 10=Nordrhein-Westfalen, 11=Rheinland-Pfalz, 12=Saarland, 13=Sachsen, 14=Sachsen-Anhalt, 15=Schleswig-Holstein, 16=Thüringen.
-        topics: The topics of the news. Can be "inland", "ausland", "wirtschaft", "sport", "video", "investigativ" or "faktenfinder".
+        regions: The german states the news are from. Multiple regions can be combined with a comma. Can be 1=Baden-Württemberg, 2=Bayern, 3=Berlin, 4=Brandenburg, 5=Bremen, 6=Hamburg, 7=Hessen, 8=Mecklenburg-Vorpommern, 9=Niedersachsen, 10=Nordrhein-Westfalen, 11=Rheinland-Pfalz, 12=Saarland, 13=Sachsen, 14=Sachsen-Anhalt, 15=Schleswig-Holstein, 16=Thüringen.
+        topic: The topic of the news. Only one topic can be selected. Can be "inland", "ausland", "wirtschaft", "sport", "video", "investigativ" or "faktenfinder".
 
     Returns:
-        The available news based on the regions and topics.
+        The available news based on the regions and topic.
     """
 
-    if not request.args.get("regions") or not request.args.get("topics"):
+    if not request.args.get("regions") or not request.args.get("topic"):
         return jsonify({"error": "Missing parameters"}), 400
 
     if invalid_tagesschau_parameters(request.args):
         return jsonify({"error": "Invalid parameters"}), 400
 
     regions = request.args.get("regions")
-    topics = request.args.get("topics")
+    topic = request.args.get("topic")
 
     url = f"https://www.tagesschau.de/api2/news"
     params = {
         "regions": regions,
-        "topic": topics,
+        "ressort": topic,
     }
     response = requests.get(url, params=params)
     if response.status_code != 200:
@@ -79,21 +79,23 @@ def get_nytimes():
     This endpoint provides news information from the New York Times top stories.
 
     Args:
-        The category of the news. Can be "arts", "home", "science", "us" or "world".
+        topic: The topic of the news. Only one topic can be selected. Can be "arts", "automobiles", "books", "business", "fashion", "food", "health", "home", "insider", "magazine", "movies", "nyregion", "obituaries", "opinion", "politics", "realestate", "science", "sports", "sundayreview", "technology", "theater", "t-magazine", "travel", "upshot", "us", "world".
 
     Returns:
-        The current news from the New York Times top stories based on the category.
+        The current news from the New York Times top stories based on the topic.
     """
 
-    if request.args.get("category") is None:
+    if request.args.get("topic") is None:
         return jsonify({"error": "Missing parameters"}), 400
 
-    if request.args.get("category") not in ["arts", "home", "science", "us", "world"]:
+    topics = ['arts', 'automobiles', 'books', 'business', 'fashion', 'food', 'health', 'home', 'insider', 'magazine', 'movies', 'nyregion', 'obituaries', 'opinion', 'politics', 'realestate', 'science', 'sports', 'sundayreview', 'technology', 'theater', 't-magazine', 'travel', 'upshot', 'us', 'world']
+
+    if request.args.get("topic") not in topics:
         return jsonify({"error": "Invalid parameters"}), 400
 
-    category = request.args.get("category")
+    topic = request.args.get("topic")
 
-    url = f"https://api.nytimes.com/svc/topstories/v2/{category}.json"
+    url = f"https://api.nytimes.com/svc/topstories/v2/{topic}.json"
     params = {
         "api-key": NYTIMES_API_KEY,
     }
@@ -120,22 +122,13 @@ def invalid_tagesschau_parameters(args):
     """
 
     regions = args.get("regions")
-    topics = args.get("topics")
+    topic = args.get("topic")
 
     for region in regions.split(","):
         if region not in map(str, range(1, 17)):
             return True
 
-    for topic in topics.split(","):
-        if topic not in {
-            "inland",
-            "ausland",
-            "wirtschaft",
-            "sport",
-            "video",
-            "investigativ",
-            "faktenfinder",
-        }:
-            return True
+    if topic not in ["inland", "ausland", "wirtschaft", "sport", "video", "investigativ", "faktenfinder"]:
+        return True
 
     return False

@@ -10,7 +10,7 @@ def client():
 
 
 @pytest.mark.parametrize(
-    "regions, topics, expected_status_code, expected_error",
+    "regions, topic, expected_status_code, expected_error",
     [
         ("1", "ausland", 200, None),
         (None, None, 400, "Missing parameters"),
@@ -19,7 +19,7 @@ def client():
     ],
 )
 def test_get_tagesschau_here(
-    client, topics, regions, expected_status_code, expected_error
+    client, regions, topic, expected_status_code, expected_error
 ):
     """Test the tagesschau news endpoint.
 
@@ -27,7 +27,7 @@ def test_get_tagesschau_here(
     """
 
     response = client.get(
-        "/news/tagesschau/here", query_string={"regions": regions, "topics": topics}
+        "/news/tagesschau/here", query_string={"regions": regions, "topic": topic}
     )
     assert response.status_code == expected_status_code
     if expected_error:
@@ -47,20 +47,20 @@ def test_get_tagesschau_homepage(client):
 
 
 @pytest.mark.parametrize(
-    "category,expected_status_code,expected_error",
+    "topic, expected_status_code, expected_error",
     [
         ("science", 200, None),
         (None, 400, "Missing parameters"),
         ("123", 400, "Invalid parameters"),
     ],
 )
-def test_get_nytimes(client, category, expected_status_code, expected_error):
+def test_get_nytimes(client, topic, expected_status_code, expected_error):
     """Test the nytimes endpoint.
 
     This test checks if the nytimes endpoint returns the correct status code and error message.
     """
 
-    response = client.get("/news/nytimes", query_string={"category": category})
+    response = client.get("/news/nytimes", query_string={"topic": topic})
     assert response.status_code == expected_status_code
     if expected_error:
         data = response.json
