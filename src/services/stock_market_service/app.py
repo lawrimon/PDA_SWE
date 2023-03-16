@@ -54,7 +54,7 @@ def get_quotes():
 
     response = requests.get(url, params=params, headers=headers)
     if response.status_code != 200:
-        jsonify({"error": "Error getting quote information"}), 500
+        return jsonify({"error": "Error getting quote information"}), 500
 
     data = response.json()
 
@@ -107,7 +107,7 @@ def get_news():
 
     response = requests.get(url, params=params, headers=headers)
     if response.status_code != 200:
-        jsonify({"error": "Error getting news information"}), 500
+        return jsonify({"error": "Error getting news information"}), 500
 
     data = response.json()
 

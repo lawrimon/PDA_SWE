@@ -45,7 +45,7 @@ def get_tagesschau_here():
     }
     response = requests.get(url, params=params)
     if response.status_code != 200:
-        jsonify({"error": "Error getting weather information"}), 500
+        return jsonify({"error": "Error getting tagesschau news information"}), 500
 
     data = response.json()
 
@@ -65,7 +65,7 @@ def get_tagesschau_homepage():
     url = "https://www.tagesschau.de/api2/homepage"
     response = requests.get(url)
     if response.status_code != 200:
-        jsonify({"error": "Error getting news information"}), 500
+        return jsonify({"error": "Error getting tagesschau homepage information"}), 500
 
     data = response.json()
 
@@ -76,13 +76,13 @@ def get_tagesschau_homepage():
 def get_nytimes():
     """New York Times news endpoint.
 
-    This endpoint provides news information from the New York Times homepage.
+    This endpoint provides news information from the New York Times top stories.
 
     Args:
         The category of the news. Can be "arts", "home", "science", "us" or "world".
 
     Returns:
-        The current news from the New York Times homepage based on the category.
+        The current news from the New York Times top stories based on the category.
     """
 
     if request.args.get("category") is None:
@@ -99,8 +99,8 @@ def get_nytimes():
     }
 
     response = requests.get(url, params=params)
-    if response.status_code != 200:
-        jsonify({"error": "Error getting news information"}), 500
+    if response.status_code != 200 or (response.status_code == 200 and "errorcode" in response.json()):
+        return jsonify({"error": "Error getting nytimes news information"}), 500
 
     data = response.json()
 

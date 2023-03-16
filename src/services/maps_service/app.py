@@ -34,7 +34,7 @@ def get_user_location():
 
     response = requests.post(url, params=params)
     if response.status_code != 200:
-        jsonify({"error": "Error getting user location information"}), 500
+        return jsonify({"error": "Error getting user location information"}), 500
 
     data = response.json()
     user_location = {"lat": data["location"]["lat"], "lon": data["location"]["lng"]}
@@ -82,7 +82,7 @@ def get_route():
 
     response = requests.get(url, params=params)
     if response.status_code != 200:
-        jsonify({"error": "Error getting route information"}), 500
+        return jsonify({"error": "Error getting route information"}), 500
 
     data = response.json()
 
