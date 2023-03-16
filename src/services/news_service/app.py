@@ -1,4 +1,4 @@
-"""This application is news service.
+"""This application is the news service.
 
  The news service is a service that provides news information.
  The functionality is based on the Tagesschau API and the New York Times API.
