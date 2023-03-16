@@ -99,7 +99,9 @@ def get_nytimes():
     }
 
     response = requests.get(url, params=params)
-    if response.status_code != 200 or (response.status_code == 200 and "errorcode" in response.json()):
+    if response.status_code != 200 or (
+        response.status_code == 200 and "errorcode" in response.json()
+    ):
         return jsonify({"error": "Error getting nytimes news information"}), 500
 
     data = response.json()
