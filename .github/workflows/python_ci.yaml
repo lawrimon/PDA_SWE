@@ -18,6 +18,11 @@ on:
 permissions:
   contents: write
 
+env:
+  MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+  STOCK_MARKET_API_KEY: ${{ secrets.STOCK_MARKET_API_KEY }}
+  STOCK_MARKET_SECRET_KEY: ${{ secrets.STOCK_MARKET_SECRET_KEY }}
+
 jobs:
   ci:
     runs-on: ubuntu-latest
@@ -32,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          find . -name requirements.txt -exec pip install -r {} \;
       - name: Run Black formatter
         run: |
           black .
