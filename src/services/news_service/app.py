@@ -121,28 +121,11 @@ def invalid_tagesschau_parameters(args):
     topics = args.get("topics")
 
     for region in regions.split(","):
-        if region not in [
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-        ]:
+        if region not in map(str, range(1, 17)):
             return True
 
     for topic in topics.split(","):
-        if topic not in [
+        if topic not in {
             "inland",
             "ausland",
             "wirtschaft",
@@ -150,7 +133,7 @@ def invalid_tagesschau_parameters(args):
             "video",
             "investigativ",
             "faktenfinder",
-        ]:
+        }:
             return True
 
     return False
