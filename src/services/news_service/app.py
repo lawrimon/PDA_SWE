@@ -88,7 +88,34 @@ def get_nytimes():
     if request.args.get("topic") is None:
         return jsonify({"error": "Missing parameters"}), 400
 
-    topics = ['arts', 'automobiles', 'books', 'business', 'fashion', 'food', 'health', 'home', 'insider', 'magazine', 'movies', 'nyregion', 'obituaries', 'opinion', 'politics', 'realestate', 'science', 'sports', 'sundayreview', 'technology', 'theater', 't-magazine', 'travel', 'upshot', 'us', 'world']
+    topics = [
+        "arts",
+        "automobiles",
+        "books",
+        "business",
+        "fashion",
+        "food",
+        "health",
+        "home",
+        "insider",
+        "magazine",
+        "movies",
+        "nyregion",
+        "obituaries",
+        "opinion",
+        "politics",
+        "realestate",
+        "science",
+        "sports",
+        "sundayreview",
+        "technology",
+        "theater",
+        "t-magazine",
+        "travel",
+        "upshot",
+        "us",
+        "world",
+    ]
 
     if request.args.get("topic") not in topics:
         return jsonify({"error": "Invalid parameters"}), 400
@@ -128,7 +155,15 @@ def invalid_tagesschau_parameters(args):
         if region not in map(str, range(1, 17)):
             return True
 
-    if topic not in ["inland", "ausland", "wirtschaft", "sport", "video", "investigativ", "faktenfinder"]:
+    if topic not in [
+        "inland",
+        "ausland",
+        "wirtschaft",
+        "sport",
+        "video",
+        "investigativ",
+        "faktenfinder",
+    ]:
         return True
 
     return False
