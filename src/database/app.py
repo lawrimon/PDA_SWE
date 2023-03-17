@@ -34,13 +34,12 @@ def manage_preferences(user_id):
         return jsonify({'status': 'success'})
     else:
         keys = redis_store.hkeys(user_id)
+        if not len(keys):
+            return jsonify({"error": "Error getting preferences. No preferences found"}), 500
         preferences = {}
-        if keys:
-            for key in keys:
-                preferences[key.decode()] = redis_store.hget(user_id, key).decode()
-            return jsonify(preferences)
-        else:
-            return jsonify({"error": "Error getting preferences"}), 500
+        for key in keys:
+            preferences[key.decode()] = redis_store.hget(user_id, key).decode()
+        return jsonify(preferences)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
