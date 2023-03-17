@@ -7,8 +7,14 @@ The functionality is based in the OpenWeatherMap API.
 
 from flask import Flask, jsonify, request
 import requests
+import dotenv
+import os
+
+dotenv.load_dotenv()
+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 
 app = Flask(__name__)
+
 
 @app.route('/weather')
 def get_weather():
@@ -28,7 +34,7 @@ def get_weather():
     lon = request.args.get('lon')
     cnt = 1
     units = 'metric'
-    api_key = '10245a3d06eb6a826ddc1bfa3d943829'
+    api_key = WEATHER_API_KEY
 
     url = f'https://api.openweathermap.org/data/2.5/forecast/daily'
     params = {
