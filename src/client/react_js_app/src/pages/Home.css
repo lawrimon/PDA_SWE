@@ -108,3 +108,23 @@ button:hover {
 
 }
 
+.record-container {
+  display: block;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 4px;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.converted-speech {
+  display: block;
+  width: 100%;
+  min-height: 100px;
+  font-size: 24px;
+  margin: 0 auto;
+}
+
