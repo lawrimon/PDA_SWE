@@ -1,0 +1,130 @@
+.App {
+  text-align: center;
+}
+
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+
+input {
+  font-size: 24px;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-shadow: none;
+  outline: none;
+  width: 90%;
+  max-width: 700px;
+  margin-top: 20px;
+}
+
+.search-container {
+  display: block;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 4px;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 20px;
+}
+
+
+button {
+  background-color: #7EC07A;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #6CA06C;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: #f2f2f2;
+  padding-top: 30px;
+  margin-top: 40px;
+}
+
+.logo {
+  max-width: 50%;
+  width: 20%;
+  height: auto;
+  background-color: black;
+  border-radius: 50%;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+  object-fit: contain;
+}
+
+
+.logo:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 50%;
+  background-color: #000000;
+  padding-top: 20px;
+
+}
+
+.settings-button-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+.settings-button {
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+
+}
+
+.record-container {
+  display: block;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 4px;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.converted-speech {
+  display: block;
+  width: 100%;
+  min-height: 100px;
+  font-size: 24px;
+  margin: 0 auto;
+}
+
