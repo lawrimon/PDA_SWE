@@ -10,21 +10,22 @@ def client():
 
 
 @pytest.mark.parametrize("lat, lon", [(37.7749, -122.4194), (40.7128, -74.0060), ("invalid", "invalid")])
-def test_get_weather(lat, lon):
+def test_get_weather(client, lat, lon):
     """Test the Weather endpoint.
     This test checks if the Weather endpoint returns the correct status code and error message.
     """
 
-    url = 'http://localhost:5000/weather'
+    url = '/weather'
     params = {
         'lat': lat,
         'lon': lon,
     }
-    response = requests.get(url, params=params)
+    response = client.get(url, query_string=params)
 
     if lat == "invalid" or lon == "invalid":
-        assert response.status_code == 400
+        assert response.json['cod'] == '400'
+        assert response.json['message'] == 'wrong latitude'
     else:
         assert response.status_code == 200
-        assert response.json()['cod'] == '200'
-        assert 'daily' in response.json()['list'][0]
+        assert response.json['cod'] == '200'
+        assert 'clouds' in response.json['list'][0]
