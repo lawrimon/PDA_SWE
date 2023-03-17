@@ -2,7 +2,12 @@
 
 The maps service provides an endpoint to get the current user location.
 It also provides an endpoint to get the route between a origin and a destination.
-The functionality is based on the Google Maps Platform.
+The functionality is based on the Google Maps Platform API.
+
+Typical endpoints usage:
+
+    GET /user_location
+    GET /route?origin=52.52,13.49&destination=54.65,14.12&mode=transit&arrival_time=1679160371
 """
 
 from flask import Flask, jsonify, request
@@ -52,7 +57,7 @@ def get_route():
         origin: The origin of the route as coordinates.
         destination: The destination of the route as coordinates.
         mode: The mode of transportation. Can be "driving", "walking", "bicycling" or "transit".
-        arrival_time (optional): The arrival time as Unix timestamp. Only used for "transit" mode.
+        arrival_time (optional): The arrival time as Unix timestamp. Only used for "transit" mode otherwise ignored.
 
     Returns:
         The route information including the distance, duration and steps.

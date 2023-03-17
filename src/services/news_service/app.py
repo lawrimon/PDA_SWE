@@ -1,7 +1,13 @@
 """This application is the news service.
 
  The news service is a service that provides news information.
- The functionality is based on the Tagesschau API and the New York Times API.
+ The functionality is based on the Tagesschau API and the NY Times API.
+
+Typical endpoints usage:
+
+    GET /news/tagesschau/news?regions=1,2,3&topic=inland
+    GET /news/tagesschau/homepage
+    GET /news/nytimes?topic=business
  """
 
 from flask import Flask, jsonify, request
@@ -15,18 +21,18 @@ NYTIMES_API_KEY = os.getenv("NYTIMES_API_KEY")
 app = Flask(__name__)
 
 
-@app.route("/news/tagesschau/here")
+@app.route("/news/tagesschau/news")
 def get_tagesschau_here():
     """Tagesschau news endpoint.
 
-    This endpoint provides current news from tagesschau.de.
+    This endpoint provides current Tagesschau news.
 
     Args:
         regions: The german states the news are from. Multiple regions can be combined with a comma. Can be 1=Baden-Württemberg, 2=Bayern, 3=Berlin, 4=Brandenburg, 5=Bremen, 6=Hamburg, 7=Hessen, 8=Mecklenburg-Vorpommern, 9=Niedersachsen, 10=Nordrhein-Westfalen, 11=Rheinland-Pfalz, 12=Saarland, 13=Sachsen, 14=Sachsen-Anhalt, 15=Schleswig-Holstein, 16=Thüringen.
         topic: The topic of the news. Only one topic can be selected. Can be "inland", "ausland", "wirtschaft", "sport", "video", "investigativ" or "faktenfinder".
 
     Returns:
-        The available news based on the regions and topic.
+        The current Tageschau news based on the regions and topic.
     """
 
     if not request.args.get("regions") or not request.args.get("topic"):
@@ -56,7 +62,7 @@ def get_tagesschau_here():
 def get_tagesschau_homepage():
     """Tagesschau homepage endpoint.
 
-    This endpoint provides news information from the Tagesschau homepage.
+    This endpoint provides news from the Tagesschau homepage.
 
     Returns:
         The current news from the Tagesschau homepage.
@@ -74,15 +80,15 @@ def get_tagesschau_homepage():
 
 @app.route("/news/nytimes")
 def get_nytimes():
-    """New York Times news endpoint.
+    """NY Times news endpoint.
 
-    This endpoint provides news information from the New York Times top stories.
+    This endpoint provides news from the NY Times top stories.
 
     Args:
         topic: The topic of the news. Only one topic can be selected. Can be "arts", "automobiles", "books", "business", "fashion", "food", "health", "home", "insider", "magazine", "movies", "nyregion", "obituaries", "opinion", "politics", "realestate", "science", "sports", "sundayreview", "technology", "theater", "t-magazine", "travel", "upshot", "us", "world".
 
     Returns:
-        The current news from the New York Times top stories based on the topic.
+        The current news from the NY Times top stories based on the topic.
     """
 
     if request.args.get("topic") is None:
