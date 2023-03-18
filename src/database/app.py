@@ -13,11 +13,12 @@ from flask_redis import FlaskRedis
 from flask_cors import CORS
 
 app = Flask(__name__)
-app.config['REDIS_URL'] = 'redis://redis:6379/0'
+app.config["REDIS_URL"] = "redis://redis:6379/0"
 redis_store = FlaskRedis(app)
 CORS(app)
 
-@app.route('/preferences/<user_id>', methods=['GET', 'POST'])
+
+@app.route("/preferences/<user_id>", methods=["GET", "POST"])
 def manage_preferences(user_id):
     """
     This function handles both GET and POST requests.
@@ -25,21 +26,34 @@ def manage_preferences(user_id):
     When a GET request is received, it retrieves all preferences for the given user from Redis and returns them as a JSON object.
     """
 
-    allowed_keys = ['language', "football_club", "username" ,"password","stocks", "artists", "spotify_link", "calendar_link"]
-    if request.method == 'POST':
+    allowed_keys = [
+        "language",
+        "football_club",
+        "username",
+        "password",
+        "stocks",
+        "artists",
+        "spotify_link",
+        "calendar_link",
+    ]
+    if request.method == "POST":
         data = request.json
         for key, value in data.items():
             if key in allowed_keys:
                 redis_store.hset(user_id, key, value)
-        return jsonify({'status': 'success'})
+        return jsonify({"status": "success"})
     else:
         keys = redis_store.hkeys(user_id)
         if not len(keys):
-            return jsonify({"error": "Error getting preferences. No preferences found"}), 500
+            return (
+                jsonify({"error": "Error getting preferences. No preferences found"}),
+                500,
+            )
         preferences = {}
         for key in keys:
             preferences[key.decode()] = redis_store.hget(user_id, key).decode()
         return jsonify(preferences)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run(host="0.0.0.0")
