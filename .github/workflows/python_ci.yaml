@@ -25,6 +25,7 @@ env:
   NYTIMES_API_KEY: ${{ secrets.NYTIMES_API_KEY }}
   NINJAS_API_KEY: ${{ secrets.NINJAS_API_KEY }}
   NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
+  WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
 
 jobs:
   ci:

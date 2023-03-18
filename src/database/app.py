@@ -14,12 +14,22 @@ from flask_redis import FlaskRedis
 from flask_cors import CORS
 
 app = Flask(__name__)
-app.config['REDIS_URL'] = 'redis://redis:6379/0'
+app.config["REDIS_URL"] = "redis://redis:6379/0"
 redis_store = FlaskRedis(app)
 CORS(app)
-allowed_keys = ['language', "football_club", "username" ,"password","stocks", "artists", "spotify_link", "calendar_link"]
+allowed_keys = [
+    "language",
+    "football_club",
+    "username",
+    "password",
+    "stocks",
+    "artists",
+    "spotify_link",
+    "calendar_link",
+]
 
-@app.route('/users/<user_id>', methods=['GET'])
+
+@app.route("/users/<user_id>", methods=["GET"])
 def get_user(user_id):
     """
     This function retrieves the preferences for the given user from Redis and returns them as a JSON object.
@@ -30,7 +40,7 @@ def get_user(user_id):
     Returns:
         A JSON object containing the preferences for the specified user.
     """
-    
+
     if not redis_store.exists(user_id):
         return jsonify({"error": "Error getting user. User or password incorrect"}), 404
     else:
@@ -40,7 +50,8 @@ def get_user(user_id):
             preferences[key.decode()] = redis_store.hget(user_id, key).decode()
         return jsonify(preferences)
 
-@app.route('/users', methods=['POST'])
+
+@app.route("/users", methods=["POST"])
 def add_user():
     """
     This function adds a new user and their preferences to Redis, provided that the user does not already exist.
@@ -53,7 +64,7 @@ def add_user():
         A JSON object indicating whether the operation was successful.
     """
     data = request.json
-    user_id = data.get('user_id')
+    user_id = data.get("user_id")
     if not user_id:
         return jsonify({"error": "Error adding user. Missing user_id field"}), 400
     if redis_store.exists(user_id):
@@ -61,9 +72,10 @@ def add_user():
     for key, value in data.items():
         if key in allowed_keys:
             redis_store.hset(user_id, key, value)
-    return jsonify({'status': 'success, user added'})
+    return jsonify({"status": "success, user added"})
 
-@app.route('/users/<user_id>', methods=['PUT'])
+
+@app.route("/users/<user_id>", methods=["PUT"])
 def update_user(user_id):
     """
     This function updates the preferences for the given user in Redis, provided that the user exists.
@@ -78,14 +90,15 @@ def update_user(user_id):
     """
     if not redis_store.exists(user_id):
         return jsonify({"error": "Error updating user. User not found"}), 404
-    
+
     data = request.json
     for key, value in data.items():
         if key in allowed_keys:
             redis_store.hset(user_id, key, value)
-    return jsonify({'status': 'success, user updated'})
+    return jsonify({"status": "success, user updated"})
 
-@app.route('/users/<user_id>', methods=['DELETE'])
+
+@app.route("/users/<user_id>", methods=["DELETE"])
 def delete_user(user_id):
     """
     This function deletes the preferences for the given user from Redis, provided that the user exists.
@@ -99,7 +112,8 @@ def delete_user(user_id):
     if not redis_store.exists(user_id):
         return jsonify({"error": "Error deleting user. User not found"}), 404
     redis_store.delete(user_id)
-    return jsonify({'status': 'success, user deleted'})
+    return jsonify({"status": "success, user deleted"})
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run(host="0.0.0.0")
