@@ -108,23 +108,28 @@ button:hover {
 
 }
 
-.record-container {
-  display: block;
+.notification-popup {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border-top: 1px solid #ccc;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.notification-popup__content {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  max-width: 800px;
-  margin: 0 auto;
-  border-radius: 4px;
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  padding: 20px;
-  margin-bottom: 20px;
+  padding: 16px;
 }
 
-.converted-speech {
-  display: block;
+.notification-popup__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
-  min-height: 100px;
-  font-size: 24px;
-  margin: 0 auto;
+  margin-bottom: 16
 }
-
