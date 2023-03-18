@@ -42,7 +42,7 @@ def get_user(user_id):
     """
 
     if not redis_store.exists(user_id):
-        return jsonify({"error": "Error getting user. User not found"}), 404
+        return jsonify({"error": "Error getting user. User or password incorrect"}), 404
     else:
         keys = redis_store.hkeys(user_id)
         preferences = {}
