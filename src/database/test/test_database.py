@@ -1,43 +1,7 @@
-# import pytest
-# from fakeredis import FakeStrictRedis
-# from database.app import app
-
-# @pytest.fixture
-# def client():
-
-#     """Create a test client for the app."""
-
-#     app.config['TESTING'] = True
-#     with app.test_client() as client:
-#         with app.app_context():
-#             yield client
-
-# @pytest.mark.parametrize("user_id, data, expected_response", [
-#     ("user1", {"language": "en", "stocks": "AAPL"}, {'language': 'en', 'stocks': 'AAPL'}),
-#     ("user2", {"language": "fr", "spotify_link": "https://open.spotify.com/"}, {'language': 'fr', 'spotify_link': 'https://open.spotify.com/'}),
-#     ("user3", {"password": "mypassword"}, {"error": "Error getting preferences"})
-# ])
-
-# def test_manage_preferences(client, user_id, data, expected_response):
-#     # POST request to set preferences
-#     response = client.post(f'/preferences/{user_id}', json=data)
-#     assert response.status_code == 200
-#     assert response.json == {'status': 'success'}
-
-#     # GET request to retrieve preferences
-#     response = client.get(f'/preferences/{user_id}')
-#     assert response.status_code == 200
-#     assert response.json == expected_response
-
-
-
-
-
-
-
 import pytest
 from fakeredis import FakeStrictRedis
 from database.app import app
+import json
 
 @pytest.fixture
 def client():
@@ -56,28 +20,62 @@ def fake_redis(monkeypatch):
     monkeypatch.setattr('database.app.redis_store', redis)
     return redis
 
-# @pytest.mark.parametrize("user_id, data, expected_response","code_expected", [
-#     ("user1", {"language": "en", "stocks": "AAPL"}, {'language': 'en', 'stocks': 'AAPL'}, 200),
-#     ("user2", {"language": "fr", "spotify_link": "https://open.spotify.com/"}, {'language': 'fr', 'spotify_link': 'https://open.spotify.com/'}, 200),
-#     ("user3", {"invalidKey": "mypassword"}, {"error": "Error getting preferences. No preferences found"}, 200),
-#     ("user4", {"password": "mypassword"}, {"error": "Error getting preferences. No preferences found"}, 200)
-# ])
-
-@pytest.mark.parametrize("user_id, data, expected_response, code_expected", [
-    ("user1", {"language": "en", "stocks": "AAPL"}, {'language': 'en', 'stocks': 'AAPL'}, 200),
-    ("user2", {"language": "fr", "spotify_link": "https://open.spotify.com/"}, {'language': 'fr', 'spotify_link': 'https://open.spotify.com/'}, 200),
-    ("user3", {"invalidKey": "mypassword"}, {"error": "Error getting preferences. No preferences found"}, 500),
-    ("user4", {"password": "mypassword"}, {"error": "Error getting preferences. No preferences found"}, 500)
+@pytest.mark.parametrize("user_id, preferences", [
+    ("user1", {"language": "en", "football_club": "Real Madrid"}),
+    ("user2", {"username": "johndoe", "password": "password123"}),
 ])
-def test_manage_preferences(client, fake_redis, user_id, data, expected_response, code_expected):
-    # POST request to set preferences
-    if user_id != "user4":
-        response = client.post(f'/preferences/{user_id}', json=data)  
-        assert response.status_code == 200
-        assert response.json == {'status': 'success'}
-    
+def test_add_user(client, fake_redis, user_id, preferences):
+    response = client.post('/users', json={"user_id": user_id, **preferences})
+    assert response.status_code == 200
+    assert json.loads(response.data) == {"status": "success, user added"}
 
-    # GET request to retrieve preferences
-    response = client.get(f'/preferences/{user_id}')
-    assert response.status_code == code_expected
-    assert response.json == expected_response
+    # check if the user was added to Redis with correct preferences
+    for key, value in preferences.items():
+        assert fake_redis.hget(user_id, key).decode() == str(value)
+
+
+@pytest.mark.parametrize("user_id, initial_preferences, updated_preferences, expected_preferences", [
+    ("user1", {"language": "en", "football_club": "Real Madrid"}, {"language": "es", "football_club": "Barcelona"},
+     {"language": "es", "football_club": "Barcelona"}),
+    ("user2", {"username": "johndoe", "password": "password123"}, {"password": "newpassword"},
+     {"username": "johndoe", "password": "newpassword"}),
+])
+def test_update_user(client, fake_redis, user_id, initial_preferences, updated_preferences, expected_preferences):
+    # add user to Redis with initial preferences
+    for key, value in initial_preferences.items():
+        fake_redis.hset(user_id, key, value)
+
+    response = client.put(f'/users/{user_id}', json=updated_preferences)
+    assert response.status_code == 200
+    assert json.loads(response.data) == {"status": "success, user updated"}
+
+    # check if the user preferences were updated in Redis
+    for key, value in expected_preferences.items():
+        assert fake_redis.hget(user_id, key).decode() == str(value)
+
+
+@pytest.mark.parametrize("user_id, preferences", [
+    ("user1", {"language": "en", "football_club": "Real Madrid"}),
+    ("user2", {"username": "johndoe", "password": "password123"}),
+])
+def test_get_user(client, fake_redis, user_id, preferences):
+    # add user to Redis with preferences
+    for key, value in preferences.items():
+        fake_redis.hset(user_id, key, value)
+
+    response = client.get(f'/users/{user_id}')
+    assert response.status_code == 200
+    assert json.loads(response.data) == preferences
+
+
+@pytest.mark.parametrize("user_id", ["user1", "user2"])
+def test_delete_user(client, fake_redis, user_id):
+    # add user to Redis
+    fake_redis.hset(user_id, "language", "en")
+
+    response = client.delete(f'/users/{user_id}')
+    assert response.status_code == 200
+    assert json.loads(response.data) == {'status': 'success, user deleted'}
+
+    # check if the user was deleted from Redis
+    assert not fake_redis.exists(user_id)
