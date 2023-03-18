@@ -3,4 +3,3 @@ flask_redis
 flask_cors
 redis
 fakeredis
-pytest
