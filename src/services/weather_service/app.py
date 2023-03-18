@@ -3,6 +3,10 @@
 The weather service is a service that provides weather information for a given location.
 It provides an endpoint to get the weather information for a given location for the next day.
 The functionality is based in the OpenWeatherMap API.
+
+Typical endpoint usage:
+
+    GET /weather?lat=40.416775&lon=3.703790
 """
 
 from flask import Flask, jsonify, request
