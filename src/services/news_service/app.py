@@ -5,9 +5,9 @@
 
 Typical endpoints usage:
 
-    GET /news/tagesschau/news?regions=1,2,3&topic=inland
-    GET /news/tagesschau/homepage
-    GET /news/nytimes?topic=business
+    GET /tagesschau/news?regions=1,2,3&topic=inland
+    GET /tagesschau/homepage
+    GET /nytimes?topic=business
  """
 
 from flask import Flask, jsonify, request
@@ -21,7 +21,7 @@ NYTIMES_API_KEY = os.getenv("NYTIMES_API_KEY")
 app = Flask(__name__)
 
 @app.route("/tagesschau/news")
-def get_tagesschau_here():
+def get_tagesschau_news():
     """Tagesschau news endpoint.
 
     This endpoint provides current Tagesschau news.
@@ -73,7 +73,7 @@ s
         The current news from the Tagesschau homepage.
     """
 
-    url = "https://www.tagesschau.de/api2/homepage"
+    url = f"https://www.tagesschau.de/api2/homepage"
     response = requests.get(url)
     if response.status_code != 200:
         return jsonify({"error": "Error getting tagesschau homepage information"}), 500
@@ -194,5 +194,3 @@ def invalid_tagesschau_parameters(args):
         return True
 
     return False
-
-app.run()

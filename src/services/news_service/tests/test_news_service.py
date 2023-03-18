@@ -18,7 +18,7 @@ def client():
         ("1", "wrong", 400, "Invalid parameters"),
     ],
 )
-def test_get_tagesschau_here(
+def test_get_tagesschau_news(
     client, regions, topic, expected_status_code, expected_error
 ):
     """Test the Tagesschau news endpoint.
