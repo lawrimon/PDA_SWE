@@ -22,6 +22,7 @@ NASA_API_KEY = os.getenv("NASA_API_KEY")
 
 app = Flask(__name__)
 
+
 @app.route("/wisdom/random_facts")
 def get_random_facts():
     """Random facts endpoint.
@@ -43,17 +44,18 @@ def get_random_facts():
     response = requests.get(url, params=params, headers=headers)
     if response.status_code != 200:
         return jsonify({"error": "Error getting random facts information"}), 500
-    
+
     data = response.json()
 
     return jsonify(data)
 
+
 @app.route("/wisdom/quotes")
 def get_quotes():
     """Quotes endpoint.
-    
+
     This endpoint provides quotes for different categories.
-    
+
     Returns:
         Several quotes for a random category.
     """
@@ -72,10 +74,11 @@ def get_quotes():
     response = requests.get(url, params=params, headers=headers)
     if response.status_code != 200:
         return jsonify({"error": "Error getting quotes information"}), 500
-    
+
     data = response.json()
 
     return jsonify(data)
+
 
 @app.route("/wisdom/apod")
 def get_apod():
@@ -94,14 +97,87 @@ def get_apod():
 
     response = requests.get(url, params=params)
     if response.status_code != 200:
-        return jsonify({"error": "Error getting astronomy picture of the day information"}), 500
-    
+        return (
+            jsonify(
+                {"error": "Error getting astronomy picture of the day information"}
+            ),
+            500,
+        )
+
     data = response.json()
-    
+
     return jsonify(data)
 
+
 def random_category():
-    
-    categories = ['age', 'alone', 'amazing', 'anger', 'architecture', 'art', 'attitude', 'beauty', 'best', 'birthday', 'business', 'car', 'change', 'communications', 'computers', 'cool', 'courage', 'dad', 'dating', 'death', 'design', 'dreams', 'education', 'environmental', 'equality', 'experience', 'failure', 'faith', 'family', 'famous', 'fear', 'fitness', 'food', 'forgiveness', 'freedom', 'friendship', 'funny', 'future', 'god', 'good', 'government', 'graduation', 'great', 'happiness', 'health', 'history', 'home', 'hope', 'humor', 'imagination', 'inspirational', 'intelligence', 'jealousy', 'knowledge', 'leadership', 'learning', 'legal', 'life', 'love', 'marriage', 'medical', 'men', 'mom', 'money', 'morning', 'movies', 'success']
-    
+    categories = [
+        "age",
+        "alone",
+        "amazing",
+        "anger",
+        "architecture",
+        "art",
+        "attitude",
+        "beauty",
+        "best",
+        "birthday",
+        "business",
+        "car",
+        "change",
+        "communications",
+        "computers",
+        "cool",
+        "courage",
+        "dad",
+        "dating",
+        "death",
+        "design",
+        "dreams",
+        "education",
+        "environmental",
+        "equality",
+        "experience",
+        "failure",
+        "faith",
+        "family",
+        "famous",
+        "fear",
+        "fitness",
+        "food",
+        "forgiveness",
+        "freedom",
+        "friendship",
+        "funny",
+        "future",
+        "god",
+        "good",
+        "government",
+        "graduation",
+        "great",
+        "happiness",
+        "health",
+        "history",
+        "home",
+        "hope",
+        "humor",
+        "imagination",
+        "inspirational",
+        "intelligence",
+        "jealousy",
+        "knowledge",
+        "leadership",
+        "learning",
+        "legal",
+        "life",
+        "love",
+        "marriage",
+        "medical",
+        "men",
+        "mom",
+        "money",
+        "morning",
+        "movies",
+        "success",
+    ]
+
     return categories[random.randint(0, len(categories) - 1)]

@@ -1,11 +1,13 @@
 import pytest
 from wisdom_service.app import app
 
+
 @pytest.fixture
 def client():
     """Create a test client for the app."""
 
     return app.test_client()
+
 
 def test_get_random_facts(client):
     """Test the random facts endpoint.
@@ -40,6 +42,7 @@ def test_get_quotes(client):
     assert isinstance(data[0]["quote"], str)
     assert isinstance(data[0]["author"], str)
 
+
 def test_get_apod(client):
     """Test the astronomy picture of the day endpoint.
 
@@ -54,5 +57,4 @@ def test_get_apod(client):
     assert "url" in data
     assert isinstance(data["title"], str)
     assert isinstance(data["explanation"], str)
-    assert isinstance(data["url"], str)    
-    
+    assert isinstance(data["url"], str)

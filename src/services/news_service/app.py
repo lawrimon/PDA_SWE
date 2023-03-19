@@ -20,6 +20,7 @@ NYTIMES_API_KEY = os.getenv("NYTIMES_API_KEY")
 
 app = Flask(__name__)
 
+
 @app.route("/tagesschau/news")
 def get_tagesschau_news():
     """Tagesschau news endpoint.
@@ -52,13 +53,12 @@ def get_tagesschau_news():
     if response.status_code != 200:
         return jsonify({"error": "Error getting tagesschau news information"}), 500
 
-    response=response.json()
+    response = response.json()
     news = []
     for info in response["news"]:
-        article = { "Title" : info["title"],
-                   "Summary" : info["firstSentence"]}
+        article = {"Title": info["title"], "Summary": info["firstSentence"]}
         news.append(article)
-    #data = response.json()
+    # data = response.json()
 
     return jsonify(news)
 
@@ -67,17 +67,17 @@ def get_tagesschau_news():
 def get_tagesschau_homepage():
     """Tagesschau homepage endpoint.
 
-    This endpoint provides news from the Tagesschau homepage.
-s
-    Returns:
-        The current news from the Tagesschau homepage.
+        This endpoint provides news from the Tagesschau homepage.
+    s
+        Returns:
+            The current news from the Tagesschau homepage.
     """
 
     url = f"https://www.tagesschau.de/api2/homepage"
     response = requests.get(url)
     if response.status_code != 200:
         return jsonify({"error": "Error getting tagesschau homepage information"}), 500
-    
+
     news = []
     response = response.json()
     tagesschau_news = response["news"]
@@ -86,12 +86,10 @@ s
         summary = text.replace("<strong>", "")
         summary = summary.replace("</strong>", "")
 
-        article = { "Title" : info["title"],
-                   "Summary" : summary
-                   }
+        article = {"Title": info["title"], "Summary": summary}
         news.append(article)
 
-    #data = response.json()
+    # data = response.json()
 
     return jsonify(news)
 
@@ -147,7 +145,6 @@ def get_nytimes():
     topic = request.args.get("topic")
 
     url = f"https://api.nytimes.com/svc/topstories/v2/{topic}.json?api-key={NYTIMES_API_KEY}"
-    
 
     response = requests.get(url)
     if response.status_code != 200 or (
