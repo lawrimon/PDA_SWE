@@ -18,7 +18,7 @@ def client():
         ("1", "wrong", 400, "Invalid parameters"),
     ],
 )
-def test_get_tagesschau_here(
+def test_get_tagesschau_news(
     client, regions, topic, expected_status_code, expected_error
 ):
     """Test the Tagesschau news endpoint.
@@ -27,7 +27,7 @@ def test_get_tagesschau_here(
     """
 
     response = client.get(
-        "/news/tagesschau/news", query_string={"regions": regions, "topic": topic}
+        "/tagesschau/news", query_string={"regions": regions, "topic": topic}
     )
     assert response.status_code == expected_status_code
     if expected_error:
@@ -42,7 +42,7 @@ def test_get_tagesschau_homepage(client):
     This test checks if the tagesschau homepage endpoint returns the correct status code and error message.
     """
 
-    response = client.get("/news/tagesschau/homepage")
+    response = client.get("/tagesschau/homepage")
     assert response.status_code == 200
 
 
@@ -60,7 +60,7 @@ def test_get_nytimes(client, topic, expected_status_code, expected_error):
     This test checks if the NY Times endpoint returns the correct status code and error message.
     """
 
-    response = client.get("/news/nytimes", query_string={"topic": topic})
+    response = client.get("/nytimes", query_string={"topic": topic})
     assert response.status_code == expected_status_code
     if expected_error:
         data = response.json

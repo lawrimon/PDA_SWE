@@ -5,9 +5,9 @@
 
 Typical endpoints usage:
 
-    GET /news/tagesschau/news?regions=1,2,3&topic=inland
-    GET /news/tagesschau/homepage
-    GET /news/nytimes?topic=business
+    GET /tagesschau/news?regions=1,2,3&topic=inland
+    GET /tagesschau/homepage
+    GET /nytimes?topic=business
  """
 
 from flask import Flask, jsonify, request
@@ -21,8 +21,8 @@ NYTIMES_API_KEY = os.getenv("NYTIMES_API_KEY")
 app = Flask(__name__)
 
 
-@app.route("/news/tagesschau/news")
-def get_tagesschau_here():
+@app.route("/tagesschau/news")
+def get_tagesschau_news():
     """Tagesschau news endpoint.
 
     This endpoint provides current Tagesschau news.
@@ -53,32 +53,48 @@ def get_tagesschau_here():
     if response.status_code != 200:
         return jsonify({"error": "Error getting tagesschau news information"}), 500
 
-    data = response.json()
+    response = response.json()
+    news = []
+    for info in response["news"]:
+        article = {"Title": info["title"], "Summary": info["firstSentence"]}
+        news.append(article)
+    # data = response.json()
 
-    return jsonify(data)
+    return jsonify(news)
 
 
-@app.route("/news/tagesschau/homepage")
+@app.route("/tagesschau/homepage")
 def get_tagesschau_homepage():
     """Tagesschau homepage endpoint.
 
-    This endpoint provides news from the Tagesschau homepage.
-
-    Returns:
-        The current news from the Tagesschau homepage.
+        This endpoint provides news from the Tagesschau homepage.
+    s
+        Returns:
+            The current news from the Tagesschau homepage.
     """
 
-    url = "https://www.tagesschau.de/api2/homepage"
+    url = f"https://www.tagesschau.de/api2/homepage"
     response = requests.get(url)
     if response.status_code != 200:
         return jsonify({"error": "Error getting tagesschau homepage information"}), 500
 
-    data = response.json()
+    news = []
+    response = response.json()
+    tagesschau_news = response["news"]
+    for info in tagesschau_news:
+        text = info["content"][0]["value"]
+        summary = text.replace("<strong>", "")
+        summary = summary.replace("</strong>", "")
 
-    return jsonify(data)
+        article = {"Title": info["title"], "Summary": summary}
+        news.append(article)
+
+    # data = response.json()
+
+    return jsonify(news)
 
 
-@app.route("/news/nytimes")
+@app.route("/nytimes")
 def get_nytimes():
     """NY Times news endpoint.
 
@@ -90,7 +106,7 @@ def get_nytimes():
     Returns:
         The current news from the NY Times top stories based on the topic.
     """
-
+    print(request.args)
     if request.args.get("topic") is None:
         return jsonify({"error": "Missing parameters"}), 400
 
@@ -128,20 +144,22 @@ def get_nytimes():
 
     topic = request.args.get("topic")
 
-    url = f"https://api.nytimes.com/svc/topstories/v2/{topic}.json"
-    params = {
-        "api-key": NYTIMES_API_KEY,
-    }
+    url = f"https://api.nytimes.com/svc/topstories/v2/{topic}.json?api-key={NYTIMES_API_KEY}"
 
-    response = requests.get(url, params=params)
+    response = requests.get(url)
     if response.status_code != 200 or (
         response.status_code == 200 and "errorcode" in response.json()
     ):
         return jsonify({"error": "Error getting nytimes news information"}), 500
 
     data = response.json()
+    news = []
 
-    return jsonify(data)
+    for i in data["results"]:
+        if i["abstract"] is not "":
+            news.append(i["abstract"])
+
+    return jsonify(news)
 
 
 def invalid_tagesschau_parameters(args):
