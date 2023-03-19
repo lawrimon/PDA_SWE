@@ -68,7 +68,7 @@ def get_tagesschau_homepage():
     """Tagesschau homepage endpoint.
 
         This endpoint provides news from the Tagesschau homepage.
-    s
+        
         Returns:
             The current news from the Tagesschau homepage.
     """
