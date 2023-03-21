@@ -2,6 +2,7 @@ import './Home.css';
 import logo from '../cAPItan_Logo.jpg';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import NotificationPopup from './Notification';
 
 
@@ -9,6 +10,9 @@ export function Home() {
   const [text, setText] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [textToSpeak, setTextToSpeak] = useState('');
+  const { SpeechSynthesisUtterance, speechSynthesis } = window;
+
 
 const toggleModal = () => setShowModal(!showModal);
 
@@ -42,6 +46,42 @@ const toggleModal = () => setShowModal(!showModal);
     });
   };
 
+  //STT and TTS
+  const handleTextChange = (event) => {
+    setTextToSpeak(event.target.value);
+  };
+
+  const handleSpeak = () => {
+    if (speechSynthesis.speaking) {
+      return; 
+    }
+    const utterance = new SpeechSynthesisUtterance(transcript);
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    speechSynthesis.speak(utterance);
+  };
+
+  const { transcript, resetTranscript } = useSpeechRecognition({
+    continuous: true
+  });
+
+  if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
+    alert("This Browser doesn't support Speech-to-Text");
+    return null;
+  }
+
+  const sendTranscript = () => {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transcript: transcript })
+    };
+    fetch('/submit_transcript', requestOptions)
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error(error));
+  };
+
   return (
     <div className="App">
       <div style={{marginTop:"3%"}}>
@@ -49,8 +89,8 @@ const toggleModal = () => setShowModal(!showModal);
       </div>
       <h1 style={{color:"white", paddingTop:"1%"}}>cAPItan</h1>
       <div className="search-container">
-        <input type="text" value={text} onChange={handleChange} onClick={() => setShowPopup(false)}
-placeholder="Search..." />
+        <input type="text" value={text} onChange={handleChange} onClick={() => setShowPopup(false)} 
+        placeholder="Search..." />
         <div>
           <button type="button" onClick={handleSubmit}>Search</button>
         </div>
@@ -109,11 +149,21 @@ placeholder="Search..." />
                 <small>10 mins ago</small>
                 </div>
 
-          </div>
+            </div>
               </div>
             </div>
           )}
+          <div className="record-container">
+        <div >
+          <textarea value={transcript} onChange={handleTextChange} className="converted-speech"></textarea>
         </div>
+        <div>
+          <button onClick={SpeechRecognition.startListening}>Record</button>
+          <button onClick={handleSpeak}>Speak</button>
+          <button onClick={sendTranscript}>Submit</button>
+        </div>
+      </div>
+      </div>
   );  
 }
 
