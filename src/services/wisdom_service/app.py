@@ -60,12 +60,9 @@ def get_quotes():
         Several quotes for a random category.
     """
 
-    category = random_category()
-
     url = f"https://api.api-ninjas.com/v1/quotes"
     params = {
         "limit": 5,
-        "category": category,
     }
     headers = {
         "X-Api-Key": NINJAS_API_KEY,
@@ -107,77 +104,3 @@ def get_apod():
     data = response.json()
 
     return jsonify(data)
-
-
-def random_category():
-    categories = [
-        "age",
-        "alone",
-        "amazing",
-        "anger",
-        "architecture",
-        "art",
-        "attitude",
-        "beauty",
-        "best",
-        "birthday",
-        "business",
-        "car",
-        "change",
-        "communications",
-        "computers",
-        "cool",
-        "courage",
-        "dad",
-        "dating",
-        "death",
-        "design",
-        "dreams",
-        "education",
-        "environmental",
-        "equality",
-        "experience",
-        "failure",
-        "faith",
-        "family",
-        "famous",
-        "fear",
-        "fitness",
-        "food",
-        "forgiveness",
-        "freedom",
-        "friendship",
-        "funny",
-        "future",
-        "god",
-        "good",
-        "government",
-        "graduation",
-        "great",
-        "happiness",
-        "health",
-        "history",
-        "home",
-        "hope",
-        "humor",
-        "imagination",
-        "inspirational",
-        "intelligence",
-        "jealousy",
-        "knowledge",
-        "leadership",
-        "learning",
-        "legal",
-        "life",
-        "love",
-        "marriage",
-        "medical",
-        "men",
-        "mom",
-        "money",
-        "morning",
-        "movies",
-        "success",
-    ]
-
-    return categories[random.randint(0, len(categories) - 1)]
