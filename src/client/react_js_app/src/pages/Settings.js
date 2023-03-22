@@ -9,6 +9,7 @@ export function Settings() {
     const [displayName, setDisplayName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [user_id, setUser_id] = useState('');
   
     const handleSave = (event) => {
       event.preventDefault();
@@ -16,7 +17,17 @@ export function Settings() {
     };
 
     const handleToggleChange = () => {
-        setDarkMode(!darkMode);
+      fetch('http://host:5000/users/'+user_id, {
+        method: 'GET',
+        body: JSON.stringify({"password": password, "username": user_id, "football_club": email}),
+        headers: { 'Content-Type': 'application/json' },
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+            console.log(data.message)
+            console.log("success User changed")
+        }})
       };
 
     const handleClose = () => {
