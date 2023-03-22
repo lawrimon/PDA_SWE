@@ -30,7 +30,7 @@ function RegisterPage() {
     console.log(username)
     setUserid(hashString(username))
     console.log(userid)
-    fetch('http://host:5000/users',{
+    fetch('https://localhost:5000/users',{
       method: 'POST',
       body: JSON.stringify({"user_id":userid, "password":password, "username":username}),
       headers: { 'Content-Type': 'application/json' },
@@ -39,7 +39,18 @@ function RegisterPage() {
     .then(data => {
       if (data.message) {
           console.log(data.message)
+          if (data.message == "Success"){
+            //Forward to 
+            //window.location.href = '/registersuccess';
+          }
       }})
+  }
+
+  function handleSubmit2(){
+    console.log(password)
+    console.log(username)
+    setUserid(hashString(username))
+    console.log(userid)
   }
 
   return (
@@ -61,9 +72,8 @@ function RegisterPage() {
             <input type="password" value={password} onChange={handlePasswordChange} />
 
         </label>
-        <Link to="/preferences" onClick={handleSubmit}>
-        <button type="submit">Next Step</button>
-        </Link>
+       
+        <button type="submit" onClick={handleSubmit2} >Next Step</button>
       </form>
     </div>
   );

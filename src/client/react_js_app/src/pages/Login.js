@@ -25,7 +25,7 @@ function LoginPage() {
     console.log(password)
     console.log(username)
     event.preventDefault();
-    fetch('http://host:5000/users/'+user_id, {
+    fetch('http://localhost:5000/users/'+user_id, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     })
