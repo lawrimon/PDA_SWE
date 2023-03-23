@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import LoginPage from './pages/Login';
 import RegisterPage from './pages/Register';
 import PreferencesPage from './pages/Preferences';
+import RabbitMqConsumer from './pages/rabbit';
 
 export function App() {
   return (
@@ -15,7 +16,8 @@ export function App() {
       <Route path="/settings" element={<Settings />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path ="/register" element={<RegisterPage/>}/>
-      <Route path ="/preferences" element={<PreferencesPage/>}/>
+      <Route path ="/preferences" element={<RabbitMqConsumer/>}/>
+      <Route path ="/rabbit" element={<RabbitMqConsumer/>}/>
 
     </Routes>
   )

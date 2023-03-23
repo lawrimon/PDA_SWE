@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  
+  rabbitmq:
+    image: 'rabbitmq:3-management'
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+
+  worker:
+    build: ./src/use_cases/use_case_gateway/worker
+    volumes:
+      - ./src/use_cases/use_case_gateway/worker:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - rabbitmq
+
+  server:
+    build: ./src/use_cases/use_case_gateway/server
+    volumes:
+      - ./src/use_cases/use_case_gateway/server:/app
+    ports:
+      - 5000:5000
+    depends_on:
+      - rabbitmq
+
+  react:
+    build: ./src/client/react_js_app
+    ports:
+      - 3000:3000
+    depends_on:
+      - rabbitmq 
+      - server
+    

@@ -10,7 +10,7 @@ export function Home() {
   const [showPopup, setShowPopup] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-const toggleModal = () => setShowModal(!showModal);
+  const toggleModal = () => setShowModal(!showModal);
 
 
   const handleButtonClick = () => {
@@ -28,43 +28,43 @@ const toggleModal = () => setShowModal(!showModal);
   const handleSubmit = () => {
     fetch('http://141.31.86.15:8000//postText', {
       method: 'POST',
-      body: JSON.stringify({"text":text}),
+      body: JSON.stringify({ "text": text }),
       headers: { 'Content-Type': 'application/json' },
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.message) {
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
           console.log(data.message)
-      }
-    })    
-    .catch(error => {
-      console.error(error);
-    });
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
 
   return (
     <div className="App">
-      <div style={{marginTop:"3%"}}>
+      <div style={{ marginTop: "3%" }}>
         <img src={logo} alt="Logo" className="logo" />
       </div>
-      <h1 style={{color:"white", paddingTop:"1%"}}>cAPItan</h1>
+      <h1 style={{ color: "white", paddingTop: "1%" }}>cAPItan</h1>
       <div className="search-container">
         <input type="text" value={text} onChange={handleChange} onClick={() => setShowPopup(false)}
-placeholder="Search..." />
+          placeholder="Search..." />
         <div>
           <button type="button" onClick={handleSubmit}>Search</button>
         </div>
         <div className="settings-button-container">
           <div>
-          <button type="button"onClick={handleButtonClick}  className="settings-button">✉</button>
-                </div>
-              
+            <button type="button" onClick={handleButtonClick} className="settings-button">✉</button>
+          </div>
+
           <Link to="/settings">
             <button type="button" className="settings-button">&#x2699;</button>
           </Link>
-          </div>
-          </div>
-          {showPopup && (
+        </div>
+      </div>
+      {showPopup && (
         <div className="sidebar">
           <div className="sidebar-header">
             <h2>Notifications</h2>
@@ -107,14 +107,14 @@ placeholder="Search..." />
                   it.
                 </p>
                 <small>10 mins ago</small>
-                </div>
-
-          </div>
               </div>
+
             </div>
-          )}
+          </div>
         </div>
-  );  
+      )}
+    </div>
+  );
 }
 
 export default Home;
