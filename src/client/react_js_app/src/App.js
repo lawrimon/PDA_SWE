@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import LoginPage from './pages/Login';
 import RegisterPage from './pages/Register';
 import PreferencesPage from './pages/Preferences';
+import RegistrationSuccess from './pages/RegisterSuccess';
 
 export function App() {
   return (
@@ -16,7 +17,7 @@ export function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path ="/register" element={<RegisterPage/>}/>
       <Route path ="/preferences" element={<PreferencesPage/>}/>
-
+      <Route path ="/registersuccess" element={<RegistrationSuccess/>}/>
     </Routes>
   )
 }

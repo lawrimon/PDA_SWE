@@ -4,20 +4,42 @@ import { Link } from 'react-router-dom';
 
 
 function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [user_id, setUser_id] = useState("");
 
-  function handleEmailChange(event) {
-    setEmail(event.target.value);
+
+
+  function hanldeUsernameChange(event) {
+    setUsername(event.target.value);
   }
+
+
 
   function handlePasswordChange(event) {
     setPassword(event.target.value);
   }
 
+ 
   function handleSubmit(event) {
+    console.log(password)
+    console.log(username)
     event.preventDefault();
-    // handle login request
+    fetch('http://localhost:5000/users/'+user_id, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.message) {
+          console.log(data.message)
+          if (data.message["password"] == password){
+            console.log("Success logged in")
+          }
+          else{
+            console.log("Error")
+          }
+      }})
   }
 
   return (
@@ -26,7 +48,7 @@ function LoginPage() {
         <h1>Log In</h1>
         <label>
           Email:
-          <input type="email" value={email} onChange={handleEmailChange} />
+          <input type="username" value={username} onChange={hanldeUsernameChange} />
         </label>
         <br />
         <label>
