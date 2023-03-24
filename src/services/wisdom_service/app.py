@@ -13,7 +13,6 @@ Typical endpoints usage:
 from flask import Flask, jsonify, request
 import requests
 import dotenv
-import random
 import os
 
 dotenv.load_dotenv()
