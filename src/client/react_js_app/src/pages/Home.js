@@ -159,6 +159,7 @@ const toggleModal = () => setShowModal(!showModal);
         </div>
         <div>
           <button onClick={SpeechRecognition.startListening}>Record</button>
+          <button onClick={SpeechRecognition.stopListening}>Stop</button>
           <button onClick={handleSpeak}>Speak</button>
           <button onClick={sendTranscript}>Submit</button>
         </div>
