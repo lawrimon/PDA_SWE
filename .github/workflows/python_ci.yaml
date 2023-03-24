@@ -26,6 +26,7 @@ env:
   NINJAS_API_KEY: ${{ secrets.NINJAS_API_KEY }}
   NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
   WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
+  SPORTS_API_KEY: ${{ secrets.SPORTS_API_KEY }}
 
 jobs:
   ci:
