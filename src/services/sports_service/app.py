@@ -3,6 +3,10 @@
 The sports service is a service that provides fixture information for different sports.
 Football and Formula 1 are supported. More sports will be added in the future.
 The infomation is based on the services offered by API Sports.
+
+Typical endpoints usage:
+    GET /football/fixture?team=33
+    GET /formulaone/fixture
 """
 
 from flask import Flask, jsonify, request
