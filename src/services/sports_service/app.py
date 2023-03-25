@@ -35,7 +35,7 @@ def get_football_fixture():
 
     if request.args.get("team") is None:
         return jsonify({"error": "Missing parameters"}), 400
-    
+
     if not request.args.get("team").isnumeric():
         return jsonify({"error": "Invalid parameters"}), 400
 
@@ -78,6 +78,7 @@ def get_football_fixture():
     }
 
     return jsonify(fixture)
+
 
 @app.route("/formulaone/fixture")
 def get_formulaone_fixture():

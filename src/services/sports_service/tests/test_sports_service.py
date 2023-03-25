@@ -8,6 +8,7 @@ def client():
 
     return app.test_client()
 
+
 @pytest.mark.parametrize(
     "team,expected_status_code,expected_error",
     [
@@ -43,7 +44,7 @@ def test_get_football_fixture(client, team, expected_status_code, expected_error
         assert isinstance(data["venue"]["city"], str)
         assert isinstance(data["home_team"], str)
         assert isinstance(data["away_team"], str)
-        
+
 
 def test_get_formulaone_fixture(client):
     """Test the Formula 1 fixture endpoint.
@@ -63,10 +64,3 @@ def test_get_formulaone_fixture(client):
     assert isinstance(data["venue"]["name"], str)
     assert isinstance(data["venue"]["city"], str)
     assert isinstance(data["venue"]["country"], str)
-
-
-
-
-
-    
-

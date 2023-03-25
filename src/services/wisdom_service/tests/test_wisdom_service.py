@@ -28,6 +28,7 @@ def test_get_random_facts(client):
         assert "fact" in data[0]
         assert isinstance(data[0]["fact"], str)
 
+
 def test_get_quotes(client):
     """Test the quotes endpoint.
 
