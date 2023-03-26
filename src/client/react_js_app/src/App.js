@@ -1,6 +1,7 @@
 import './App.css';
 import logo from './cAPItan_Logo.jpg';
-import { Route, Routes } from "react-router-dom"
+//import { Route, Routes } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Switch, Route } from 'react-router-dom';
 import { Home } from "./pages/Home"
 import { Settings } from "./pages/Settings"
 import React, { useState } from 'react';
