@@ -1,21 +1,37 @@
 import './Home.css';
 import logo from '../cAPItan_Logo.jpg';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef}  from 'react';
+
 import { Link } from 'react-router-dom';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import NotificationPopup from './Notification';
+import { getUserId,setUserId,user_id } from './User.js';
 
 
 export function Home() {
+  const useridRef = useRef(null);
+
   const [text, setText] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [textToSpeak, setTextToSpeak] = useState('');
   const { SpeechSynthesisUtterance, speechSynthesis } = window;
+  let userid = null;
 
+  useEffect(() => {
+    // Call your function here
+    // Retrieve the user ID from local storage
+    const storedUserId = localStorage.getItem('user_id');
+    
+    // Set the value of useridRef.current to the retrieved user ID, if it exists
+    if (storedUserId) {
+      useridRef.current = storedUserId;
+      console.log("Userid", useridRef.current);
+      setUserId(useridRef.current)
+    }
+  }, [getUserId()]);
 
 const toggleModal = () => setShowModal(!showModal);
-
 
   const handleButtonClick = () => {
     setShowPopup(true);

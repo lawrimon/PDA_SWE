@@ -1,0 +1,60 @@
+
+export let user_id = null;
+export let user_name = null;
+export let user_password = null;
+export let user_football_club = null;
+export let user_stocks = null;
+export let user_artists = null;
+export let user_spotify_link = null;
+export let user_calendar_link = null;
+export let user_preferences = [user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link]
+
+export function setUserId(userId) {
+  user_id = userId;
+}
+
+export function getUserId() {
+  return user_id;
+}
+
+export function getUserPreferences() {
+    return user_preferences;
+  }
+
+export function setUserPreferences(pref_list){
+    let old_list = [user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link]
+    for (let i = 0; i < pref_list.length; i++) {
+      old_list.push(pref_list[i]);
+    }
+  }
+
+function pushUserPreferences(pref_list){
+    const user_preferences = {
+        "user_football_club": user_football_club,
+        "user_stocks": user_stocks,
+        "user_artists": user_artists,
+        "spotify_link": user_spotify_link,
+        "user_calendar_link" : user_calendar_link,
+      };
+    
+    const jsonPreferences = JSON.stringify(user_preferences);
+    fetch('https://example.com/api/preferences', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: jsonPreferences
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to send data to server');
+        }
+        console.log('Data sent successfully');
+      })
+      .catch(error => {
+        console.error(error);
+      });
+}
+
+   
+    

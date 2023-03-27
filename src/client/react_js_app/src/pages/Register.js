@@ -2,60 +2,53 @@ import React, { useState } from "react";
 import "./Register.css";
 import { Link } from 'react-router-dom';
 import sha256 from 'crypto-js/sha256';
+import { setUserId } from './User.js';
 
 
 function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   let [username, setUsername] = useState("");
-  let [userid, setUserid] = useState("");
-
-  function hashString(str) {
+  const [userid, setUserid] = useState("");
  
-    const hash = sha256(str);
-    
-    return hash.digest('hex');
-  }
-  
   function hanldeUsernameChange(event) {
     setUsername(event.target.value);
+    setUserid(event.target.value)
   }
 
   function handlePasswordChange(event) {
     setPassword(event.target.value);
   }
 
+  function handleUserIDChange(){
+    setUserid(username)
+  }
+
   function handleSubmit() {
     console.log(password)
     console.log(username)
-    setUserid(hashString(username))
     console.log(userid)
-    fetch('https://localhost:5000/users',{
+    fetch('http://localhost:5000/users',{
       method: 'POST',
       body: JSON.stringify({"user_id":userid, "password":password, "username":username}),
       headers: { 'Content-Type': 'application/json' },
     })
     .then(response => response.json())
     .then(data => {
-      if (data.message) {
-          console.log(data.message)
-          if (data.message == "Success"){
-            //Forward to 
-            //window.location.href = '/registersuccess';
+      if (data) {
+          console.log(data)
+          if (data.status == "success, user added"){
+            window.location.href = '/preferences';
+            setUserId(userid)
+            console.log(userid)
           }
       }})
   }
 
-  function handleSubmit2(){
-    console.log(password)
-    console.log(username)
-    setUserid(hashString(username))
-    console.log(userid)
-  }
 
   return (
     <div className="login-container">
-      <form onSubmit={handleSubmit} className="login-form">
+      <div className="login-form">
         <h1>Register</h1>
         <label>
           Username:
@@ -73,8 +66,8 @@ function RegisterPage() {
 
         </label>
        
-        <button type="submit" onClick={handleSubmit2} >Next Step</button>
-      </form>
+        <button type="submit" onClick={handleSubmit} >Next Step</button>
+      </div>
     </div>
   );
 }
