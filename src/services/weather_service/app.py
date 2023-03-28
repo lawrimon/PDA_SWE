@@ -1,7 +1,6 @@
 """This application is weather service.
 
-The weather service is a service that provides weather information for a given location.
-It provides an endpoint to get the weather information for a given location for the next day.
+The weather service provides an endpoint to get the weather information for a given location for the next day.
 The functionality is based in the OpenWeatherMap API.
 
 Typical endpoint usage:

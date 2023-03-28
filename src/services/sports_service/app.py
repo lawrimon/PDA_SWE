@@ -1,6 +1,6 @@
 """This application is the sports service.
 
-The sports service is a service that provides fixture information for different sports.
+The sports service provides endpoints to get fixture information for different sports.
 Football and Formula 1 are supported. More sports will be added in the future.
 The infomation is based on the services offered by API Sports.
 

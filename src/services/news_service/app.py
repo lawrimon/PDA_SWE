@@ -1,6 +1,6 @@
 """This application is the news service.
 
- The news service is a service that provides news information.
+ The news service provides endpoints to get news from different sources.
  The functionality is based on the Tagesschau API and the NY Times API.
 
 Typical endpoints usage:

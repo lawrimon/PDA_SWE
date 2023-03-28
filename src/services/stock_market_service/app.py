@@ -1,7 +1,6 @@
 """This application is the stock market service.
 
-The maps service provides an endpoint to get the latest quote of a list of symbols.
-It also provides an endpoint to get the latest news of a list of symbols.
+The maps service provides endpoints to get the latest quotes and news of a list of symbols.
 The functionality is based on the Alpaca API.
 
 Typical endpoints usage:

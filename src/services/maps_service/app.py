@@ -1,7 +1,6 @@
 """This application is the maps service.
 
-The maps service provides an endpoint to get the current user location.
-It also provides an endpoint to get the route between a origin and a destination.
+The maps service provides endpoints to get the user location and a route between two locations.
 The functionality is based on the Google Maps Platform API.
 
 Typical endpoints usage:
