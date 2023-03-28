@@ -13,9 +13,9 @@ import RegistrationSuccess from './pages/RegisterSuccess';
 export function App() {
   return (
     <Routes>
+      <Route path="/login" element={<LoginPage />} />
       <Route path="/" element={<Home />} />
       <Route path="/settings" element={<Settings />} />
-      <Route path="/login" element={<LoginPage />} />
       <Route path ="/register" element={<RegisterPage/>}/>
       <Route path ="/preferences" element={<PreferencesPage/>}/>
       <Route path ="/registersuccess" element={<RegistrationSuccess/>}/>

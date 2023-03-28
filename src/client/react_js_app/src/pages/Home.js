@@ -33,6 +33,14 @@ export function Home() {
 
 const toggleModal = () => setShowModal(!showModal);
 
+  const Logout = () => {
+    console.log("Logging out!");
+    const storedUserId = ""
+    localStorage.clear()
+    window.location.href = '/login';
+
+  };
+
   const handleButtonClick = () => {
     setShowPopup(true);
   };
@@ -114,12 +122,20 @@ const toggleModal = () => setShowModal(!showModal);
           <div>
           <button type="button"onClick={handleButtonClick}  className="settings-button">✉</button>
                 </div>
-              
+      
           <Link to="/settings">
             <button type="button" className="settings-button">&#x2699;</button>
           </Link>
+          <div className="">
+            <div className="notification-icon">
+
+            <button type="button" onClick={Logout} className="settings-button">&#10149;</button>           
+            </div>  
+            </div>
           </div>
           </div>
+                  
+         
           {showPopup && (
         <div className="sidebar">
           <div className="sidebar-header">

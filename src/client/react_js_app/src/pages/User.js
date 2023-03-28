@@ -21,6 +21,29 @@ export function getUserPreferences() {
     return user_preferences;
   }
 
+  export function getUserPreferencesDB(userid) {
+    console.log("this userid gets searched", userid);
+    return fetch('http://localhost:5000/users/' + userid, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (!data) {
+          throw new Error('Failed to send data to server');
+        } else {
+          console.log(data);
+          console.log('Data sent successfully');
+          return data;
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+  
 export function setUserPreferences(pref_list){
     let old_list = [user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link]
     for (let i = 0; i < pref_list.length; i++) {

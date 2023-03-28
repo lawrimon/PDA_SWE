@@ -3,7 +3,7 @@ import logo from '../cAPItan_Logo.jpg';
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { getUserId, setUserId } from './User.js';
-import { getUserPreferences } from './User.js';
+import { getUserPreferencesDB, getUserPreferences } from './User.js';
 
 export function Settings() {
     const useridRef = useRef(null);
@@ -53,34 +53,60 @@ export function Settings() {
     }
 
     useEffect(() => {
-      // Call your function here
-        // Call your function here
-      // Retrieve the user ID from local storage
-      const storedUserId = localStorage.getItem('user_id');
-      
-      // Set the value of useridRef.current to the retrieved user ID, if it exists
-      if (storedUserId) {
-        useridRef.current = storedUserId;
-        console.log("Userid", useridRef.current);
-        setUserId(useridRef.current)
+      // Define an async function to retrieve the user preferences
+      async function getUserPreferences() {
+        // Retrieve the user ID from local storage
+        const storedUserId = localStorage.getItem('user_id');
+        if (storedUserId) {
+          useridRef.current = storedUserId;
+          console.log("Userid", useridRef.current);
+          setUserId(useridRef.current)
+        }
+        // Call getUserPreferencesDB and wait for it to finish
+        const pref = await getUserPreferencesDB(useridRef.current);
+        return pref
       }
-      user_pref = getUserPreferences()
+      
+      async function setUserPreferences() {
+        const pref = await getUserPreferences();
+        console.log("this the pref", pref)
+        setUsername(useridRef.current)
+        setFootballClub(pref.football_club)
+        setStocks(pref.stocks)
+        setSpotify(pref.spotify_link)
+        setCalendar(pref.calendar_link)
+        setArtist(pref.artists)
+      }
+      
+      setUserPreferences();
     }, []);
+    
+      
+    const TestToggle = () =>{
+      console.log(JSON.stringify({"username": useridRef.current, "football_club": user_football_club, "user_calendar_link": user_calendar_link, "user_spotify_link":user_spotify_link, "user_stocks":user_stocks, "user_artists": user_artists}),
+      )
+    }
+    
 
-
-
-    const handleToggleChange = () => {
-      fetch('http://host:5000/users/'+user_id, {
-        method: 'GET',
-        body: JSON.stringify({"password": password, "username": user_id, "football_club": user_football_club, "user_calendar_link": user_calendar_link, "user_spotify_link":user_spotify_link, "user_stocks":user_stocks, "user_artists": user_artists}),
+    const  handleToggleChange = () => {
+      fetch('http://localhost:5000/users/'+ useridRef.current, {
+        method: 'PUT',
+        body: JSON.stringify({"username": useridRef.current, "football_club": user_football_club, "user_calendar_link": user_calendar_link, "user_spotify_link":user_spotify_link, "user_stocks":user_stocks, "user_artists": user_artists}),
         headers: { 'Content-Type': 'application/json' },
       })
       .then(response => response.json())
       .then(data => {
-        if (data.message) {
-            console.log(data.message)
+        if (data) {
+            console.log(data)
             console.log("success User changed")
-        }})
+        }
+        else {
+          console.log("Error");
+        }
+      })
+    .catch(error => {
+      console.error(error);
+    });
       };
 
     const handleClose = () => {
@@ -93,10 +119,9 @@ export function Settings() {
         <div className="overlay">
           <div className="overlay-header">
             <h2>Settings</h2>
-            <button className="close-btn" onClick={handleClose}>X</button>
           </div>
           <div className="overlay-content">
-          <form onSubmit={handleToggleChange} className="login-form">
+          <div className="login-form">
         <h1>Preferences</h1>
         <label>
           Username:
@@ -133,8 +158,12 @@ export function Settings() {
           <input type="text" value={user_calendar_link} onChange={handleCalendar} />
         </label>
         <br />
-        <button type="submit">Save Changes</button>
-      </form>
+        <button type="submit" onClick={handleToggleChange} >Save Changes</button>
+        <Link to="/">
+        <button type="submit"  >Back to Home</button>
+          </Link>
+       
+      </div>
           </div>
         </div>
       </div>
