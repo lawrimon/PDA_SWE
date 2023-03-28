@@ -60,6 +60,7 @@ function LoginPage() {
             getUserPref();
             console.log("lol");
             localStorage.setItem('user_id', userIdRef.current);
+            console.log(userIdRef.current)
             window.location.href = '/';
           }
           else {
