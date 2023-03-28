@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./Register.css";
 import { Link } from 'react-router-dom';
 import sha256 from 'crypto-js/sha256';
-import { setUserId } from './User.js';
+import { setUserId } from '../components/User.js';
 
 
 function RegisterPage() {
@@ -47,8 +47,8 @@ function RegisterPage() {
 
 
   return (
-    <div className="login-container">
-      <div className="login-form">
+    <div className="register-container">
+      <div className="register-form">
         <h1>Register</h1>
         <label>
           Username:

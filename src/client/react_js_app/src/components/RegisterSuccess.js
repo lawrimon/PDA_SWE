@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import './RegisterSuccess.css'; // Import CSS file
-import logo from '../cAPItan_Logo.jpg';
+import logo from '../resources/cAPItan_Logo.jpg';
 
 function RegistrationSuccess() {
 

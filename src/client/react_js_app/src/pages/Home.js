@@ -1,11 +1,11 @@
 import './Home.css';
-import logo from '../cAPItan_Logo.jpg';
+import logo from '../resources/cAPItan_Logo.jpg';
 import React, { useState, useEffect, useRef}  from 'react';
 
 import { Link } from 'react-router-dom';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import NotificationPopup from './Notification';
-import { getUserId,setUserId,user_id } from './User.js';
+import { getUserId,setUserId,user_id } from '../components/User.js';
 
 
 export function Home() {
