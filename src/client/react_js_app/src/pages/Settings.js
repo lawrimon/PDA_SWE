@@ -18,6 +18,8 @@ export function Settings() {
   const [user_spotify_link, setSpotify] = useState("/spotify/url");
   const [user_calendar_link, setCalendar] = useState("/calender/url");
   const [user_artists, setArtist] = useState(["Justin Bieber"]);
+  const [user_news, setNews] = useState(["National"]);
+
   let user_pref = []
 
   const options = [
@@ -60,6 +62,14 @@ export function Settings() {
     { value: 'Helene Fischer', label: 'Helene Fischer' },
   ]
 
+  const news_options = [
+    { value: 'Business', label: 'Business' },
+    { value: 'Sport', label: 'Sport' },
+    { value: 'National', label: 'National' },
+    { value: 'International', label: 'International' },
+    { value: 'Politics', label: 'Politics' },
+    { value: 'Lifestyle', label: 'Lifestyle' }
+  ]
 
   const handleSave = (event) => {
     event.preventDefault();
@@ -68,6 +78,10 @@ export function Settings() {
 
   function handleUsernameChange(event) {
     setUsername(event.target.value);
+  }
+
+  function handleNews(selectedOptions) {
+    setNews(selectedOptions.map(option => option.value));
   }
 
   function handleFootball(selectedOptions) {
@@ -128,6 +142,7 @@ export function Settings() {
     setUserPreferences();
   }, []);
 
+  
 
   const TestToggle = () => {
     console.log(JSON.stringify({ "username": useridRef.current, "football_club": user_football_club, "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "user_stocks": user_stocks, "user_artists": user_artists }),
@@ -139,7 +154,7 @@ export function Settings() {
     console.log("handle triggered")
     fetch('http://localhost:5000/users/' + useridRef.current, {
       method: 'PUT',
-      body: JSON.stringify({ "username": useridRef.current, "football_club": user_football_club, "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "user_stocks": user_stocks, "user_artists": user_artists }),
+      body: JSON.stringify({ "username": useridRef.current, "football_club": user_football_club, "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "user_stocks": user_stocks, "user_artists": user_artists, "news": user_news}),
       headers: { 'Content-Type': 'application/json' },
     })
       .then(response => response.json())
@@ -210,6 +225,16 @@ export function Settings() {
               onChange={handleArtists}
             />
             <br />
+        <h4>Favorite News-Topics  </h4>
+          <Select
+            closeMenuOnSelect={false}
+            components={animatedComponents}
+            isMulti
+            options={news_options}
+            value={user_news.map(fc => ({ label: fc, value: fc }))}
+            onChange={handleNews}
+          />
+        <br />
             <label>
               <h4>Spotify Link </h4>
               <input type="email" value={user_spotify_link} onChange={handleSpotify} />

@@ -16,6 +16,8 @@ function PreferencesPage() {
   const [user_spotify_link, setSpotify] = useState("/spotify/url");
   const [user_calendar_link, setCalendar] = useState("/calender/url");
   const [user_artists, setArtist] = useState(["Justin Bieber"]);
+  const [user_news, setNews] = useState(["National"]);
+
   
   let user_pref = [];
   let userid = null;
@@ -52,6 +54,15 @@ function PreferencesPage() {
     { value: 'Helene Fischer', label: 'Helene Fischer' },
   ]
 
+  const news_options = [
+    { value: 'Business', label: 'Business' },
+    { value: 'Sport', label: 'Sport' },
+    { value: 'National', label: 'National' },
+    { value: 'International', label: 'International' },
+    { value: 'Politics', label: 'Politics' },
+    { value: 'Lifestyle', label: 'Lifestyle' }
+  ]
+
   const animatedComponents = makeAnimated();
 
   useEffect(() => {
@@ -82,6 +93,10 @@ function PreferencesPage() {
     setCalendar(event.target.value);
   }
 
+  function handleNews(selectedOptions) {
+    setNews(selectedOptions.map(option => option.value));
+  }
+
   function handleSpotify(event) {
     setSpotify(event.target.value);
   }
@@ -96,12 +111,35 @@ function PreferencesPage() {
 
   function handleSubmit(event) {
     event.preventDefault();
+    uploadSubmit()
     user_pref = []
-    setUserPreferences([user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link])
+    setUserPreferences([user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link, user_news])
     window.location.href = '/registersuccess';
     // handle login request
 
   }
+
+  const uploadSubmit = () => {
+    console.log("handle triggered")
+    fetch('http://localhost:5000/users/' + useridRef.current, {
+      method: 'PUT',
+      body: JSON.stringify({ "username": useridRef.current, "football_club": user_football_club, "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "user_stocks": user_stocks, "user_artists": user_artists, "news": user_news}),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data) {
+          console.log(data)
+          console.log("success preferences aved")
+        }
+        else {
+          console.log("Error");
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
 
   return (
     <div className="pref-container">
@@ -149,6 +187,16 @@ function PreferencesPage() {
           />
         <br />
         <label>
+        <h4>Favorite News-Topics  </h4>
+          <Select
+            closeMenuOnSelect={false}
+            components={animatedComponents}
+            isMulti
+            options={news_options}
+            value={user_news.map(fc => ({ label: fc, value: fc }))}
+            onChange={handleNews}
+          />
+        <br />
         <h4>Spotify Link </h4>
           <input type="text" value={user_spotify_link} onChange={handleSpotify} />
         </label>
