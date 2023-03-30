@@ -7,21 +7,28 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1;
 }
 
 .overlay-header h2 {
   margin: 0 auto;
-  margin-left: 45%;
 }
 
+.settings-form {
+  display: fixed;
+  width: 60%;
+  flex-direction: column;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
 
 .overlay {
   position: fixed;
-  width: 60%;
+  width: 70%;
   height: 75%;
-  overflow: auto;
   background-color: #fff;
+  overflow: auto;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
@@ -54,12 +61,12 @@
 
 form label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.2rem;
 }
 
 form input {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.2rem;
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-bottom: 1rem;
@@ -113,4 +120,57 @@ input[type="checkbox"]:checked + .switch {
 
 input[type="checkbox"]:checked + .switch::before {
   transform: translateX(26px);
+}
+
+.settings-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 120vh;
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.settings-form h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.settings-form label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.settings-form input[type="email"],
+.settings-form input[type="password"] {
+  width: 100%;
+  padding: 5px;
+  font-size: 16px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 20px;
+}
+
+.settings-form button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  background-color: #0073aa;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.settings-form button[type="submit"]:hover {
+  background-color: #006187;
 }

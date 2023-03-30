@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import "./Login.css";
 import { Link } from 'react-router-dom';
-import { getUserId, setUserId, setUserPreferences } from './User.js';
+import { getUserId, setUserId, setUserPreferences } from '../components/User.js';
 
 
 function LoginPage() {
@@ -74,25 +74,27 @@ function LoginPage() {
   }
 
   return (
-    <div className="login-container">
-      <div className="login-form">
-        <h1>Log In</h1>
-        <label>
-          Email:
-          <input type="username" value={username} onChange={handleUsernameChange} />
-        </label>
-        <br />
-        <label>
-          Password:
-          <input type="password" value={password} onChange={handlePasswordChange} />
-        </label>
-        <br />
-        <div className="container">
+    <div className="login-overall">
+      <div className="login-container">
+        <div className="login-form">
+          <h1>Log In</h1>
           <label>
-            Not a Sailor yet? Get on board <Link to="/register">here</Link>.
+            Email:
+            <input type="username" value={username} onChange={handleUsernameChange} />
           </label>
+          <br />
+          <label>
+            Password:
+            <input type="password" value={password} onChange={handlePasswordChange} />
+          </label>
+          <br />
+          <div className="container">
+            <label>
+              Not a Sailor yet? Get on board <Link to="/register">here</Link>.
+            </label>
+          </div>
+          <button type="submit" onClick={handleSubmit}>Log In</button>
         </div>
-        <button type="submit" onClick={handleSubmit}>Log In</button>
       </div>
     </div>
   );

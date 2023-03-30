@@ -1,11 +1,11 @@
-.login-container {
+.register-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
   }
   
-  .login-form {
+  .register-form {
     display: flex;
     flex-direction: column;
     padding: 40px;
@@ -14,20 +14,20 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   }
   
-  .login-form h1 {
+  .register-form h1 {
     font-size: 24px;
     margin-bottom: 20px;
     text-align: center;
   }
   
-  .login-form label {
+  .register-form label {
     display: block;
     margin-bottom: 10px;
     font-size: 16px;
   }
   
-  .login-form input[type="email"],
-  .login-form input[type="password"] {
+  .register-form input[type="email"],
+  .register-form input[type="password"] {
     width: 100%;
     padding: 10px;
     font-size: 16px;
@@ -36,7 +36,7 @@
     margin-bottom: 20px;
   }
   
-  .login-form button[type="submit"] {
+  .register-form button[type="submit"] {
     width: 100%;
     padding: 10px;
     font-size: 16px;
@@ -47,7 +47,7 @@
     transition: background-color 0.3s ease;
   }
   
-  .login-form button[type="submit"]:hover {
+  .register-form button[type="submit"]:hover {
     background-color: #006187;
   }
   
