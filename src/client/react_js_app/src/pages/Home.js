@@ -82,11 +82,15 @@ const toggleModal = () => setShowModal(!showModal);
     const utterance = new SpeechSynthesisUtterance(transcript);
     utterance.rate = 0.9;
     utterance.pitch = 1;
+    var voices = window.speechSynthesis.getVoices();
+    utterance.voice = voices[15];
+    utterance.lang = 'en-US'; 
     speechSynthesis.speak(utterance);
   };
 
   const { transcript, resetTranscript } = useSpeechRecognition({
-    continuous: true
+    continuous: true,
+    lang: 'en-US'
   });
 
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
