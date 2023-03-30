@@ -50,7 +50,7 @@ export function Home() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ transcript: transcript })
     };
-    fetch('/submit_transcript', requestOptions)
+    fetch('http://localhost:8002/submit_transcript', requestOptions)
       .then(response => response.json())
       .then(data => console.log(data))
       .catch(error => console.error(error));
