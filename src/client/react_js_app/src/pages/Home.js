@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
+
 export function Home() {
   const [inputValue, setInputValue] = useState('');
   const [textToSpeak, setTextToSpeak] = useState('');
@@ -24,11 +25,18 @@ export function Home() {
     const utterance = new SpeechSynthesisUtterance(transcript);
     utterance.rate = 0.9;
     utterance.pitch = 1;
+    var voices = window.speechSynthesis.getVoices();
+    utterance.voice = voices[15]; //15
+    utterance.lang = "en-US"; 
     speechSynthesis.speak(utterance);
+    for(var i = 0; i < voices.length; i++) {
+      console.log(voices[i].lang)
+    }
   };
   
   const { transcript, resetTranscript } = useSpeechRecognition({
-    continuous: true
+    continuous: true, 
+    language: 'en-US'
   });
  
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
@@ -67,7 +75,7 @@ export function Home() {
       </div>
       <div className="record-container">
         <div >
-          <textarea value={transcript} onChange={handleTextChange} className="converted-speech"></textarea>
+          <textarea value={transcript} type="text" onChange={handleTextChange} className="converted-speech"></textarea>
         </div>
         <div>
           <button onClick={SpeechRecognition.startListening}>Record</button>
@@ -78,5 +86,4 @@ export function Home() {
     </div>
   );
 }
-
 export default Home;
