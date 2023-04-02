@@ -115,5 +115,16 @@ def delete_user(user_id):
     return jsonify({"status": "success, user deleted"})
 
 
+@app.route("/allusers", methods=["GET"])
+def get_all_users():
+    """
+    This function retrieves all user IDs from Redis and returns them as a JSON array.
+
+    Returns:
+        A JSON array containing all the user IDs.
+    """
+    user_ids = redis_store.keys("*")
+    return jsonify([user_id.decode() for user_id in user_ids])
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0")

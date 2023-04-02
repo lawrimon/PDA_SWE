@@ -1,23 +1,27 @@
-version: '3.8'
+version: '3'
 
 services:
-  
   rabbitmq:
-    image: 'rabbitmq:3-management'
+    image: rabbitmq:3.9-management-alpine
     ports:
-      - '5672:5672'
-      - '15672:15672'
+      - "15672:15672"
+      - "5672:5672"
 
-  worker:
-    build: worker
-    volumes:
-      - ./worker:/app
+  app1:
+    build: ./service_adapter
+    ports:
+      - "5001:5000"
     environment:
-      - PYTHONUNBUFFERED=1
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - rabbitmq
 
-  server:
-    build: server
-    volumes:
-      - ./server:/app
+  app2:
+    build: ./use_case
     ports:
-      - 5000:5000
+      - "5002:5000"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - rabbitmq
+      - app1
