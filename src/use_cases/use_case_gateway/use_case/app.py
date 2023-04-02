@@ -49,13 +49,11 @@ def check_appointment_interference(appointments, event):
     appointment_duration = timedelta(minutes=30)
 
     # Convert the event time string to a datetime object
-    print("Event Time: " + event['time'])
     event_time = datetime.strptime(event['time'], '%Y-%m-%dT%H:%M:%S.%fZ')
 
     # Loop over the appointments and check for interference
     for appointment in appointments:
         # Convert the appointment time string to a datetime object
-        print("Appointment Time: " + event['time'])
         appointment_time = datetime.strptime(appointment['time'], '%Y-%m-%dT%H:%M:%S.%fZ')
 
         # Check if the event and appointment overlap in time
@@ -77,8 +75,6 @@ def notify_users():
     channel = connection.channel()
     channel.queue_declare(queue='notifications')
 
-    print("Successfully Connected")
-
     for user_id in users:
         location = get_user_location(user_id)
         appointments = get_user_appointments(user_id)
@@ -91,7 +87,6 @@ def notify_users():
                     event_str = json.dumps(event)
                     # publish the event to the queue
                     channel.basic_publish(exchange='', routing_key='notifications', body=event_str)
-                    print("User notified")
     connection.close()
 
 scheduler = BackgroundScheduler(daemon=True)
