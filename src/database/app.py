@@ -27,7 +27,7 @@ allowed_keys = [
     "spotify_link",
     "calendar_link",
     "news",
-    "location"
+    "location",
 ]
 
 
