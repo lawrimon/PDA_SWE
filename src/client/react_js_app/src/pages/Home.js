@@ -31,7 +31,7 @@ export function Home() {
     }
   }, [getUserId()]);
 
-const toggleModal = () => setShowModal(!showModal);
+  const toggleModal = () => setShowModal(!showModal);
 
   const Logout = () => {
     console.log("Logging out!");
@@ -56,19 +56,20 @@ const toggleModal = () => setShowModal(!showModal);
   const handleSubmit = () => {
     fetch('http://141.31.86.15:8000//postText', {
       method: 'POST',
-      body: JSON.stringify({"text":text}),
+      body: JSON.stringify({ "text": text }),
       headers: { 'Content-Type': 'application/json' },
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.message) {
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
           console.log(data.message)
-      }
-    })    
-    .catch(error => {
-      console.error(error);
-    });
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
+  
 
   //STT and TTS
   const handleTextChange = (event) => {
@@ -112,10 +113,10 @@ const toggleModal = () => setShowModal(!showModal);
 
   return (
     <div className="App">
-      <div style={{marginTop:"3%"}}>
+      <div style={{ marginTop: "3%" }}>
         <img src={logo} alt="Logo" className="logo" />
       </div>
-      <h1 style={{color:"white", paddingTop:"1%"}}>cAPItan</h1>
+      <h1 style={{ color: "white", paddingTop: "1%" }}>cAPItan</h1>
       <div className="search-container">
         <input type="text" value={text} onChange={handleChange} onClick={() => setShowPopup(false)} 
         placeholder="Search..." />
@@ -187,6 +188,7 @@ const toggleModal = () => setShowModal(!showModal);
 
             </div>
               </div>
+
             </div>
           )}
           <div className="record-container">

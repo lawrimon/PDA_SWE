@@ -1,3 +1,8 @@
+from flask import Flask, jsonify, request
+import requests
+import dotenv
+import os
+
 
 from flask import Flask, jsonify, request
 import requests
@@ -8,7 +13,6 @@ dotenv.load_dotenv()
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 
 app = Flask(__name__)
-
 
 
 def get_weather():
@@ -44,11 +48,13 @@ def get_news(user_pref):
     
     url = f"http://127.0.0.1:5001/tagesschau/homepage"
 
+
     response = requests.get(url)
     if response.status_code != 200:
         jsonify({"error": "Error getting weather information"}), 500
 
     data = response.json()
+
     print(data)
 
     return data
