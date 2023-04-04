@@ -55,6 +55,15 @@ services:
     depends_on:
       - rabbitmq 
 
+  news:
+    build: ./src/services/news_service
+    volumes:
+      - ./src/services/news_service:/app
+    ports:
+      - 5001:5001
+    depends_on:
+      - rabbitmq
+
   weather:
     build: ./src/services/weather_service
     volumes:
