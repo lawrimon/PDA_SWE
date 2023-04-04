@@ -9,6 +9,7 @@ import RegisterPage from './pages/Register';
 import PreferencesPage from './pages/Preferences';
 import RegistrationSuccess from './components/RegisterSuccess';
 import NotFound from './components/NotFound';
+import RabbitMqConsumer from './pages/rabbit';
 
 export function App() {
   return (
