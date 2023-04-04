@@ -1,32 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./Register.css";
-import { Link } from 'react-router-dom';
+import { setUserId } from '../components/User.js';
 
 
 function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  let [username, setUsername] = useState("");
+  const [userid, setUserid] = useState("");
+  const userIdRef = useRef("");
 
-  function handleEmailChange(event) {
-    setEmail(event.target.value);
+  function hanldeUsernameChange(event) {
+    setUsername(event.target.value);
+    setUserid(event.target.value)
   }
 
   function handlePasswordChange(event) {
     setPassword(event.target.value);
   }
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    // handle login request
+  function handleUserIDChange(){
+    setUserid(username)
   }
 
+  function handleSubmit() {
+    console.log(password)
+    console.log(username)
+    console.log(userid)
+    fetch('http://localhost:5000/users',{
+      method: 'POST',
+      body: JSON.stringify({"user_id":userid, "password":password, "username":username}),
+      headers: { 'Content-Type': 'application/json' },
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data) {
+          console.log(data)
+          if (data.status == "success, user added"){
+            userIdRef.current = username
+            localStorage.setItem('user_id', userIdRef.current);
+            console.log(userIdRef.current, "is userid")
+            setUserId(userid)
+            console.log(userid)
+            window.location.href = '/preferences';
+          }
+      }})
+  }
+
+
   return (
-    <div className="login-container">
-      <form onSubmit={handleSubmit} className="login-form">
+    <div className="register-container">
+      <div className="register-form">
         <h1>Register</h1>
         <label>
-          Email:
-          <input type="email" value={email} onChange={handleEmailChange} />
+          Username:
+          <input type="username" value={username} onChange={hanldeUsernameChange} />
         </label>
         <br />
         <label>
@@ -39,10 +67,9 @@ function RegisterPage() {
             <input type="password" value={password} onChange={handlePasswordChange} />
 
         </label>
-        <Link to="/preferences">
-        <button type="submit">Next Step</button>
-        </Link>
-      </form>
+       
+        <button type="submit" onClick={handleSubmit} >Next Step</button>
+      </div>
     </div>
   );
 }

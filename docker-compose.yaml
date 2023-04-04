@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  
+
   rabbitmq:
     image: rabbitmq:3.9-management-alpine
     ports:
@@ -23,7 +23,7 @@ services:
       REDIS_URL: redis://redis:6379/0
     volumes:
       - ./src/database/:/app
-      
+
   redisinsight:
     image: redislabs/redisinsight:latest
     ports:
@@ -54,6 +54,15 @@ services:
       - 3000:3000
     depends_on:
       - rabbitmq 
+
+  news:
+    build: ./src/services/news_service
+    volumes:
+      - ./src/services/news_service:/app
+    ports:
+      - 5001:5001
+    depends_on:
+      - rabbitmq
 
   weather:
     build: ./src/services/weather_service

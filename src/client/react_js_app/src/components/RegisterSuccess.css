@@ -1,0 +1,17 @@
+.registration-success {
+    background-color: #3cba54;
+    color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 0px 0px 10px #ccc;
+  }
+  
+  .registration-success h2 {
+    margin-top: 0;
+  }
+  
+  .registration-success p {
+    font-size: 18px;
+  }
+  

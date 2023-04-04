@@ -12,6 +12,7 @@ Typical endpoints usage:
 
 from flask import Flask, jsonify, request
 import requests
+from pprint import pprint
 import dotenv
 import os
 
@@ -81,15 +82,15 @@ def get_tagesschau_homepage():
     news = []
     response = response.json()
     tagesschau_news = response["news"]
+
     for info in tagesschau_news:
-        text = info["content"][0]["value"]
-        summary = text.replace("<strong>", "")
-        summary = summary.replace("</strong>", "")
+        if "content" in info:
+            text = info["content"][0]["value"]
+            summary = text.replace("<strong>", "")
+            summary = summary.replace("</strong>", "")
 
-        article = {"Title": info["title"], "Summary": summary}
-        news.append(article)
-
-    # data = response.json()
+            article = {"Title": info["title"], "Summary": summary}
+            news.append(article)
 
     return jsonify(news)
 
