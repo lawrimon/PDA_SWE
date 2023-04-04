@@ -1,7 +1,5 @@
 import React, { useState, useRef } from "react";
 import "./Register.css";
-import { Link } from 'react-router-dom';
-import sha256 from 'crypto-js/sha256';
 import { setUserId } from '../components/User.js';
 
 
