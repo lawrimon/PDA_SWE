@@ -41,6 +41,7 @@ export function Home() {
         console.error(error);
       });
   };
+  
 
   return (
     <div className="App">

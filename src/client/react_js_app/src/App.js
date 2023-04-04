@@ -16,7 +16,7 @@ export function App() {
       <Route path="/settings" element={<Settings />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path ="/register" element={<RegisterPage/>}/>
-      <Route path ="/preferences" element={<RabbitMqConsumer/>}/>
+      <Route path ="/preferences" element={<PreferencesPage/>}/>
       <Route path ="/rabbit" element={<RabbitMqConsumer/>}/>
 
     </Routes>

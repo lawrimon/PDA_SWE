@@ -1,27 +1,57 @@
 import React, { useEffect, useState } from 'react';
-import { useAmqp, useAmqpQueue } from 'amqplib';
+import Connection from 'rabbitmq-client';
 
 const RabbitMqConsumer = () => {
   const [messages, setMessages] = useState([]);
-  const { connection, error: connectionError } = useAmqp({
-    url: 'amqp://localhost',
-  });
+  const [connection, setConnection] = useState(null);
 
-  const { error: consumerError } = useAmqpQueue({
-    connection,
-    queue: 'task_queue',
-    onMessage: (msg) => {
-      setMessages((prevMessages) => [...prevMessages, msg.content.toString()]);
-    },
-  });
+  useEffect(() => {
+    const rabbit = new Connection({
+      url: 'amqp://guest:guest@localhost:5672',
+      retryLow: 1000,
+      retryHigh: 30000,
+    });
+
+    rabbit.on('error', (err) => {
+      console.error(err);
+    });
+
+    rabbit.on('connection', () => {
+      console.log('The connection is successfully (re)established');
+    });
+
+    async function consumeMessages() {
+      const ch = await rabbit.acquire();
+
+      await ch.queueDeclare({ queue: 'notifications', exclusive: true });
+
+      await ch.basicConsume({ queue: 'notifications' }, (msg) => {
+        setMessages((prevMessages) => [...prevMessages, msg.content.toString()]);
+        ch.basicAck({ deliveryTag: msg.deliveryTag });
+      });
+    }
+
+    rabbit
+      .connect()
+      .then(() => {
+        console.log('Connected to RabbitMQ');
+        setConnection(rabbit);
+        consumeMessages();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
+    return () => {
+      if (connection) {
+        connection.close();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     console.log(messages);
   }, [messages]);
-
-  if (connectionError || consumerError) {
-    return <div>Error connecting to RabbitMQ</div>;
-  }
 
   return (
     <div>
