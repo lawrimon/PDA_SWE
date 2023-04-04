@@ -13,9 +13,18 @@ app = Flask(__name__)
 
 def get_weather():
 
-    url = f"http://weather-service/weather?lat=40.416775&lon=3.703790"
+    '''
+    TODO:
+    Implement UserID Logic to get User Location
+    '''
+    user_location = {"lat":"3232", "lon":"32323"}
+    params = {
+        "lat": user_location["lat"],
+        "lon": user_location["lon"]
+    }
+    url = f"http://127.0.0.1:5002/weather"
 
-    response = requests.get(url)
+    response = requests.get(url, params)
     if response.status_code != 200:
         jsonify({"error": "Error getting weather information"}), 500
 
@@ -33,7 +42,7 @@ def get_weather():
 
 def get_news(user_pref):
     
-    url = f"http://127.0.0.1:5000/tagesschau/homepage"
+    url = f"http://127.0.0.1:5001/tagesschau/homepage"
 
     response = requests.get(url)
     if response.status_code != 200:
@@ -44,10 +53,10 @@ def get_news(user_pref):
 
     return data
 
-def get_stocks(user_pref):
+def get_stocks():
     
-    symbol_list = user_pref
-    url = "/quotes" 
+    symbol_list = ["IBM","MSFT","GOOG"]
+    url = "http://127.0.0.1:5005/quotes" 
     params = {
         "symbols": symbol_list
     }
@@ -71,9 +80,9 @@ def get_scuttlebutt():
     print("weather----",weather)
     stocks = get_stocks()
     print("stocks----",weather)
+    
 
-
-    return jsonify(news, weather)
+    return jsonify(news, weather, stocks)
   
   
 
