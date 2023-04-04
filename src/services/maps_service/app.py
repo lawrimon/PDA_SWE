@@ -26,6 +26,7 @@ def get_user_location():
     """User location endpoint.
 
     This endpoint provides the current user location.
+    It does not work as intended as it will return the location of the server from where the request is made instead of the user location.
 
     Returns:
         The latitude and longitude of the current user location.
