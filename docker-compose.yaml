@@ -1,0 +1,82 @@
+version: '3'
+
+services:
+  
+  rabbitmq:
+    image: 'rabbitmq:3-management'
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  db:
+    build: ./src/database/
+    ports:
+      - "5000:5000"
+    depends_on:
+      - redis
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - ./src/database/:/app
+      
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    ports:
+      - "8001:8001"
+
+  gateway:
+    build: ./src/use_cases/use_case_gateway/server
+    volumes:
+      - ./src/use_cases/use_case_gateway/server:/app
+    ports:
+      - 5001:5001
+    depends_on:
+      - rabbitmq
+
+  react:
+    build: ./src/client/react_js_app
+    ports:
+      - 3000:3000
+    depends_on:
+      - rabbitmq 
+
+  weather:
+    build: ./src/services/weather_service
+    volumes:
+      - ./src/services/weather_service:/app
+    ports:
+      - 5002:5002
+    depends_on:
+      - rabbitmq
+
+  maps:
+    build: ./src/services/maps_service
+    volumes:
+      - ./src/services/maps_service:/app
+    ports:
+      - 5003:5003
+    depends_on:
+      - rabbitmq
+
+  wisdom:
+    build: ./src/services/wisdom_service
+    volumes:
+      - ./src/services/wisdom_service:/app
+    ports:
+      - 5004:5004
+    depends_on:
+      - rabbitmq
+
+  stockmarket:
+    build: ./src/services/stock_market_service
+    volumes:
+      - ./src/services/stock_market_service:/app
+    ports:
+      - 5005:5005
+    depends_on:
+      - rabbitmq

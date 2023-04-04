@@ -16,8 +16,3 @@ services:
       REDIS_URL: redis://redis:6379/0
     volumes:
       - .:/app
-      
-  redisinsight:
-    image: redislabs/redisinsight:latest
-    ports:
-      - "8001:8001"

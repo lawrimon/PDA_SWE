@@ -60,7 +60,7 @@ def add_user():
     Args:
         user_id: The ID of the user to be added.
         preferences: A dictionary of the user's preferences.
-        Payload: {"password": "myPassword", "username": "username3", "football_club": "Real Madrid"}
+        Payload: {"user_id":"user1", "password": "myPassword", "username": "username2", "football_club": "Real Madrid"}
     Returns:
         A JSON object indicating whether the operation was successful.
     """
@@ -84,7 +84,7 @@ def update_user(user_id):
     Args:
         user_id: The ID of the user whose preferences should be updated.
         preferences: A dictionary of the new preferences.
-        Payload: {"user_id":"user1", "password": "myPassword", "username": "username2", "football_club": "Real Madrid"}
+        Payload: {"password": "myPassword", "username": "username2", "football_club": "Real Madrid"}
 
     Returns:
         A JSON object indicating whether the operation was successful.
@@ -115,6 +115,17 @@ def delete_user(user_id):
     redis_store.delete(user_id)
     return jsonify({"status": "success, user deleted"})
 
+
+@app.route("/allusers", methods=["GET"])
+def get_all_users():
+    """
+    This function retrieves all user IDs from Redis and returns them as a JSON array.
+
+    Returns:
+        A JSON array containing all the user IDs.
+    """
+    user_ids = redis_store.keys("*")
+    return jsonify([user_id.decode() for user_id in user_ids])
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
