@@ -127,5 +127,6 @@ def get_all_users():
     user_ids = redis_store.keys("*")
     return jsonify([user_id.decode() for user_id in user_ids])
 
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0")

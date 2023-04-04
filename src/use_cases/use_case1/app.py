@@ -1,4 +1,3 @@
-
 from flask import Flask, jsonify, request
 import requests
 import dotenv
@@ -12,7 +11,6 @@ app = Flask(__name__)
 
 @app.route("/usecaseweather")
 def get_weather():
-
     url = f"http://weather-service/weather?lat=40.416775&lon=3.703790"
 
     response = requests.get(url)
