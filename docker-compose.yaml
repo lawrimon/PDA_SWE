@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  
+
   rabbitmq:
     image: rabbitmq:3.9-management-alpine
     ports:
@@ -23,7 +23,7 @@ services:
       REDIS_URL: redis://redis:6379/0
     volumes:
       - ./src/database/:/app
-      
+
   redisinsight:
     image: redislabs/redisinsight:latest
     ports:

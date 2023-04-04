@@ -9,7 +9,7 @@ import makeAnimated from 'react-select/animated';
 function PreferencesPage() {
   const useridRef = useRef(null);
 
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(useridRef.current);
   const [password, setPassword] = useState("");
   const [user_football_club, setFootballClub] = useState(["Bayern München"]);
   const [user_stocks, setStocks] = useState(["Apple"]);
@@ -114,23 +114,25 @@ function PreferencesPage() {
     uploadSubmit()
     user_pref = []
     setUserPreferences([user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link, user_news])
-    window.location.href = '/registersuccess';
+    //window.location.href = '/registersuccess';
     // handle login request
 
   }
 
   const uploadSubmit = () => {
     console.log("handle triggered")
-    fetch('http://localhost:5000/users/' + useridRef.current, {
+    console.log(useridRef.current)
+    fetch('http://localhost:5000/users/'+useridRef.current, {
       method: 'PUT',
-      body: JSON.stringify({ "username": useridRef.current, "football_club": user_football_club, "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "user_stocks": user_stocks, "user_artists": user_artists, "news": user_news}),
+      body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString()}),
       headers: { 'Content-Type': 'application/json' },
     })
       .then(response => response.json())
       .then(data => {
+        console.log("lol")
         if (data) {
           console.log(data)
-          console.log("success preferences aved")
+          console.log("success preferences saved")
         }
         else {
           console.log("Error");
@@ -204,9 +206,8 @@ function PreferencesPage() {
         <h4>Calendar Link  </h4>
           <input type="text" value={user_calendar_link} onChange={handleCalendar} />
         </label>
-        <Link to="/">
+        
         <button type="submit">Finish Setup</button>
-        </Link>
      
       </form>
     </div>
