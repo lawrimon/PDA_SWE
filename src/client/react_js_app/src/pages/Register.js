@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./Register.css";
 import { Link } from 'react-router-dom';
 import sha256 from 'crypto-js/sha256';
@@ -10,7 +10,8 @@ function RegisterPage() {
   const [password, setPassword] = useState("");
   let [username, setUsername] = useState("");
   const [userid, setUserid] = useState("");
- 
+  const userIdRef = useRef("");
+
   function hanldeUsernameChange(event) {
     setUsername(event.target.value);
     setUserid(event.target.value)
@@ -38,9 +39,12 @@ function RegisterPage() {
       if (data) {
           console.log(data)
           if (data.status == "success, user added"){
-            window.location.href = '/preferences';
+            userIdRef.current = username
+            localStorage.setItem('user_id', userIdRef.current);
+            console.log(userIdRef.current, "is userid")
             setUserId(userid)
             console.log(userid)
+            window.location.href = '/preferences';
           }
       }})
   }

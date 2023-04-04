@@ -1,12 +1,12 @@
 version: '3'
 
 services:
-  
+
   rabbitmq:
-    image: 'rabbitmq:3-management'
+    image: rabbitmq:3.9-management-alpine
     ports:
-      - '5672:5672'
-      - '15672:15672'
+      - "15672:15672"
+      - "5672:5672"
 
   redis:
     image: redis:latest
@@ -23,20 +23,30 @@ services:
       REDIS_URL: redis://redis:6379/0
     volumes:
       - ./src/database/:/app
-      
+
   redisinsight:
     image: redislabs/redisinsight:latest
     ports:
       - "8001:8001"
 
-  gateway:
-    build: ./src/use_cases/use_case_gateway/server
-    volumes:
-      - ./src/use_cases/use_case_gateway/server:/app
+  app1:
+    build: ./src/use_cases/use_case_gateway/service_adapter
     ports:
-      - 5001:5001
+      - "5006:5000"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
     depends_on:
       - rabbitmq
+
+  app2:
+    build: ./src/use_cases/use_case_gateway/use_case
+    ports:
+      - "5007:5000"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - rabbitmq
+      - app1
 
   react:
     build: ./src/client/react_js_app
