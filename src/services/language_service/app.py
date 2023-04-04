@@ -26,10 +26,8 @@ def detect_intent_from_text(project_id, session_id, text):
     fulfillment_text = response.query_result.fulfillment_text
     intent = response.query_result.intent.display_name
     confidence = response.query_result.intent_detection_confidence
-    date_time = response.query_result.parameters.get('date-time')
-
-
-
+    date_time = response.query_result.parameters.get("date-time")
+    location = response.query_result.parameters.get("location")
     return fulfillment_text, intent, confidence, date_time
 
 # Initialize the Flask application
@@ -38,7 +36,7 @@ app = Flask(__name__)
 # Route for handling transcript submission requests
 @app.route('/submit_transcript', methods=['GET', 'POST'])
 def submit_transcript():
-    data = "Can you give me a rundown of today's news"
+    data = "Can you tell me about the news from yesterday in berlin"
     transcript = data 
     try:
         intent = detect_intent_from_text("capitan-382017", create_session_id(), transcript)
