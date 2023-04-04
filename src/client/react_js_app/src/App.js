@@ -19,8 +19,8 @@ export function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/preferences" element={<PreferencesPage />} />
         <Route path="/registersuccess" element={<RegistrationSuccess />} />
+        <Route path ="/rabbit" element={<RabbitMqConsumer/>}/>
         <Route path="*"  element={<NotFound />}/>
-
       </Routes>
   )
 }

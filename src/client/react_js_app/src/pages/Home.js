@@ -69,6 +69,7 @@ export function Home() {
         console.error(error);
       });
   };
+  
 
   //STT and TTS
   const handleTextChange = (event) => {
