@@ -1,6 +1,6 @@
 import './Home.css';
 import logo from '../resources/cAPItan_Logo.jpg';
-import React, { useState, useEffect, useRef}  from 'react';
+import React, { useState, useEffect, useRef, sendToFrontend}  from 'react';
 
 import { Link } from 'react-router-dom';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
@@ -16,6 +16,7 @@ export function Home() {
   const [showModal, setShowModal] = useState(false);
   const [textToSpeak, setTextToSpeak] = useState('');
   const { SpeechSynthesisUtterance, speechSynthesis } = window;
+  const [message, setMessage] = useState('');
   let userid = null;
 
   useEffect(() => {
@@ -111,6 +112,15 @@ export function Home() {
       .catch(error => console.error(error));
   };
 
+  sendToFrontend(() => {
+    fetch('/send_transcript')
+      .then(response => response.json())
+      .then(data => {
+        setMessage(data.message);
+      })
+      .catch(error => console.error(error));
+  }, []);
+
   return (
     <div className="App">
       <div style={{ marginTop: "3%" }}>
@@ -194,6 +204,7 @@ export function Home() {
           <div className="record-container">
         <div >
           <textarea value={transcript} onChange={handleTextChange} className="converted-speech"></textarea>
+          <textarea value={message} onChange={handleTextChange} className="converted-speech"></textarea>
         </div>
         <div>
           <button onClick={SpeechRecognition.startListening}>Record</button>
