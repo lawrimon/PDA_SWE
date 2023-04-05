@@ -19,8 +19,10 @@ import datetime
 app = Flask(__name__)
 
 dotenv.load_dotenv()
-STOCK_MARKET_API_KEY = os.getenv("STOCK_MARKET_API_KEY")
-STOCK_MARKET_SECRET_KEY = os.getenv("STOCK_MARKET_SECRET_KEY")
+#STOCK_MARKET_API_KEY = os.getenv("STOCK_MARKET_API_KEY")
+#STOCK_MARKET_SECRET_KEY = os.getenv("STOCK_MARKET_SECRET_KEY")
+STOCK_MARKET_API_KEY="PKBR8Q6JBV1ZJIEHHWBV"
+STOCK_MARKET_SECRET_KEY="PwcPbNK9dFJ2V10Okwk3Kc2sVtO4txWnxofoy7rg"
 
 
 @app.route("/quotes")
@@ -56,7 +58,6 @@ def get_quotes():
         "APCA-API-KEY-ID": STOCK_MARKET_API_KEY,
         "APCA-API-SECRET-KEY": STOCK_MARKET_SECRET_KEY,
     }
-
     response = requests.get(url, params=params, headers=headers)
     if response.status_code != 200:
         return jsonify({"error": "Error getting quote information"}), 500
@@ -133,3 +134,8 @@ def get_news():
                     news[symbol].append(article)
 
     return jsonify(news)
+
+
+if __name__ == "__main__":
+    #app.run()
+    app.run(host='0.0.0.0', port=5001, debug=True)

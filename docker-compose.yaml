@@ -60,7 +60,7 @@ services:
     volumes:
       - ./src/services/news_service:/app
     ports:
-      - 5001:5001
+      - 5005:5000
     depends_on:
       - rabbitmq
 
@@ -69,7 +69,7 @@ services:
     volumes:
       - ./src/services/weather_service:/app
     ports:
-      - 5002:5002
+      - 5002:5000
     depends_on:
       - rabbitmq
 
@@ -96,6 +96,6 @@ services:
     volumes:
       - ./src/services/stock_market_service:/app
     ports:
-      - 5005:5005
+      - 5001:5000
     depends_on:
       - rabbitmq

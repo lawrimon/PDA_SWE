@@ -15,9 +15,10 @@ import dotenv
 import os
 
 dotenv.load_dotenv()
-WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
-
+#WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
+WEATHER_API_KEY="83a537aa155edeac4a863aece6dd5147"
 app = Flask(__name__)
+
 
 
 @app.route("/weather")
@@ -58,4 +59,5 @@ def get_weather():
 
 
 if __name__ == "__main__":
-    app.run()
+    #app.run()
+    app.run(host='0.0.0.0', port=5002, debug=True)

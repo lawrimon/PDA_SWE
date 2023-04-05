@@ -21,55 +21,59 @@ def get_weather():
     TODO:
     Implement UserID Logic to get User Location
     '''
-    user_location = {"lat":"3232", "lon":"32323"}
+    user_location = {"lat":"50", "lon":"30"}
     params = {
         "lat": user_location["lat"],
         "lon": user_location["lon"]
     }
     url = f"http://127.0.0.1:5002/weather"
-
     response = requests.get(url, params)
     if response.status_code != 200:
         jsonify({"error": "Error getting weather information"}), 500
 
     data = response.json()
-
-    max_temp = data["list"]["temp"]["max"]
-    min_temp = data["list"]["temp"]["min"]
-    description = data["list"]["weather"]["description"]
+    print(data)
     
-    Answer = "The maximum temperature today is" + max_temp + "and the minimum temperature is " + min_temp + ". The weather today is looking like" + description
+    max_temp = data["list"][0]["temp"]["max"]
+    min_temp = data["list"][0]["temp"]["min"]
+    description = data["list"][0]["weather"][0]["description"]
+    
+    Answer = "The maximum temperature today is " + str(max_temp) + "and the minimum temperature is " + str(min_temp) + " . The weather today is looking like " + description
     
     print(Answer)
     return Answer
 
 
-def get_news(user_pref):
+def get_news():
     
-    url = f"http://127.0.0.1:5001/tagesschau/homepage"
-
+    url = f"http://127.0.0.1:5005/tagesschau/homepage"
 
     response = requests.get(url)
     if response.status_code != 200:
         jsonify({"error": "Error getting weather information"}), 500
 
     data = response.json()
-
+    compromised_data = []
     print(data)
+    compromised_data.append(data[0]["Summary"]) 
+    compromised_data.append(data[1]["Summary"]) 
 
-    return data
+    Answer = "These are the headline storys for the day : " + str(compromised_data[0]) + " Nächster Artikel " + str(compromised_data[1]) 
+
+    return Answer
 
 def get_stocks():
     
-    symbol_list = ["IBM","MSFT","GOOG"]
-    url = "http://127.0.0.1:5005/quotes" 
+    symbol_list = ["IBM,MSFT,GOOG"]
+    url = "http://127.0.0.1:5001/quotes" 
+
     params = {
         "symbols": symbol_list
     }
     
     response = requests.get(url ,params)
     if response.status_code != 200:
-        jsonify({"error": "Error getting weather information"}), 500
+        jsonify({"error": "Error getting weather information"}), 500  
 
     data = response.json()
     print(data)
@@ -80,13 +84,14 @@ def get_stocks():
 
 @app.route("/scuttlebutt")
 def get_scuttlebutt():
+    print("lol")
     news = get_news()
     print("news----",news)
     weather = get_weather()
     print("weather----",weather)
     stocks = get_stocks()
-    print("stocks----",weather)
-    
+    print("stocks----",stocks)
+
 
     return jsonify(news, weather, stocks)
   
