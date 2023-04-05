@@ -82,10 +82,10 @@ export function Home() {
       return; 
     }
     console.log("in handlespeak")
-    await sendToFrontend()
-    await setMessage("sus")
+    let answer = await sendToFrontend()
+    setMessage(answer)
 
-    
+
     console.log("messagi",message)
     const utterance = new SpeechSynthesisUtterance(message);
     utterance.rate = 0.9;
@@ -123,7 +123,7 @@ export function Home() {
     const data = await response.json();
     console.log("this data",data.toString())
     if(data){
-      setMessage(data)
+      return data
     }
   };
 
