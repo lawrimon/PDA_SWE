@@ -88,14 +88,13 @@ export function Home() {
 
     console.log("messagi",message)
     const utterance = new SpeechSynthesisUtterance(message);
-    utterance.rate = 0.9;
+    utterance.rate = 1;
     utterance.pitch = 1;
     var voices = window.speechSynthesis.getVoices();
     utterance.voice = voices[15];
     utterance.lang = 'en-US'; 
     speechSynthesis.speak(utterance);
-    
-    SpeechRecognition.startListening()
+  
   };
 
   const { transcript, resetTranscript } = useSpeechRecognition({
@@ -132,10 +131,6 @@ export function Home() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ transcript: transcript, moreInfo: false })
         };
-        fetch('/scuttlebutt/additional', requestOptions)
-          .then(response => response.json())
-          .then(data => console.log(data))
-          .catch(error => console.error(error));
       }
     }
   };
