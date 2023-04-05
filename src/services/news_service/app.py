@@ -192,3 +192,8 @@ def invalid_tagesschau_parameters(args):
         return True
 
     return False
+
+
+if __name__ == "__main__":
+    # app.run()
+    app.run(host="0.0.0.0", port=5005, debug=True)

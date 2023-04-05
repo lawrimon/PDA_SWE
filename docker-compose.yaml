@@ -16,7 +16,7 @@ services:
   db:
     build: ./src/database/
     ports:
-      - "5000:5000"
+      - "5009:5000"
     depends_on:
       - redis
     environment:
@@ -60,16 +60,19 @@ services:
     volumes:
       - ./src/services/news_service:/app
     ports:
-      - 5001:5001
+      - 5005:5000
     depends_on:
       - rabbitmq
 
   weather:
+    env_file: .env
+    environment:
+      WEATHER_API_KEY: ${WEATHER_API_KEY}
     build: ./src/services/weather_service
     volumes:
       - ./src/services/weather_service:/app
     ports:
-      - 5002:5002
+      - 5002:5000
     depends_on:
       - rabbitmq
 
@@ -92,10 +95,26 @@ services:
       - rabbitmq
 
   stockmarket:
+    env_file: .env
+    environment:
+      STOCK_MARKET_API_KEY: ${STOCK_MARKET_API_KEY}
+      STOCK_MARKET_SECRET_KEY: ${STOCK_MARKET_SECRET_KEY}
     build: ./src/services/stock_market_service
     volumes:
       - ./src/services/stock_market_service:/app
     ports:
-      - 5005:5005
+      - 5001:5000
     depends_on:
+      - rabbitmq
+
+  scuttlebutt:
+    build: ./src/use_cases/scuttlebutt
+    volumes:
+      - ./src/use_cases/scuttlebutt:/app
+    ports:
+      - 5008:5000
+    depends_on:
+      - stockmarket
+      - news
+      - weather
       - rabbitmq

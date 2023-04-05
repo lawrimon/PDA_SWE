@@ -16,7 +16,6 @@ import os
 
 dotenv.load_dotenv()
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
-
 app = Flask(__name__)
 
 
@@ -58,4 +57,5 @@ def get_weather():
 
 
 if __name__ == "__main__":
-    app.run()
+    # app.run()
+    app.run(host="0.0.0.0", port=5002, debug=True)
