@@ -52,6 +52,9 @@ def get_news():
     compromised_data = []
     compromised_data.append(data[0]["Summary"])
     compromised_data.append(data[1]["Summary"])
+    compromised_data.append(data[2]["Summary"])
+    compromised_data.append(data[3]["Summary"])
+
 
     translator = Translator()
 
@@ -66,8 +69,8 @@ def get_news():
     german_text = compromised_data[3]
     compromised_data[3] = translator.translate(german_text, src='de', dest='en').text
 
-    more_news.append(data[2]["Summary"])
-    more_news.append(data[3]["Summary"])
+    more_news.append(compromised_data[2])
+    more_news.append(compromised_data[3])
 
 
     Answer = (
