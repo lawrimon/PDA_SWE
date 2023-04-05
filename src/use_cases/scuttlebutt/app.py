@@ -1,8 +1,8 @@
 from flask import Flask, jsonify, request
-import requests
+import requests, flask_cors
 
 app = Flask(__name__)
-
+flask_cors.CORS(app)
 
 def get_weather():
     """

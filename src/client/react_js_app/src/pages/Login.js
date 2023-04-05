@@ -109,7 +109,6 @@ function LoginPage() {
         });
     };
     
-  
 
   function handlePasswordChange(event) {
     setPassword(event.target.value);
