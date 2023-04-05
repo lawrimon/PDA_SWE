@@ -81,7 +81,7 @@ export function Home() {
     if (speechSynthesis.speaking) {
       return; 
     }
-    const utterance = new SpeechSynthesisUtterance(transcript);
+    const utterance = new SpeechSynthesisUtterance(message);
     utterance.rate = 0.9;
     utterance.pitch = 1;
     var voices = window.speechSynthesis.getVoices();
