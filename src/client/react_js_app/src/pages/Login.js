@@ -77,6 +77,14 @@ function LoginPage() {
     return coord
      }
 
+     async function handleLocationSubmit(event) {
+      await pushUserLocation()
+      getUserPref();
+      localStorage.setItem('user_id', userIdRef.current);
+      console.log(userIdRef.current)
+      window.location.href = '/'
+    }
+
   function pushUserLocation(){
      let lat = user_location.latitude
      let lon =  user_location.longitude
@@ -123,13 +131,8 @@ function LoginPage() {
             console.log("ref", userIdRef.current);
             setUserId(userIdRef.current);
             console.log("User_id", getUserId());}}})
-            .then(pushUserLocation())
-         
-              getUserPref();
-              console.log("lol");
-              localStorage.setItem('user_id', userIdRef.current);
-              console.log(userIdRef.current)
-              //window.location.href = '/';
+            handleLocationSubmit()
+              
       .catch(error => {
         console.error(error);
       });
