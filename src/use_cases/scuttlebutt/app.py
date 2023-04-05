@@ -1,5 +1,7 @@
 from flask import Flask, jsonify, request
 import requests, flask_cors
+from googletrans import Translator
+
 
 app = Flask(__name__)
 flask_cors.CORS(app)
@@ -48,11 +50,19 @@ def get_news():
     compromised_data.append(data[0]["Summary"])
     compromised_data.append(data[1]["Summary"])
 
+    translator = Translator()
+    german_text = compromised_data[0]
+    compromised_data[0] = translator.translate(german_text, src='de', dest='en').text
+    german_text = compromised_data[1]
+    compromised_data[1] = translator.translate(german_text, src='de', dest='en').text
+
+
     Answer = (
         "These are the headline storys for the day : "
         + str(compromised_data[0])
-        + " Nächster Artikel "
+        + " Here is your next Article: "
         + str(compromised_data[1])
+        
     )
 
     return Answer
@@ -109,7 +119,7 @@ def get_scuttlebutt():
     # stocks = get_stocks()
     # print("stocks----",stocks)
 
-    return jsonify(news, weather, stock_news)
+    return jsonify(news, weather, stock_news, "Thank you for listening. Do you want any additional information? ")
 
 
 if __name__ == "__main__":

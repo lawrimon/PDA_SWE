@@ -94,6 +94,8 @@ export function Home() {
     utterance.voice = voices[15];
     utterance.lang = 'en-US'; 
     speechSynthesis.speak(utterance);
+
+    //SpeechRecognition.startListening()
   };
 
   const { transcript, resetTranscript } = useSpeechRecognition({
