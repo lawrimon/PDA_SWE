@@ -94,8 +94,8 @@ export function Home() {
     utterance.voice = voices[15];
     utterance.lang = 'en-US'; 
     speechSynthesis.speak(utterance);
-
-    //SpeechRecognition.startListening()
+    
+    SpeechRecognition.startListening()
   };
 
   const { transcript, resetTranscript } = useSpeechRecognition({
@@ -109,6 +109,12 @@ export function Home() {
   }
 
   const sendTranscript = () => {
+    if(transcript == "No") {
+      setMessage("Alright, have a nice day!");
+      return null;
+    } else {
+      console.log("provide more information");
+    }
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
