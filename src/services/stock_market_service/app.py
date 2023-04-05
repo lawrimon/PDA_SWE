@@ -22,6 +22,7 @@ dotenv.load_dotenv()
 STOCK_MARKET_API_KEY = os.getenv("STOCK_MARKET_API_KEY")
 STOCK_MARKET_SECRET_KEY = os.getenv("STOCK_MARKET_SECRET_KEY")
 
+
 @app.route("/quotes")
 def get_quotes():
     """Quotes endpoint.
@@ -134,5 +135,5 @@ def get_news():
 
 
 if __name__ == "__main__":
-    #app.run()
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    # app.run()
+    app.run(host="0.0.0.0", port=5001, debug=True)

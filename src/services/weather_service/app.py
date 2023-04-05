@@ -19,7 +19,6 @@ WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 app = Flask(__name__)
 
 
-
 @app.route("/weather")
 def get_weather():
     """Weather information endpoint.
@@ -58,5 +57,5 @@ def get_weather():
 
 
 if __name__ == "__main__":
-    #app.run()
-    app.run(host='0.0.0.0', port=5002, debug=True)
+    # app.run()
+    app.run(host="0.0.0.0", port=5002, debug=True)
