@@ -1,6 +1,6 @@
 import './Home.css';
 import logo from '../resources/cAPItan_Logo.jpg';
-import React, { useState, useEffect, useRef, sendToFrontend}  from 'react';
+import React, { useState, useEffect, useRef}  from 'react';
 
 import { Link } from 'react-router-dom';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
@@ -77,10 +77,16 @@ export function Home() {
     setTextToSpeak(event.target.value);
   };
 
-  const handleSpeak = () => {
+  async function handleSpeak () {
     if (speechSynthesis.speaking) {
       return; 
     }
+    console.log("in handlespeak")
+    let answer = await sendToFrontend()
+    setMessage(answer)
+
+
+    console.log("messagi",message)
     const utterance = new SpeechSynthesisUtterance(message);
     utterance.rate = 0.9;
     utterance.pitch = 1;
@@ -112,14 +118,14 @@ export function Home() {
       .catch(error => console.error(error));
   };
 
-  sendToFrontend(() => {
-    fetch('/send_transcript')
-      .then(response => response.json())
-      .then(data => {
-        setMessage(data.message);
-      })
-      .catch(error => console.error(error));
-  }, []);
+  async function sendToFrontend () {
+    const response = await fetch('http://127.0.0.1:5008/scuttlebutt')
+    const data = await response.json();
+    console.log("this data",data.toString())
+    if(data){
+      return data
+    }
+  };
 
   return (
     <div className="App">
