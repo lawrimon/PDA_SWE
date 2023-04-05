@@ -113,18 +113,33 @@ export function Home() {
       setMessage("Alright, have a nice day!");
       return null;
     } else {
-      console.log("provide more information");
+      if (transcript.toLowerCase() === "yes") {
+        console.log("provide more information");
+        transcript += "";
+        const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transcript: transcript, moreInfo: true })
+        };
+        fetch('/submit_transcript', requestOptions)
+          .then(response => response.json())
+          .then(data => console.log(data))
+          .catch(error => console.error(error));
+      } else {
+        console.log("User did not request more information.");
+        const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transcript: transcript, moreInfo: false })
+        };
+        fetch('/submit_transcript', requestOptions)
+          .then(response => response.json())
+          .then(data => console.log(data))
+          .catch(error => console.error(error));
+      }
     }
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ transcript: transcript })
-    };
-    fetch('/submit_transcript', requestOptions)
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .catch(error => console.error(error));
   };
+  
 
   async function sendToFrontend () {
     const response = await fetch('http://127.0.0.1:5008/scuttlebutt')
