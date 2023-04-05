@@ -59,6 +59,7 @@ def get_quotes():
         "APCA-API-SECRET-KEY": STOCK_MARKET_SECRET_KEY,
     }
     response = requests.get(url, params=params, headers=headers)
+    print(response.json())
     if response.status_code != 200:
         return jsonify({"error": "Error getting quote information"}), 500
 

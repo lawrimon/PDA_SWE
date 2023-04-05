@@ -38,7 +38,7 @@ def get_weather():
     min_temp = data["list"][0]["temp"]["min"]
     description = data["list"][0]["weather"][0]["description"]
     
-    Answer = "The maximum temperature today is " + str(max_temp) + "and the minimum temperature is " + str(min_temp) + " . The weather today is looking like " + description
+    Answer = "The maximum temperature today is " + str(max_temp) + " and the minimum temperature is " + str(min_temp) + " . The weather today is looking like " + description
     
     print(Answer)
     return Answer
@@ -64,16 +64,17 @@ def get_news():
 
 def get_stocks():
     
-    symbol_list = ["IBM,MSFT,GOOG"]
+    symbols = ["IBM,MSFT,GOOG"]
+    
     url = "http://127.0.0.1:5001/quotes" 
 
     params = {
-        "symbols": symbol_list
+        "symbols": symbols
     }
     
     response = requests.get(url ,params)
     if response.status_code != 200:
-        jsonify({"error": "Error getting weather information"}), 500  
+        jsonify({"error": "Error getting stock service information"}), 500  
 
     data = response.json()
     print(data)
