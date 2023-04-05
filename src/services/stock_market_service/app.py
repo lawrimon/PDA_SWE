@@ -19,11 +19,8 @@ import datetime
 app = Flask(__name__)
 
 dotenv.load_dotenv()
-#STOCK_MARKET_API_KEY = os.getenv("STOCK_MARKET_API_KEY")
-#STOCK_MARKET_SECRET_KEY = os.getenv("STOCK_MARKET_SECRET_KEY")
-STOCK_MARKET_API_KEY="PKBR8Q6JBV1ZJIEHHWBV"
-STOCK_MARKET_SECRET_KEY="PwcPbNK9dFJ2V10Okwk3Kc2sVtO4txWnxofoy7rg"
-
+STOCK_MARKET_API_KEY = os.getenv("STOCK_MARKET_API_KEY")
+STOCK_MARKET_SECRET_KEY = os.getenv("STOCK_MARKET_SECRET_KEY")
 
 @app.route("/quotes")
 def get_quotes():

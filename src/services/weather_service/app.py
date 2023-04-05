@@ -15,8 +15,7 @@ import dotenv
 import os
 
 dotenv.load_dotenv()
-#WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
-WEATHER_API_KEY="83a537aa155edeac4a863aece6dd5147"
+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 app = Flask(__name__)
 
 
