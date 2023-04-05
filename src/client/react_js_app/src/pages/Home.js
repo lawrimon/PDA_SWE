@@ -109,7 +109,7 @@ export function Home() {
   }
 
   const sendTranscript = () => {
-    if(transcript == "No") {
+    if(transcript.toLowerCase() == "no") {
       setMessage("Alright, have a nice day!");
       return null;
     } else {
@@ -121,7 +121,7 @@ export function Home() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ transcript: transcript, moreInfo: true })
         };
-        fetch('/submit_transcript', requestOptions)
+        fetch('/scuttlebutt/additional', requestOptions)
           .then(response => response.json())
           .then(data => console.log(data))
           .catch(error => console.error(error));
@@ -132,7 +132,7 @@ export function Home() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ transcript: transcript, moreInfo: false })
         };
-        fetch('/submit_transcript', requestOptions)
+        fetch('/scuttlebutt/additional', requestOptions)
           .then(response => response.json())
           .then(data => console.log(data))
           .catch(error => console.error(error));
