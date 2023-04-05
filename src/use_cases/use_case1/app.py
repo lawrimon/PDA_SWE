@@ -81,7 +81,26 @@ def get_stocks():
 
     return data
 
+def get_stock_news():
+    
+    symbols = ["IBM,MSFT,GOOG"]
+    
+    url = "http://127.0.0.1:5001/news"
 
+    params = {
+        "symbols": symbols
+    }
+
+    response = requests.get(url ,params)
+    if response.status_code != 200:
+        jsonify({"error": "Error getting stock news information"}), 500
+
+    data = response.json()
+    print(data)
+
+    answer = "These are the latest news for the stocks you are interested in : " + data[symbols.split(",")[0]][0]["headline"] + " " + data[symbols.split(",")[0]][0]["summary"]
+
+    return answer
 
 @app.route("/scuttlebutt")
 def get_scuttlebutt():
@@ -90,11 +109,13 @@ def get_scuttlebutt():
     print("news----",news)
     weather = get_weather()
     print("weather----",weather)
-    stocks = get_stocks()
-    print("stocks----",stocks)
+    stock_news = get_stock_news()
+    print("stock_news----",stock_news)
+    #stocks = get_stocks()
+    #print("stocks----",stocks)
 
 
-    return jsonify(news, weather, stocks)
+    return jsonify(news, weather, stock_news)
   
   
 
