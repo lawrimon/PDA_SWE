@@ -101,8 +101,71 @@ export function Home() {
     utterance.voice = voices[15];
     utterance.lang = 'en-US'; 
     speechSynthesis.speak(utterance);
+
+
   }
   
+  
+
+  async function say_scuttlebutt2() {
+    let val = ""
+    try {
+      const text = await handleSpeak();
+      console.log(text, "is the message then");
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      var voices = window.speechSynthesis.getVoices();
+      utterance.voice = voices[15];
+      utterance.lang = 'en-US';
+  
+      await new Promise((resolve, reject) => {
+        utterance.onend = resolve;
+        utterance.onerror = reject;
+        speechSynthesis.speak(utterance);
+      });
+  
+      console.log("After speak");
+  
+      const recognition = new window.webkitSpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.start();
+  
+      console.log("Listening...");
+  
+      // Wait for 3 seconds before stopping the recognition
+      setTimeout(() => {
+        recognition.stop();
+        console.log("Stopped listening");
+        console.log(transcript," is the transcript");
+
+        recognition.onresult = function(event) {
+          const transcript2 = event.results[0][0].transcript;
+          console.log(transcript2," is the transcript");
+          if (transcript2 !== ""){
+            recognition.onend = function() {
+              console.log('Speech recognition service disconnected');
+              console.log(transcript2," is the transcript right before");
+    
+              say_additional(transcript2);
+    
+            };
+          }
+        };  
+      }, 5000);
+  
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  
+  
+  
+  
+  
+  
+  
+    
   
 
   function timeout(delay) {
@@ -119,12 +182,15 @@ export function Home() {
     return null;
   }
 
-  async function sendTranscript() {
+
+  async function sendTranscript(trans2) {
     let text = "";
-    if (transcript.toLowerCase() === "no") {
+    console.log("transcript in sendTranscript",trans2)
+   
+    if (trans2.toLowerCase() === "no") {
       setMessage("Alright, have a nice day!");
       return null;
-    } else if (transcript.toLowerCase() === "yes") {
+    } else if (trans2.toLowerCase() === "yes") {
       console.log("provide more information");
       try {
         const response = await fetch('http://127.0.0.1:5008/scuttlebutt/additional');
@@ -142,8 +208,8 @@ export function Home() {
     }
   }
   
-  async function say_additional() {
-    const text = await sendTranscript();
+  async function say_additional(trans2) {
+    const text = await sendTranscript(trans2);
     console.log(text, "is the message then")
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 1;
@@ -191,6 +257,12 @@ export function Home() {
             <div className="notification-icon">
 
             <button type="button" onClick={Logout} className="settings-button">&#10149;</button>           
+            </div>  
+            </div>
+            <div className="">
+            <div className="notification-icon">
+
+            <button type="button" onClick={say_scuttlebutt2} className="settings-button">&#x2603;</button>           
             </div>  
             </div>
           </div>
@@ -255,7 +327,7 @@ export function Home() {
         <div>
           <button onClick={SpeechRecognition.startListening}>Record</button>
           <button onClick={SpeechRecognition.stopListening}>Stop</button>
-          <button onClick={say_scuttlebutt}>Speak</button>
+          <button onClick={say_scuttlebutt2}>Speak</button>
           <button onClick={say_additional}>Submit</button>
         </div>
       </div>
