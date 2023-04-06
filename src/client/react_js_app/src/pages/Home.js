@@ -77,25 +77,37 @@ export function Home() {
     setTextToSpeak(event.target.value);
   };
 
-  async function handleSpeak () {
+  async function handleSpeak() {
     if (speechSynthesis.speaking) {
       return; 
     }
-    console.log("in handlespeak")
-    let answer = await sendToFrontend()
-    setMessage(answer)
+    console.log("in handlespeak");
+  
+    // Wait for sendToFrontend to complete and return a value
+    const answer = await sendToFrontend();
+    console.log("answer:", answer);
+    // Wait for setMessage to complete and then call SpeechSynthesisUtterance
+    await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
+    return answer  
+  };
 
-
-    console.log("messagi",message)
-    const utterance = new SpeechSynthesisUtterance(message);
+  async function say_scuttlebutt(){
+    const text = await handleSpeak();
+    console.log(text, "is the message then")
+    const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 1;
     utterance.pitch = 1;
     var voices = window.speechSynthesis.getVoices();
     utterance.voice = voices[15];
     utterance.lang = 'en-US'; 
     speechSynthesis.speak(utterance);
+  }
   
-  };
+  
+
+  function timeout(delay) {
+    return new Promise( res => setTimeout(res, delay) );
+}
 
   const { transcript, resetTranscript } = useSpeechRecognition({
     continuous: true,
@@ -107,33 +119,42 @@ export function Home() {
     return null;
   }
 
-  const sendTranscript = () => {
-    if(transcript.toLowerCase() == "no") {
+  async function sendTranscript() {
+    let text = "";
+    if (transcript.toLowerCase() === "no") {
       setMessage("Alright, have a nice day!");
       return null;
-    } else {
-      if (transcript.toLowerCase() === "yes") {
-        console.log("provide more information");
-        transcript += "";
-        const requestOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ transcript: transcript, moreInfo: true })
-        };
-        fetch('/scuttlebutt/additional', requestOptions)
-          .then(response => response.json())
-          .then(data => console.log(data))
-          .catch(error => console.error(error));
-      } else {
-        console.log("User did not request more information.");
-        const requestOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ transcript: transcript, moreInfo: false })
-        };
+    } else if (transcript.toLowerCase() === "yes") {
+      console.log("provide more information");
+      try {
+        const response = await fetch('http://127.0.0.1:5008/scuttlebutt/additional');
+        const data = await response.json();
+        text = data[0].toString() + data[1].toString();
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 2 seconds
+        setMessage(text);
+        console.log(message, "messsssagio");
+        return text;
+      } catch (error) {
+        console.error(error);
       }
+    } else {
+      console.log("User did not request more information.");
     }
-  };
+  }
+  
+  async function say_additional() {
+    const text = await sendTranscript();
+    console.log(text, "is the message then")
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    var voices = window.speechSynthesis.getVoices();
+    utterance.voice = voices[15];
+    utterance.lang = 'en-US'; 
+    speechSynthesis.speak(utterance);
+  }
+  
+  
   
 
   async function sendToFrontend () {
@@ -141,6 +162,7 @@ export function Home() {
     const data = await response.json();
     console.log("this data",data.toString())
     if(data){
+      setMessage(data)
       return data
     }
   };
@@ -233,8 +255,8 @@ export function Home() {
         <div>
           <button onClick={SpeechRecognition.startListening}>Record</button>
           <button onClick={SpeechRecognition.stopListening}>Stop</button>
-          <button onClick={handleSpeak}>Speak</button>
-          <button onClick={sendTranscript}>Submit</button>
+          <button onClick={say_scuttlebutt}>Speak</button>
+          <button onClick={say_additional}>Submit</button>
         </div>
       </div>
       </div>
