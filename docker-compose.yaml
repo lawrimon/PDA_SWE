@@ -86,11 +86,15 @@ services:
       - rabbitmq
 
   wisdom:
+    env_file: .env
+    environment:
+      NINJAS_API_KEY: ${NINJAS_API_KEY}
+      NASA_API_KEY: ${NASA_API_KEY}
     build: ./src/services/wisdom_service
     volumes:
       - ./src/services/wisdom_service:/app
     ports:
-      - 5004:5004
+      - 5004:5000
     depends_on:
       - rabbitmq
 
@@ -117,4 +121,15 @@ services:
       - stockmarket
       - news
       - weather
+      - rabbitmq
+
+  
+  shoreleave:
+    build: ./src/use_cases/shoreleave
+    volumes:
+      - ./src/use_cases/shoreleave:/app
+    ports:
+      - 5009:5000
+    depends_on:
+      - wisdom
       - rabbitmq
