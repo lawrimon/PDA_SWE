@@ -77,24 +77,100 @@ export function Home() {
     setTextToSpeak(event.target.value);
   };
 
-  async function handleSpeak () {
+  async function handleSpeak() {
     if (speechSynthesis.speaking) {
       return; 
     }
-    console.log("in handlespeak")
-    let answer = await sendToFrontend()
-    setMessage(answer)
+    console.log("in handlespeak");
+  
+    // Wait for sendToFrontend to complete and return a value
+    const answer = await sendToFrontend();
+    console.log("answer:", answer);
+    // Wait for setMessage to complete and then call SpeechSynthesisUtterance
+    await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
+    return answer  
+  };
 
-
-    console.log("messagi",message)
-    const utterance = new SpeechSynthesisUtterance(message);
-    utterance.rate = 0.9;
+  async function say_scuttlebutt(){
+    const text = await handleSpeak();
+    console.log(text, "is the message then")
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1;
     utterance.pitch = 1;
     var voices = window.speechSynthesis.getVoices();
     utterance.voice = voices[15];
     utterance.lang = 'en-US'; 
     speechSynthesis.speak(utterance);
-  };
+
+
+  }
+  
+  
+
+  async function say_scuttlebutt2() {
+    let val = ""
+    try {
+      const text = await handleSpeak();
+      console.log(text, "is the message then");
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      var voices = window.speechSynthesis.getVoices();
+      utterance.voice = voices[15];
+      utterance.lang = 'en-US';
+  
+      await new Promise((resolve, reject) => {
+        utterance.onend = resolve;
+        utterance.onerror = reject;
+        speechSynthesis.speak(utterance);
+      });
+  
+      console.log("After speak");
+  
+      const recognition = new window.webkitSpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.start();
+  
+      console.log("Listening...");
+  
+      // Wait for 3 seconds before stopping the recognition
+      setTimeout(() => {
+        recognition.stop();
+        console.log("Stopped listening");
+        console.log(transcript," is the transcript");
+
+        recognition.onresult = function(event) {
+          const transcript2 = event.results[0][0].transcript;
+          console.log(transcript2," is the transcript");
+          if (transcript2 !== ""){
+            recognition.onend = function() {
+              console.log('Speech recognition service disconnected');
+              console.log(transcript2," is the transcript right before");
+    
+              say_additional(transcript2);
+    
+            };
+          }
+        };  
+      }, 5000);
+  
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  
+  
+  
+  
+  
+  
+  
+    
+  
+
+  function timeout(delay) {
+    return new Promise( res => setTimeout(res, delay) );
+}
 
   const { transcript, resetTranscript } = useSpeechRecognition({
     continuous: true,
@@ -106,23 +182,53 @@ export function Home() {
     return null;
   }
 
-  const sendTranscript = () => {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ transcript: transcript })
-    };
-    fetch('/submit_transcript', requestOptions)
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .catch(error => console.error(error));
-  };
+
+  async function sendTranscript(trans2) {
+    let text = "";
+    console.log("transcript in sendTranscript",trans2)
+   
+    if (trans2.toLowerCase() === "no") {
+      setMessage("Alright, have a nice day!");
+      return null;
+    } else if (trans2.toLowerCase() === "yes") {
+      console.log("provide more information");
+      try {
+        const response = await fetch('http://127.0.0.1:5008/scuttlebutt/additional');
+        const data = await response.json();
+        text = data[0].toString() + data[1].toString();
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 2 seconds
+        setMessage(text);
+        console.log(message, "messsssagio");
+        return text;
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      console.log("User did not request more information.");
+    }
+  }
+  
+  async function say_additional(trans2) {
+    const text = await sendTranscript(trans2);
+    console.log(text, "is the message then")
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    var voices = window.speechSynthesis.getVoices();
+    utterance.voice = voices[15];
+    utterance.lang = 'en-US'; 
+    speechSynthesis.speak(utterance);
+  }
+  
+  
+  
 
   async function sendToFrontend () {
     const response = await fetch('http://127.0.0.1:5008/scuttlebutt')
     const data = await response.json();
     console.log("this data",data.toString())
     if(data){
+      setMessage(data)
       return data
     }
   };
@@ -151,6 +257,12 @@ export function Home() {
             <div className="notification-icon">
 
             <button type="button" onClick={Logout} className="settings-button">&#10149;</button>           
+            </div>  
+            </div>
+            <div className="">
+            <div className="notification-icon">
+
+            <button type="button" onClick={say_scuttlebutt2} className="settings-button">&#x2603;</button>           
             </div>  
             </div>
           </div>
@@ -215,8 +327,8 @@ export function Home() {
         <div>
           <button onClick={SpeechRecognition.startListening}>Record</button>
           <button onClick={SpeechRecognition.stopListening}>Stop</button>
-          <button onClick={handleSpeak}>Speak</button>
-          <button onClick={sendTranscript}>Submit</button>
+          <button onClick={say_scuttlebutt2}>Speak</button>
+          <button onClick={say_additional}>Submit</button>
         </div>
       </div>
       </div>

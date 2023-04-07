@@ -1,8 +1,13 @@
 from flask import Flask, jsonify, request
 import requests, flask_cors
+from googletrans import Translator
+
 
 app = Flask(__name__)
 flask_cors.CORS(app)
+
+more_stocks = []
+more_news = []
 
 
 def get_weather():
@@ -47,12 +52,33 @@ def get_news():
     compromised_data = []
     compromised_data.append(data[0]["Summary"])
     compromised_data.append(data[1]["Summary"])
+    compromised_data.append(data[2]["Summary"])
+    compromised_data.append(data[3]["Summary"])
+
+
+    translator = Translator()
+
+    german_text = compromised_data[0]
+    compromised_data[0] = translator.translate(german_text, src='de', dest='en').text
+    german_text = compromised_data[1]
+    compromised_data[1] = translator.translate(german_text, src='de', dest='en').text
+
+
+    german_text = compromised_data[2]
+    compromised_data[2] = translator.translate(german_text, src='de', dest='en').text
+    german_text = compromised_data[3]
+    compromised_data[3] = translator.translate(german_text, src='de', dest='en').text
+
+    more_news.append(compromised_data[2])
+    more_news.append(compromised_data[3])
+
 
     Answer = (
         "These are the headline storys for the day : "
         + str(compromised_data[0])
-        + " Nächster Artikel "
+        + " Here is your next Article: "
         + str(compromised_data[1])
+        
     )
 
     return Answer
@@ -109,7 +135,17 @@ def get_scuttlebutt():
     # stocks = get_stocks()
     # print("stocks----",stocks)
 
-    return jsonify(news, weather, stock_news)
+    return jsonify(news, weather, stock_news, "Thank you for listening. Do you want any additional information? ")
+
+
+
+@app.route("/scuttlebutt/additional")
+def get_more_scuttlebutt():
+    print("lol")
+    news = more_news
+    print("news----", news)
+
+    return jsonify(news)
 
 
 if __name__ == "__main__":
