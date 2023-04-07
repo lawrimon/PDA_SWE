@@ -55,30 +55,26 @@ def get_news():
     compromised_data.append(data[2]["Summary"])
     compromised_data.append(data[3]["Summary"])
 
-
     translator = Translator()
 
     german_text = compromised_data[0]
-    compromised_data[0] = translator.translate(german_text, src='de', dest='en').text
+    compromised_data[0] = translator.translate(german_text, src="de", dest="en").text
     german_text = compromised_data[1]
-    compromised_data[1] = translator.translate(german_text, src='de', dest='en').text
-
+    compromised_data[1] = translator.translate(german_text, src="de", dest="en").text
 
     german_text = compromised_data[2]
-    compromised_data[2] = translator.translate(german_text, src='de', dest='en').text
+    compromised_data[2] = translator.translate(german_text, src="de", dest="en").text
     german_text = compromised_data[3]
-    compromised_data[3] = translator.translate(german_text, src='de', dest='en').text
+    compromised_data[3] = translator.translate(german_text, src="de", dest="en").text
 
     more_news.append(compromised_data[2])
     more_news.append(compromised_data[3])
-
 
     Answer = (
         "These are the headline storys for the day : "
         + str(compromised_data[0])
         + " Here is your next Article: "
         + str(compromised_data[1])
-        
     )
 
     return Answer
@@ -135,8 +131,12 @@ def get_scuttlebutt():
     # stocks = get_stocks()
     # print("stocks----",stocks)
 
-    return jsonify(news, weather, stock_news, "Thank you for listening. Do you want any additional information? ")
-
+    return jsonify(
+        news,
+        weather,
+        stock_news,
+        "Thank you for listening. Do you want any additional information? ",
+    )
 
 
 @app.route("/scuttlebutt/additional")
