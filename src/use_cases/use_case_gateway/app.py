@@ -25,6 +25,7 @@ channel = None
 connection = None
 RABBITMQ_HOST = "rabbitmq"
 
+
 # listen for acknowledge from client
 @socketio.on("ack")
 def acknowledge_message(data):
@@ -36,7 +37,7 @@ def acknowledge_message(data):
         if channel is not None:
             channel.basic_ack(delivery_tag=delivery_tag)
             print("Delivery_tag: " + str(delivery_tag))
-        else: 
+        else:
             print("channel not found for ACK!")
 
 
@@ -54,7 +55,7 @@ def on_message(user_id, message, delivery_tag):
 @socketio.on("connect")
 def on_connect():
     print("Connected! " + request.sid)
-    global connection 
+    global connection
     connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST))
 
 
@@ -63,7 +64,7 @@ def on_connect():
 def on_start(data):
     try:
         # Declare the queue for the current user
-        user_id = data.get('user_id')
+        user_id = data.get("user_id")
         print("user_id: " + user_id)
         room_id = user_id
         join_room(room_id)
@@ -72,15 +73,23 @@ def on_start(data):
         if connection is not None:
             channel = connection.channel()
             # Declare the exchange for the notifications
-            channel.exchange_declare(exchange='notifications', exchange_type='direct')
+            channel.exchange_declare(exchange="notifications", exchange_type="direct")
             channel.queue_declare(queue=user_id)
-            channel.queue_bind(exchange='notifications', queue=user_id, routing_key=user_id)
+            channel.queue_bind(
+                exchange="notifications", queue=user_id, routing_key=user_id
+            )
             # Set prefetch count to 1 to only consume one message at a time
             channel.basic_qos(prefetch_count=1)
 
             print("Starts Consuming")
             # Start consuming messages from the user's queue
-            channel.basic_consume(queue=user_id, on_message_callback=lambda ch, method, properties, body: on_message(user_id, body.decode('utf-8'), method.delivery_tag), auto_ack=False)
+            channel.basic_consume(
+                queue=user_id,
+                on_message_callback=lambda ch, method, properties, body: on_message(
+                    user_id, body.decode("utf-8"), method.delivery_tag
+                ),
+                auto_ack=False,
+            )
             channel.start_consuming()
         else:
             print("Error: connection not established!")
@@ -98,7 +107,7 @@ def on_start(data):
 def on_disconnect():
     try:
         print("Disconnected! " + request.sid)
-        global channel 
+        global channel
         global connection
         if (channel is not None) and channel.is_open:
             channel.stop_consuming()
@@ -108,11 +117,12 @@ def on_disconnect():
     except Exception as e:
         print("Exception occurred: ", e)
 
+
 # Define a SocketIO event handler for when the server shuts down
 @socketio.on("shutdown")
 def on_shutdown():
     print("Shutting down...")
-    global channel 
+    global channel
     global connection
     if (channel is not None) and channel.is_open:
         channel.stop_consuming()
