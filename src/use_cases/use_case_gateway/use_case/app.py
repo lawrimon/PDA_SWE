@@ -20,6 +20,7 @@ users = ["user1", "user2", "user3"]
 
 ENDPOINT = "http://data_source:5000"
 
+
 def get_user_location(user_id):
     """
     This function retrieves the location of a user by calling the App1 API.
