@@ -9,15 +9,12 @@ eventlet.monkey_patch()
 
 import pika
 
-# # Import the RabbitMQ client library, patched to work with eventlet
-# pika = eventlet.import_patched('pika')
-
 # Turn off the multiple-reader check in eventlet's hub (not sure why)
 eventlet.debug.hub_prevent_multiple_readers(False)
 
 # Create the Flask app and configure it
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
+app.config["SECRET_KEY"] = "secret!"
 
 # Create the SocketIO server and allow CORS requests from any origin
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -31,7 +28,7 @@ RABBITMQ_HOST = "localhost"
 # listen for acknowledge from client
 @socketio.on("ack")
 def acknowledge_message(data):
-    delivery_tag = data.get('delivery_tag')
+    delivery_tag = data.get("delivery_tag")
 
     if delivery_tag:
         # Acknowledge the message processing to RabbitMQ
@@ -42,10 +39,16 @@ def acknowledge_message(data):
         else: 
             print("channel not found for ACK!")
 
+
 # Define a function to emit a message to a user's SocketIO room
 def on_message(user_id, message, delivery_tag):
     print("Message emitted: " + message + " " + user_id)
-    emit('message', {'user_id': user_id, 'message': message, "delivery_tag":delivery_tag}, room=user_id)
+    emit(
+        "message",
+        {"user_id": user_id, "message": message, "delivery_tag": delivery_tag},
+        room=user_id,
+    )
+
 
 # Define a SocketIO event handler for when a user connects
 @socketio.on("connect")
@@ -54,8 +57,9 @@ def on_connect():
     global connection 
     connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST))
 
+
 # Define a SocketIO event handler for when a user starts a conversation
-@socketio.on('start')
+@socketio.on("start")
 def on_start(data):
     try:
         # Declare the queue for the current user
@@ -88,8 +92,9 @@ def on_start(data):
         if connection is not None and connection.is_open:
             connection.close()
 
+
 # Define a SocketIO event handler for when a user disconnects
-@socketio.on('disconnect')
+@socketio.on("disconnect")
 def on_disconnect():
     try:
         print("Disconnected! " + request.sid)
@@ -115,6 +120,7 @@ def on_shutdown():
     if (connection is not None) and connection.is_open:
         connection.close()
 
+
 # Run the app
-if __name__ == '__main__':
-    socketio.run(app, debug=True, host='0.0.0.0', port=5010)
+if __name__ == "__main__":
+    socketio.run(app, debug=True, host="0.0.0.0", port=5010)
