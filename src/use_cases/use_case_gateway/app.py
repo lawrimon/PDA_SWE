@@ -23,7 +23,7 @@ CORS(app)
 # Set up the RabbitMQ connection and channel
 channel = None
 connection = None
-RABBITMQ_HOST = "localhost"
+RABBITMQ_HOST = "rabbitmq"
 
 # listen for acknowledge from client
 @socketio.on("ack")
