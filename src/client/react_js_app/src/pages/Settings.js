@@ -189,11 +189,6 @@ export function Settings() {
               <input type="email" value={username} onChange={handleUsernameChange} />
             </label>
             <br />
-            <label>
-              <h4>Password </h4>
-              <input type="password" value={password} onChange={handlePasswordChange} />
-            </label>
-            <br />
             <h4>Favorite Football Club </h4>
             <Select
               closeMenuOnSelect={false}

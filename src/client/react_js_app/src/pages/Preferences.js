@@ -109,54 +109,47 @@ function PreferencesPage() {
     setPassword(event.target.value);
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    uploadSubmit()
-    user_pref = []
+    await uploadSubmit();
     setUserPreferences([user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link, user_news])
-    //window.location.href = '/registersuccess';
+    window.location.href = '/registersuccess';
+  }
+  
+    
+    
     // handle login request
 
-  }
 
-  const uploadSubmit = () => {
+  const uploadSubmit = async () => {
     console.log("handle triggered")
     console.log(useridRef.current)
-    fetch('http://localhost:5000/users/'+useridRef.current, {
-      method: 'PUT',
-      body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString()}),
-      headers: { 'Content-Type': 'application/json' },
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log("lol")
-        if (data) {
-          console.log(data)
-          console.log("success preferences saved")
-        }
-        else {
-          console.log("Error");
-        }
-      })
-      .catch(error => {
-        console.error(error);
+    try {
+      const response = await fetch('http://localhost:5000/users/'+useridRef.current, {
+        method: 'PUT',
+        body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString()}),
+        headers: { 'Content-Type': 'application/json' },
       });
+      const data = await response.json();
+      console.log("lol")
+      if (data) {
+        console.log(data)
+        console.log("success preferences saved")
+        return data
+      }
+      else {
+        console.log("Error");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
+  
 
   return (
     <div className="pref-container">
       <form onSubmit={handleSubmit} className="pref-form">
         <h1>Preferences</h1>
-        <label>
-          Username:
-          <input type="username" value={username} onChange={handleUsernameChange} />
-        </label>
-        <br />
-        <label>
-          Password:
-          <input type="password" value={password} onChange={handlePasswordChange} />
-        </label>
-        <br />
        <h4>Favorite Football Club </h4>
           <Select
             closeMenuOnSelect={false}
