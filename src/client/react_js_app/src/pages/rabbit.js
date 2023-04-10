@@ -1,5 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
+
+
+// have a look at localhost:3000/rabbit
+// Just connect to the socket via ENDPOINT and subscribe to the queue with user_id via the "start" event
+// Managing connections is crucial, so you should definitely try to close each connection (see below)
+
 
 const ENDPOINT = 'http://localhost:5010/';
 
@@ -54,14 +60,14 @@ function RabbitMqConsumer() {
         socketRef.current = null;
       }
     };
-  }, []);
+  },[]);
 
   // Function to acknowledge a message
   const handleAcknowledge = (deliveryTag) => {
+
+    try {
     // Check if the delivery tag is a valid integer
-    if (isNaN(deliveryTag)) {
-      console.error('Invalid delivery tag:', deliveryTag);
-    } else {
+    if (deliveryTag) {
       // Acknowledge Message by emitting 'ack' event with delivery_tag
       socketRef.current.emit('ack', { delivery_tag: deliveryTag });
 
@@ -69,6 +75,11 @@ function RabbitMqConsumer() {
       setMessages((prevMessages) => {
         return prevMessages.filter((message) => message.delivery_tag !== deliveryTag);
       });
+    } else {
+      console.error('Invalid delivery tag:', deliveryTag);
+    }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -82,7 +93,9 @@ function RabbitMqConsumer() {
   // Function to handle queue name submission
   const handleQueueNameSubmit = (event) => {
     // Acknowledge the first message in the current queue before switching queues (cosmetics)
+    if(messages.length > 0){
     handleAcknowledge(messages[0].delivery_tag);
+    }
     event.preventDefault();
 
     // Disconnect from current socket room
