@@ -6,14 +6,17 @@ import pika
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
+
 RABBITMQ_HOST = "rabbitmq"
 
 # Mock users
 users = ["user1", "user2", "user3"]
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST))
-channel = connection.channel()
-channel.exchange_declare(exchange='notifications', exchange_type='direct')
+# to get all users in production have a look at the "/allusers" Endpoint in database app.py
+# something like: allUsers = requests.get("http://db/allUsers")
+
+#Rabbitmq: have a look at localhost:1572
+# use notification exchange like shown below, just change body and routing_key
 
 ENDPOINT = "http://data_source:5000"
 
@@ -87,7 +90,9 @@ def notify_users():
     interfere with any appointments of the user. If the requirements are met, it
     publishes the event to a RabbitMQ queue.
     """
-    
+    connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST))
+    channel = connection.channel()
+    channel.exchange_declare(exchange='notifications', exchange_type='direct')
 
     for user_id in users:
         channel.queue_declare(queue=user_id)
@@ -103,10 +108,11 @@ def notify_users():
                     # convert the event object to a string before publishing
                     event_str = json.dumps(event)
                     # publish the event to the queue
-                    
                     channel.basic_publish(exchange="notifications", routing_key=user_id, body=event_str)
+    channel.close()
+    connection.close()
 
-
+# publish every 7 seconds
 scheduler = BackgroundScheduler(daemon=True)
 scheduler.add_job(func=notify_users, trigger="interval", seconds=7)
 scheduler.start()

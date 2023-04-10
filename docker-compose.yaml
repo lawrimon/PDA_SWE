@@ -47,6 +47,7 @@ services:
     depends_on:
       - rabbitmq
       - data_source
+    restart: on-failure
     
   websocket:
     build: ./src/use_cases/use_case_gateway
@@ -56,6 +57,7 @@ services:
       - RABBITMQ_HOST=rabbitmq
     depends_on:
       - rabbitmq
+    restart: on-failure
 
   react:
     build: ./src/client/react_js_app
