@@ -9,6 +9,7 @@ use_mock = True
 
 # Fetch data from external API
 location_data = {"latitude": 37.7749, "longitude": -122.4194}
+
 event_data = [
     {"name": "Music Festival", "time": "2023-05-01T12:00:00.000000Z"},
     {"name": "Art Exhibition", "time": "2023-05-02T10:00:00.000000Z"},
