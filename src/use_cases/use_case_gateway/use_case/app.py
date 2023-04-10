@@ -13,9 +13,10 @@ users = ["user1", "user2", "user3"]
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST))
 channel = connection.channel()
-channel.exchange_declare(exchange='notifications', exchange_type='direct')
+channel.exchange_declare(exchange="notifications", exchange_type="direct")
 
 ENDPOINT = "http://data_source:5000"
+
 
 def get_user_location(user_id):
     """
@@ -87,7 +88,6 @@ def notify_users():
     interfere with any appointments of the user. If the requirements are met, it
     publishes the event to a RabbitMQ queue.
     """
-    
 
     for user_id in users:
         channel.queue_declare(queue=user_id)
@@ -103,8 +103,10 @@ def notify_users():
                     # convert the event object to a string before publishing
                     event_str = json.dumps(event)
                     # publish the event to the queue
-                    
-                    channel.basic_publish(exchange="notifications", routing_key=user_id, body=event_str)
+
+                    channel.basic_publish(
+                        exchange="notifications", routing_key=user_id, body=event_str
+                    )
 
 
 scheduler = BackgroundScheduler(daemon=True)
