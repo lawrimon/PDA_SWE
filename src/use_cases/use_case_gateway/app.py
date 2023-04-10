@@ -59,13 +59,14 @@ def on_message(user_id, message, delivery_tag):
 # Define a SocketIO event handler for when a user connects
 @socketio.on("connect")
 def on_connect():
-    print("Connected!")
+    print("Connected! " + request.sid)
 
 # Define a SocketIO event handler for when a user starts a conversation
 @socketio.on('start')
 def on_start(data):
     # Declare the queue for the current user
     user_id = data.get('user_id')
+    print("user_id: " + user_id)
     room_id = user_id
     join_room(room_id)
     global channel
@@ -85,7 +86,7 @@ def on_start(data):
 # Define a SocketIO event handler for when a user disconnects
 @socketio.on('disconnect')
 def on_disconnect():
-    print("Disconnected!")
+    print("Disconnected! " + request.sid)
     global channel 
     if channel is not None:
         channel.stop_consuming()
