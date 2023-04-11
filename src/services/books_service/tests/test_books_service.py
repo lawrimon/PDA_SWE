@@ -27,4 +27,14 @@ def test_get_books(client, genre, expected_status_code, expected_error):
         data = response.json
         assert "error" in data
         assert data["error"] == expected_error
+    else:
+        data = response.json
+        assert len(data) > 0
+        assert isinstance(data[0]["title"], str)
+        assert isinstance(data[0]["author"], str)
+        assert isinstance(data[0]["description"], str)
+        assert isinstance(data[0]["rank"], int)
+        assert isinstance(data[0]["weeks_on_list"], int)
+        assert isinstance(data[0]["publisher"], str)
+
     
