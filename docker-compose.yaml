@@ -152,6 +152,18 @@ services:
     depends_on:
       - rabbitmq
 
+  coding:
+    env_file: .env
+    environment:
+      CODING_API_KEY: ${CODING_API_KEY}
+    build: ./src/services/coding_service
+    volumes:
+      - ./src/services/coding_service:/app
+    ports:
+      - 5013:5000
+    depends_on:
+      - rabbitmq
+
   scuttlebutt:
     build: ./src/use_cases/scuttlebutt
     volumes:
