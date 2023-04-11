@@ -91,6 +91,9 @@ services:
       - rabbitmq
 
   maps:
+    env_file: .env
+    environment:
+      MAPS_API_KEY: ${MAPS_API_KEY}
     build: ./src/services/maps_service
     volumes:
       - ./src/services/maps_service:/app
@@ -100,6 +103,10 @@ services:
       - rabbitmq
 
   wisdom:
+    env_file: .env
+    environment:
+      NINJAS_API_KEY: ${NINJAS_API_KEY}
+      NASA_API_KEY: ${NASA_API_KEY}
     build: ./src/services/wisdom_service
     volumes:
       - ./src/services/wisdom_service:/app
@@ -130,6 +137,18 @@ services:
       - ./src/services/books_service:/app
     ports:
       - 5011:5000
+    depends_on:
+      - rabbitmq
+
+  sports:
+    env_file: .env
+    environment:
+      SPORTS_API_KEY: ${SPORTS_API_KEY}
+    build: ./src/services/sports_service
+    volumes:
+      - ./src/services/sports_service:/app
+    ports:
+      - 5012:5000
     depends_on:
       - rabbitmq
 
