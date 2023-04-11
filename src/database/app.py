@@ -28,6 +28,7 @@ allowed_keys = [
     "calendar_link",
     "news",
     "location",
+    "books",
 ]
 
 

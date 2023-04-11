@@ -145,9 +145,12 @@ def get_nytimes():
 
     topic = request.args.get("topic")
 
-    url = f"https://api.nytimes.com/svc/topstories/v2/{topic}.json?api-key={NYTIMES_API_KEY}"
+    url = f"https://api.nytimes.com/svc/topstories/v2/{topic}.json"
+    params = {
+        "api-key": NYTIMES_API_KEY,
+    }
 
-    response = requests.get(url)
+    response = requests.get(url, params=params)
     if response.status_code != 200 or (
         response.status_code == 200 and "errorcode" in response.json()
     ):
