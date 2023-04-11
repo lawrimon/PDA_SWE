@@ -107,20 +107,13 @@ def get_events_location():
         event_list = data["_embedded"]["events"]
         print("here")
         for i in event_list:
-            print("here2")
-            #print("thats data i", i)
             try: 
-                print(i["name"])
-                print(i["dates"]["start"]["localDate"])
-                print(i["classifications"][0]["segment"]["name"])
-                print(str(i["priceRanges"][0]["min"]))
-                print(i["name"] + " "+ i["dates"]["start"]["localDate"] + " " + i["classifications"][0]["segment"]["name"] + " " + str(i["priceRanges"][0]["min"]))
-
-                event = i["name"] + " "+ i["dates"]["start"]["localDate"] + " " + i["classifications"][0]["segment"]["name"] + " " + str(i["priceRanges"][0]["min"])
+                event = {"name" :i["name"], 
+                         "date" :i["dates"]["start"]["localDate"], 
+                         "topic": i["classifications"][0]["segment"]["name"],
+                          "price" : str(i["priceRanges"][0]["min"]), 
+                          "location" : i["_embedded"]["venues"][0]["city"]["name"]}
                 events.append(event)
-                print(event)
-                #print("event", event)
-                print("appended")
             except:
                 pass
         return events
@@ -180,7 +173,11 @@ def get_events_artists():
             event_list = data["_embedded"]["events"]
             for i in event_list:
                 
-                event = i["name"] + " "+ i["dates"]["start"]["localDate"] + " " + i["classifications"][0]["segment"]["name"] + " " + str(i["priceRanges"][0]["min"]) + " " +i["_embedded"]["venues"][0]["city"]["name"]
+                event = {"name" :i["name"], 
+                         "date" :i["dates"]["start"]["localDate"], 
+                         "topic": i["classifications"][0]["segment"]["name"],
+                          "price" : str(i["priceRanges"][0]["min"]), 
+                          "location" : i["_embedded"]["venues"][0]["city"]["name"]}
                 events.append(event)
 
         return events
@@ -228,7 +225,11 @@ def get_events():
             data = response.json()
             event_list = data["_embedded"]["events"]
             for i in event_list:
-                event = i["name"] + " "+ i["dates"]["start"]["localDate"] + " " + i["classifications"][0]["segment"]["name"] + " " + str(i["priceRanges"][0]["min"]) + " " +i["_embedded"]["venues"][0]["city"]["name"]
+                event = {"name" :i["name"], 
+                         "date" :i["dates"]["start"]["localDate"], 
+                         "topic": i["classifications"][0]["segment"]["name"],
+                          "price" : str(i["priceRanges"][0]["min"]), 
+                          "location" : i["_embedded"]["venues"][0]["city"]["name"]}
                 events.append(event)
 
         return events
