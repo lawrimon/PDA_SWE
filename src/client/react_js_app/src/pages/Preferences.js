@@ -17,8 +17,8 @@ function PreferencesPage() {
   const [user_calendar_link, setCalendar] = useState("/calender/url");
   const [user_artists, setArtist] = useState(["Justin Bieber"]);
   const [user_news, setNews] = useState(["National"]);
+  const [user_books, setBooks] = useState(["Non-Fiction"]);
 
-  
   let user_pref = [];
   let userid = null;
   const soccer_options = [
@@ -63,6 +63,12 @@ function PreferencesPage() {
     { value: 'Lifestyle', label: 'Lifestyle' }
   ]
 
+  const book_options = [
+    { value: 'Non-Fiction', label: 'Non-Fiction' },
+    { value: 'Fiction', label: 'Fiction' },
+    { value: 'Miscellaneous', label: 'Miscellaneous' },
+    { value: 'Picture Books', label: 'Picture Books' }
+  ]
   const animatedComponents = makeAnimated();
 
   useEffect(() => {
@@ -97,6 +103,11 @@ function PreferencesPage() {
     setNews(selectedOptions.map(option => option.value));
   }
 
+  function handleBooks(selectedOptions) {
+    setBooks(selectedOptions.map(option => option.value));
+  }
+
+
   function handleSpotify(event) {
     setSpotify(event.target.value);
   }
@@ -127,7 +138,7 @@ function PreferencesPage() {
     try {
       const response = await fetch('http://localhost:5000/users/'+useridRef.current, {
         method: 'PUT',
-        body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString()}),
+        body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString()}),
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await response.json();
@@ -190,6 +201,17 @@ function PreferencesPage() {
             options={news_options}
             value={user_news.map(fc => ({ label: fc, value: fc }))}
             onChange={handleNews}
+          />
+        <br />
+        <br />
+        <h4>Favorite Book Topics </h4>
+          <Select
+            closeMenuOnSelect={false}
+            components={animatedComponents}
+            isMulti
+            options={book_options}
+            value={user_books.map(fc => ({ label: fc, value: fc }))}
+            onChange={handleBooks}
           />
         <br />
         <h4>Spotify Link </h4>
