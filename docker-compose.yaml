@@ -67,6 +67,9 @@ services:
       - rabbitmq 
 
   news:
+    env_file: .env
+    environment:
+      NYTIMES_API_KEY: ${NYTIMES_API_KEY}
     build: ./src/services/news_service
     volumes:
       - ./src/services/news_service:/app
@@ -115,6 +118,18 @@ services:
       - ./src/services/stock_market_service:/app
     ports:
       - 5001:5000
+    depends_on:
+      - rabbitmq
+
+  books:
+    env_file: .env
+    environment:
+      NYTIMES_API_KEY: ${NYTIMES_API_KEY}
+    build: ./src/services/books_service
+    volumes:
+      - ./src/services/books_service:/app
+    ports:
+      - 5011:5000
     depends_on:
       - rabbitmq
 

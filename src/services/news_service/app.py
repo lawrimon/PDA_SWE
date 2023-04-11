@@ -12,7 +12,6 @@ Typical endpoints usage:
 
 from flask import Flask, jsonify, request
 import requests
-from pprint import pprint
 import dotenv
 import os
 
