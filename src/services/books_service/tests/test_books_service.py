@@ -1,11 +1,13 @@
 import pytest
 from books_service.app import app
 
+
 @pytest.fixture
 def client():
     """Create a test client for the app."""
 
     return app.test_client()
+
 
 @pytest.mark.parametrize(
     "genre, expected_status_code, expected_error",
@@ -36,5 +38,3 @@ def test_get_books(client, genre, expected_status_code, expected_error):
         assert isinstance(data[0]["rank"], int)
         assert isinstance(data[0]["weeks_on_list"], int)
         assert isinstance(data[0]["publisher"], str)
-
-    

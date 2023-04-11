@@ -34,17 +34,17 @@ def get_books():
 
     if not request.args.get("genre"):
         return jsonify({"error": "Missing parameters"}), 400
-    
+
     genres = [
         "combined-print-and-e-book-fiction",
         "combined-print-and-e-book-nonfiction",
         "advice-how-to-and-miscellaneous",
         "picture-books",
-   ]
+    ]
 
     if request.args.get("genre") not in genres:
         return jsonify({"error": "Invalid parameters"}), 400
-    
+
     genre = request.args.get("genre")
 
     url = f"https://api.nytimes.com/svc/books/v3/lists.json"

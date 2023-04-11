@@ -163,7 +163,7 @@ def get_nytimes():
         if i["abstract"] is not "":
             news.append(i["abstract"])
 
-    return jsonify(news) 
+    return jsonify(news)
 
 
 def invalid_tagesschau_parameters(args):
