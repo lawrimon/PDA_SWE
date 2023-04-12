@@ -99,7 +99,7 @@ function LoginPage() {
       getUserPref();
       localStorage.setItem('user_id', userIdRef.current);
       console.log(userIdRef.current)
-      //window.location.href = '/'
+      window.location.href = '/'
     }
 
   function pushUserLocation(city){
