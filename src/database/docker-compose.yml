@@ -6,7 +6,7 @@ services:
     ports:
       - "6379:6379"
 
-  flask:
+  db:
     build: .
     ports:
       - "5000:5000"

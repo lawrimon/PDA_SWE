@@ -1,11 +1,11 @@
 import './Home.css';
-import logo from '../cAPItan_Logo.jpg';
+import logo from '../resources/cAPItan_Logo.jpg';
 import React, { useState, useEffect, useRef}  from 'react';
 
 import { Link } from 'react-router-dom';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import NotificationPopup from './Notification';
-import { getUserId,setUserId,user_id } from './User.js';
+import { getUserId,setUserId,user_id } from '../components/User.js';
 
 
 export function Home() {
@@ -16,6 +16,7 @@ export function Home() {
   const [showModal, setShowModal] = useState(false);
   const [textToSpeak, setTextToSpeak] = useState('');
   const { SpeechSynthesisUtterance, speechSynthesis } = window;
+  const [message, setMessage] = useState('');
   let userid = null;
 
   useEffect(() => {
@@ -31,7 +32,7 @@ export function Home() {
     }
   }, [getUserId()]);
 
-const toggleModal = () => setShowModal(!showModal);
+  const toggleModal = () => setShowModal(!showModal);
 
   const Logout = () => {
     console.log("Logging out!");
@@ -56,37 +57,48 @@ const toggleModal = () => setShowModal(!showModal);
   const handleSubmit = () => {
     fetch('http://141.31.86.15:8000//postText', {
       method: 'POST',
-      body: JSON.stringify({"text":text}),
+      body: JSON.stringify({ "text": text }),
       headers: { 'Content-Type': 'application/json' },
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.message) {
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
           console.log(data.message)
-      }
-    })    
-    .catch(error => {
-      console.error(error);
-    });
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
+  
 
   //STT and TTS
   const handleTextChange = (event) => {
     setTextToSpeak(event.target.value);
   };
 
-  const handleSpeak = () => {
+  async function handleSpeak () {
     if (speechSynthesis.speaking) {
       return; 
     }
-    const utterance = new SpeechSynthesisUtterance(transcript);
+    console.log("in handlespeak")
+    let answer = await sendToFrontend()
+    setMessage(answer)
+
+
+    console.log("messagi",message)
+    const utterance = new SpeechSynthesisUtterance(message);
     utterance.rate = 0.9;
     utterance.pitch = 1;
+    var voices = window.speechSynthesis.getVoices();
+    utterance.voice = voices[15];
+    utterance.lang = 'en-US'; 
     speechSynthesis.speak(utterance);
   };
 
   const { transcript, resetTranscript } = useSpeechRecognition({
-    continuous: true
+    continuous: true,
+    lang: 'en-US'
   });
 
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
@@ -106,12 +118,21 @@ const toggleModal = () => setShowModal(!showModal);
       .catch(error => console.error(error));
   };
 
+  async function sendToFrontend () {
+    const response = await fetch('http://127.0.0.1:5008/scuttlebutt')
+    const data = await response.json();
+    console.log("this data",data.toString())
+    if(data){
+      return data
+    }
+  };
+
   return (
     <div className="App">
-      <div style={{marginTop:"3%"}}>
+      <div style={{ marginTop: "3%" }}>
         <img src={logo} alt="Logo" className="logo" />
       </div>
-      <h1 style={{color:"white", paddingTop:"1%"}}>cAPItan</h1>
+      <h1 style={{ color: "white", paddingTop: "1%" }}>cAPItan</h1>
       <div className="search-container">
         <input type="text" value={text} onChange={handleChange} onClick={() => setShowPopup(false)} 
         placeholder="Search..." />
@@ -183,11 +204,13 @@ const toggleModal = () => setShowModal(!showModal);
 
             </div>
               </div>
+
             </div>
           )}
           <div className="record-container">
         <div >
           <textarea value={transcript} onChange={handleTextChange} className="converted-speech"></textarea>
+          <textarea value={message} onChange={handleTextChange} className="converted-speech"></textarea>
         </div>
         <div>
           <button onClick={SpeechRecognition.startListening}>Record</button>
