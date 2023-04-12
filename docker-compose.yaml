@@ -170,7 +170,7 @@ services:
     volumes:
       - ./src/use_cases/shoreleave:/app
     ports:
-      - 5009:5000
+      - 5013:5000
     depends_on:
       - wisdom
       - rabbitmq

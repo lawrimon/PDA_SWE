@@ -107,7 +107,6 @@ function PreferencesPage() {
     setBooks(selectedOptions.map(option => option.value));
   }
 
-
   function handleSpotify(event) {
     setSpotify(event.target.value);
   }
@@ -123,7 +122,7 @@ function PreferencesPage() {
   async function handleSubmit(event) {
     event.preventDefault();
     await uploadSubmit();
-    setUserPreferences([user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link, user_news])
+    setUserPreferences([user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link, user_news, user_books])
     window.location.href = '/registersuccess';
   }
   
@@ -136,7 +135,7 @@ function PreferencesPage() {
     console.log("handle triggered")
     console.log(useridRef.current)
     try {
-      const response = await fetch('http://localhost:5000/users/'+useridRef.current, {
+      const response = await fetch('http://localhost:5009/users/'+useridRef.current, {
         method: 'PUT',
         body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString()}),
         headers: { 'Content-Type': 'application/json' },
@@ -192,7 +191,6 @@ function PreferencesPage() {
             onChange={handleArtists}
           />
         <br />
-        <label>
         <h4>Favorite News-Topics  </h4>
           <Select
             closeMenuOnSelect={false}
@@ -216,7 +214,6 @@ function PreferencesPage() {
         <br />
         <h4>Spotify Link </h4>
           <input type="text" value={user_spotify_link} onChange={handleSpotify} />
-        </label>
         <label>
         <h4>Calendar Link  </h4>
           <input type="text" value={user_calendar_link} onChange={handleCalendar} />
