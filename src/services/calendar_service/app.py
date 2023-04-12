@@ -27,6 +27,7 @@ SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 app = Flask(__name__)
 
+
 @app.route("/calendar/getappointments")
 def get_calendar_appointments():
     """Get appointment endpoint
@@ -38,7 +39,7 @@ def get_calendar_appointments():
         requested_date: A string representing the date to filter the events by in "yyyy-mm-dd" format (optional).
 
     Returns:
-        A JSON object containing the start time and summary of each upcoming event that matches the specified filter(s). 
+        A JSON object containing the start time and summary of each upcoming event that matches the specified filter(s).
         If no events are found, returns a 404 error.
         If an error occurs while retrieving the events, returns a 500 error with a JSON object containing the error message.
     """
@@ -48,7 +49,7 @@ def get_calendar_appointments():
     user = request.args.get("user")
 
     try:
-        service = build('calendar', 'v3', credentials=creds)
+        service = build("calendar", "v3", credentials=creds)
 
         now = datetime.datetime.utcnow().isoformat() + 'Z' 
         events_result = service.events().list(calendarId='primary', timeMin=now, singleEvents=True,
@@ -73,7 +74,7 @@ def parse_username(summary, user):
 
 @app.route("/calendar/addappointment")
 def add_calendar_appointments():
-    """Calendar add appointment endpoint 
+    """Calendar add appointment endpoint
 
     Add a new appointment to the user's Google calendar.
 
@@ -99,7 +100,7 @@ def add_calendar_appointments():
     location = request.args.get("location")
     
     try:
-        service = build('calendar', 'v3', credentials=creds)
+        service = build("calendar", "v3", credentials=creds)
 
         event = {
             'summary': summary,
@@ -108,13 +109,13 @@ def add_calendar_appointments():
                 'dateTime': start_time,
                 'timeZone': 'UTC',
             },
-            'end': {
-                'dateTime': end_time,
-                'timeZone': 'UTC',
+            "end": {
+                "dateTime": end_time,
+                "timeZone": "UTC",
             },
         }
 
-        event = service.events().insert(calendarId='primary', body=event).execute()
+        event = service.events().insert(calendarId="primary", body=event).execute()
 
         return jsonify({"success": f"Event added successfully at {location}."}), 200
 
@@ -122,11 +123,9 @@ def add_calendar_appointments():
         return jsonify({"error": "An error occurred: %s" % error}), 500
 
 
-
 @app.route("/calendar/deleteappointment")
 def delete_calendar_appointments():
-
-    """Calendar delete appointment endpoint 
+    """Calendar delete appointment endpoint
     Deletes events from the primary calendar with the matching summary.
 
     Args:
@@ -144,7 +143,7 @@ def delete_calendar_appointments():
     full_summary = request.args.get("summary") + f"@{request.args.get('user')}"
 
     try:
-        service = build('calendar', 'v3', credentials=creds)
+        service = build("calendar", "v3", credentials=creds)
 
         now = datetime.datetime.utcnow().isoformat() + 'Z'  
         events_result = service.events().list(calendarId='primary', timeMin=now, maxResults=50, singleEvents=True,
@@ -155,12 +154,13 @@ def delete_calendar_appointments():
             return jsonify({"error": "No events found with summary %s" % full_summary}), 404
 
         for event in events:
-            service.events().delete(calendarId='primary', eventId=event['id']).execute()
+            service.events().delete(calendarId="primary", eventId=event["id"]).execute()
 
         return jsonify({"success": "Events with summary %s deleted successfully." % full_summary}), 200
 
     except HttpError as error:
         return jsonify({"error": "An error occurred: %s" % error}), 500
+
 
 def get_creds():
     """Retrieves the user's credentials from the token.json file or generates a new one if necessary.
@@ -171,24 +171,20 @@ def get_creds():
 
     creds = None
 
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    if os.path.exists("token.json"):
+        creds = Credentials.from_authorized_user_file("token.json", SCOPES)
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
             creds = flow.run_local_server(port=0)
 
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
-    
+
     return creds
 
 if __name__ == '__main__':
     app.run()
-
-
-

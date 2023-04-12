@@ -22,7 +22,7 @@ def add_event():
     return data
 
 #list all events for a specific user (description, location, start time, end time)
-@app.route("/example_get_events")
+@app.route("/example_get_event")
 def get_event():
     url = "http://127.0.0.1:5000/calendar/getappointments"
 
