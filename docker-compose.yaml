@@ -61,7 +61,7 @@ services:
 
   react:
     build: ./src/client/react_js_app
-    ports:        <label>
+    ports:
       - 3000:3000
     depends_on:
       - rabbitmq 
@@ -152,11 +152,11 @@ services:
     depends_on:
       - rabbitmq
 
-   events:
+  events:
     env_file: .env
     environment:
       EVENTS_API_KEY: ${EVENTS_API_KEY}
-    build: ./src/services/events_serivce
+    build: ./src/services/events_service
     volumes:
       - ./src/services/events_service:/app
     ports:
