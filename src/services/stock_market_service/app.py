@@ -1,6 +1,7 @@
 """This application is the stock market service.
 
-The maps service provides endpoints to get the latest quotes and news of a list of symbols.
+The maps service provides an endpoint to get the latest quote of a list of symbols.
+It also provides an endpoint to get the latest news of a list of symbols.
 The functionality is based on the Alpaca API.
 
 Typical endpoints usage:
@@ -55,7 +56,6 @@ def get_quotes():
         "APCA-API-KEY-ID": STOCK_MARKET_API_KEY,
         "APCA-API-SECRET-KEY": STOCK_MARKET_SECRET_KEY,
     }
-
     response = requests.get(url, params=params, headers=headers)
     if response.status_code != 200:
         return jsonify({"error": "Error getting quote information"}), 500
@@ -132,3 +132,8 @@ def get_news():
                     news[symbol].append(article)
 
     return jsonify(news)
+
+
+if __name__ == "__main__":
+    # app.run()
+    app.run(host="0.0.0.0", port=5001, debug=True)

@@ -1,6 +1,6 @@
 """This application is the wisdom service.
 
-The wisdom service provides endpoints for wisdom information like quotes, random facts and astronomy picture of the day.
+The wisdom service is a service that provides wisdom information like quotes, random facts and astronomy picture of the day.
 The quotes and random facts are based on API Ninjas. The astronomy picture of the day is based on the NASA API.
 
 Typical endpoints usage:

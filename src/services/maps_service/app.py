@@ -1,6 +1,7 @@
 """This application is the maps service.
 
-The maps service provides endpoints to get the user location and a route between two locations.
+The maps service provides an endpoint to get the current user location.
+It also provides an endpoint to get the route between a origin and a destination.
 The functionality is based on the Google Maps Platform API.
 
 Typical endpoints usage:
@@ -26,7 +27,6 @@ def get_user_location():
     """User location endpoint.
 
     This endpoint provides the current user location.
-    It does not work as intended as it will return the location of the server from where the request is made instead of the user location.
 
     Returns:
         The latitude and longitude of the current user location.

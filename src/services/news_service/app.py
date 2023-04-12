@@ -1,6 +1,6 @@
 """This application is the news service.
 
- The news service provides endpoints to get news from different sources.
+ The news service is a service that provides news information.
  The functionality is based on the Tagesschau API and the NY Times API.
 
 Typical endpoints usage:
@@ -59,7 +59,7 @@ def get_tagesschau_news():
     for info in response["news"]:
         article = {"Title": info["title"], "Summary": info["firstSentence"]}
         news.append(article)
-
+    # data = response.json()
     return jsonify(news)
 
 
@@ -191,3 +191,8 @@ def invalid_tagesschau_parameters(args):
         return True
 
     return False
+
+
+if __name__ == "__main__":
+    # app.run()
+    app.run(host="0.0.0.0", port=5005, debug=True)
