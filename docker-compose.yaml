@@ -152,7 +152,7 @@ services:
     depends_on:
       - rabbitmq
 
-   sports:
+   events:
     env_file: .env
     environment:
       EVENTS_API_KEY: ${EVENTS_API_KEY}
