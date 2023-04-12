@@ -115,15 +115,6 @@ services:
     depends_on:
       - rabbitmq
 
-  wisdom:
-    build: ./src/services/events_service
-    volumes:
-      - ./src/services/events_service:/app
-    ports:
-      - 5010:5000
-    depends_on:
-      - rabbitmq
-
   stockmarket:
     env_file: .env
     environment:
@@ -171,4 +162,15 @@ services:
       - stockmarket
       - news
       - weather
+      - rabbitmq
+
+  
+  shoreleave:
+    build: ./src/use_cases/shoreleave
+    volumes:
+      - ./src/use_cases/shoreleave:/app
+    ports:
+      - 5009:5000
+    depends_on:
+      - wisdom
       - rabbitmq
