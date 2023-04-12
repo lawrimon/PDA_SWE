@@ -52,6 +52,7 @@ function PreferencesPage() {
     { value: 'Rihanna', label: 'Rihanna' },
     { value: 'Doja Cat', label: 'Doja Cat' },
     { value: 'Helene Fischer', label: 'Helene Fischer' },
+    { value: 'Avril Lavigne', label: 'Avril Lavigne' },
   ]
 
   const news_options = [

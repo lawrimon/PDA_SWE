@@ -61,6 +61,7 @@ export function Settings() {
     { value: 'Rihanna', label: 'Rihanna' },
     { value: 'Doja Cat', label: 'Doja Cat' },
     { value: 'Helene Fischer', label: 'Helene Fischer' },
+    { value: 'Avril Lavigne', label: 'Avril Lavigne' },
   ]
 
   const news_options = [
@@ -144,12 +145,13 @@ export function Settings() {
       const pref = await getUserPreferences();
       console.log("this the pref", pref)
       setUsername(useridRef.current)
-      setFootballClub([pref.football_club])
-      setStocks([pref.stocks])
+      setFootballClub(pref.football_club.split(","))
+      setStocks(pref.stocks.split(","))
       setSpotify(pref.spotify_link)
       setCalendar(pref.calendar_link)
-      setArtist([pref.artists])
-      setBooks([pref.books])
+      setArtist(pref.artists.split(","))
+      setBooks(pref.books.split(","))
+      setNews(pref.news.split(","))
     }
 
     setUserPreferences();
@@ -167,7 +169,7 @@ export function Settings() {
     console.log("handle triggered")
     fetch('http://localhost:5009/users/' + useridRef.current, {
       method: 'PUT',
-      body: JSON.stringify({ "username": useridRef.current, "football_club": user_football_club, "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "user_stocks": user_stocks, "user_artists": user_artists, "news": user_news}),
+      body: JSON.stringify({ "username": useridRef.current, "football_club": user_football_club.join(","), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "user_stocks": user_stocks.join(","), "user_artists": user_artists.join(","), "news": user_news.join(","), "books": user_books.join(",")}),
       headers: { 'Content-Type': 'application/json' },
     })
       .then(response => response.json())

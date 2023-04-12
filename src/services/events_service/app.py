@@ -41,7 +41,6 @@ def missing_route_parameters(route_params: Dict) -> bool:
         return True
     return False
 
-
 def invalid_route_parameters(route_params: Dict) -> bool:
     """
     Returns True if any of the route params are invalid
@@ -52,7 +51,6 @@ def invalid_route_parameters(route_params: Dict) -> bool:
             return True
     return False
 
-
 def missing_query_parameters(query_params: Dict, required_params: List[str]) -> bool:
     """Returns True if required parameters are missing from the query string"""
     missing_params = [p for p in required_params if p not in query_params]
@@ -60,7 +58,6 @@ def missing_query_parameters(query_params: Dict, required_params: List[str]) -> 
         print(f"Missing query parameters: {missing_params}")
         return True
     return False
-
 
 def invalid_query_parameters(query_params: Dict, valid_params: List[str]) -> bool:
     """Returns True if any of the query params are invalid"""
@@ -205,13 +202,15 @@ def get_events():
 
     events = []
 
-    location = request.args.get("city")
+    location = request.args.get("location")
     keyword_list = request.args.get("artists")
     keyword_list = json.loads(keyword_list)
     enddate = request.args.get("enddate")
+    print(location, keyword_list, enddate)
     events = []
     try:
         for keyword in keyword_list:
+            print(keyword)
             url = f"https://app.ticketmaster.com/discovery/v2/events.json"
             params = {
                 "apikey": EVENTS_API_KEY,
