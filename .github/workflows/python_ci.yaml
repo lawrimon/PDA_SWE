@@ -28,6 +28,7 @@ env:
   WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
   SPORTS_API_KEY: ${{ secrets.SPORTS_API_KEY }}
   CODING_API_KEY: ${{ secrets.CODING_API_KEY }}
+  EVENTS_API_KEY: ${{ secrets.EVENTS_API_KEY }}
 
 jobs:
   ci:

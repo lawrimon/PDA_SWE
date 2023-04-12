@@ -61,7 +61,7 @@ services:
 
   react:
     build: ./src/client/react_js_app
-    ports:
+    ports:        <label>
       - 3000:3000
     depends_on:
       - rabbitmq 
@@ -160,7 +160,19 @@ services:
     volumes:
       - ./src/services/coding_service:/app
     ports:
-      - 5013:5000
+      - 5015:5000
+    depends_on:
+      - rabbitmq
+
+   events:
+    env_file: .env
+    environment:
+      EVENTS_API_KEY: ${EVENTS_API_KEY}
+    build: ./src/services/events_serivce
+    volumes:
+      - ./src/services/events_service:/app
+    ports:
+      - 5014:5000
     depends_on:
       - rabbitmq
 
@@ -174,4 +186,15 @@ services:
       - stockmarket
       - news
       - weather
+      - rabbitmq
+
+  
+  shoreleave:
+    build: ./src/use_cases/shoreleave
+    volumes:
+      - ./src/use_cases/shoreleave:/app
+    ports:
+      - 5013:5000
+    depends_on:
+      - wisdom
       - rabbitmq
