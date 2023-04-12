@@ -61,7 +61,7 @@ services:
 
   react:
     build: ./src/client/react_js_app
-    ports:
+    ports:        <label>
       - 3000:3000
     depends_on:
       - rabbitmq 
@@ -151,6 +151,19 @@ services:
       - 5012:5000
     depends_on:
       - rabbitmq
+
+   sports:
+    env_file: .env
+    environment:
+      EVENTS_API_KEY: ${EVENTS_API_KEY}
+    build: ./src/services/events_serivce
+    volumes:
+      - ./src/services/events_service:/app
+    ports:
+      - 5014:5000
+    depends_on:
+      - rabbitmq
+
 
   scuttlebutt:
     build: ./src/use_cases/scuttlebutt

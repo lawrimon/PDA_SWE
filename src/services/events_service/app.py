@@ -20,7 +20,7 @@ from typing import Dict, List, Optional
 app = Flask(__name__)
 
 dotenv.load_dotenv()
-EVENT_API_KEY = os.getenv("EVENT_API_KEY")
+EVENTS_API_KEY = os.getenv("EVENTS_API_KEY")
 
 def missing_route_parameters(route_params: Dict) -> bool:
     """
@@ -92,7 +92,7 @@ def get_events_location():
         
         url = f"https://app.ticketmaster.com/discovery/v2/events.json"
         params = {
-            "apikey": EVENT_API_KEY,
+            "apikey": EVENTS_API_KEY,
             "city": location,
             "endDateTime": enddate
         }
@@ -151,14 +151,14 @@ def get_events_artists():
     enddate = request.args.get("enddate")
     print(keyword_list, "keywordlist")
     print(enddate, "enddate")
-    print(EVENT_API_KEY,"APIKEY")
+    print(EVENTS_API_KEY,"APIKEY")
     events =[]
     try: 
         for keyword in keyword_list:
             print("keyword",keyword)
             url = f"https://app.ticketmaster.com/discovery/v2/events.json"
             params = {
-                "apikey": EVENT_API_KEY,
+                "apikey": EVENTS_API_KEY,
                 "keyword": keyword,
                 "endDateTime": enddate
             }
@@ -212,7 +212,7 @@ def get_events():
         for keyword in keyword_list:
             url = f"https://app.ticketmaster.com/discovery/v2/events.json"
             params = {
-                "apikey": EVENT_API_KEY,
+                "apikey": EVENTS_API_KEY,
                 "city": location,
                 "keyword": keyword,
                 "endDateTime": enddate
