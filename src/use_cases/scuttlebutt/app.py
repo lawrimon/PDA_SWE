@@ -10,12 +10,14 @@ more_stocks = []
 more_news = []
 
 
-def get_weather():
+def get_weather(coords):
     """
     TODO:
     Implement UserID Logic to get User Location
     """
-    user_location = {"lat": "50", "lon": "30"}
+    print(coords, "COOORDS")
+    user_location = {"lat": coords[0], "lon": coords[1]}
+    print("we HERE", user_location)
     params = {"lat": user_location["lat"], "lon": user_location["lon"]}
     url = f"http://weather:5000/weather"
     response = requests.get(url, params)
@@ -41,7 +43,7 @@ def get_weather():
     return Answer
 
 
-def get_news():
+def get_news(pref):
     url = f"http://news:5000/tagesschau/homepage"
 
     response = requests.get(url)
@@ -80,7 +82,7 @@ def get_news():
     return Answer
 
 
-def get_stocks():
+def get_stocks(pref):
     symbols = ["IBM,MSFT,GOOG"]
 
     url = "http://stockmarket:5000/quotes"
@@ -95,9 +97,30 @@ def get_stocks():
 
     return data
 
+def get_stock_shortcuts(company_names):
+    stocks = {
+    "Apple": "AAPL",
+    "Microsoft": "MSFT",
+    "Alphabet": "GOOG",
+    "Amazon": "AMZN",
+    "NVIDIA": "NVDA",
+    "Tesla": "TSLA",
+    "TSMC": "TSM",
+    "Ford": "F"
+}    
+    stock_shortcuts = []
+    for company_name in company_names:
+        stock_shortcuts.append(stocks.get(company_name, "Stock shortcut not found"))
+    
+    stock_shortcuts = ",".join(stock_shortcuts)
 
-def get_stock_news():
-    symbols = "MSFT,GOOG,IBM"
+    return stock_shortcuts
+
+
+def get_stock_news(pref):
+
+    symbols = get_stock_shortcuts(pref)
+    print(symbols)
 
     url = "http://stockmarket:5000/news"
 
@@ -109,24 +132,70 @@ def get_stock_news():
 
     data = response.json()
 
-    answer = (
-        "These are the latest news for the stocks you are interested in : "
-        + data[symbols.split(",")[0]][0]["headline"]
-        + " "
-        + data[symbols.split(",")[0]][0]["summary"]
-    )
+    news = []
+    # iterate over every symbol
+    for symbol in symbols.split(","):
+        # check if there is a news article for the symbol
+        if len(data[symbol]) > 0:
+            # get the first article
+            news_string = (
+                symbol + ": " + data[symbol][0]["headline"] + " " + data[symbol][0]["summary"]
+            )
+            news.append(news_string)
+
+    # if there is no news, return an empty string
+    if len(news) == 0:
+        answer = "There is no news for the stocks you are interested in."
+    else:
+        answer = "Here are the news for the stocks you are interested in: " + " ".join(news)
+
 
     return answer
 
 
+def get_user_preferences(user):
+    url = "http://db:5000/users/" + user
+
+    response = requests.get(url)
+    if response.status_code != 200:
+        jsonify({"error": "Error getting stock news information"}), 500
+
+    data = response.json()
+    print(data)
+    return data
+    
+
 @app.route("/scuttlebutt")
 def get_scuttlebutt():
-    print("lol")
-    news = get_news()
+    try: 
+        user = request.args["user"]
+    except: 
+        return jsonify("ERROR! : No User given!")
+    
+    print("-----")
+    user_pref = get_user_preferences(user)
+    
+    news_pref = user_pref["news"].split(",")
+    stock_pref = user_pref["stocks"].split(",")
+    user_coords = user_pref["coordinates"].split(",")
+    print(user_coords, "COOORDS")
+    user_location = {"lat": user_coords[0], "lon": user_coords[1]}
+    print("we HERE", user_location)
+
+    print("lol", user)
+    '''
+     user_pref = ""
+    news_pref = ""
+    user_coords = ["30,30"]
+    stock_pref = ["Apple"]
+    '''
+   
+    
+    news = get_news(news_pref)
     print("news----", news)
-    weather = get_weather()
+    weather = get_weather(user_coords)
     print("weather----", weather)
-    stock_news = get_stock_news()
+    stock_news = get_stock_news(stock_pref)
     print("stock_news----", stock_news)
     # stocks = get_stocks()
     # print("stocks----",stocks)

@@ -1,12 +1,11 @@
 import './Home.css';
 import logo from '../resources/cAPItan_Logo.jpg';
-import React, { useState, useEffect, useRef}  from 'react';
+import React, { useState, useEffect, useRef }  from 'react';
 
 import { Link } from 'react-router-dom';
-import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import NotificationPopup from './Notification';
-import { getUserId,setUserId,user_id } from '../components/User.js';
-
+import { getUserId, setUserId, user_id } from '../components/User.js';
+import { useSpeech } from '../components/SpeechFunctions';
 
 export function Home() {
   const useridRef = useRef(null);
@@ -14,16 +13,15 @@ export function Home() {
   const [text, setText] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [textToSpeak, setTextToSpeak] = useState('');
-  const { SpeechSynthesisUtterance, speechSynthesis } = window;
   const [message, setMessage] = useState('');
   let userid = null;
+  const { textToSpeak, setTextToSpeak, speak, transcript, resetTranscript } = useSpeech();
 
   useEffect(() => {
     // Call your function here
     // Retrieve the user ID from local storage
     const storedUserId = localStorage.getItem('user_id');
-    
+
     // Set the value of useridRef.current to the retrieved user ID, if it exists
     if (storedUserId) {
       useridRef.current = storedUserId;
@@ -39,7 +37,6 @@ export function Home() {
     const storedUserId = ""
     localStorage.clear()
     window.location.href = '/login';
-
   };
 
   const handleButtonClick = () => {
@@ -71,46 +68,41 @@ export function Home() {
       });
   };
   
-
   //STT and TTS
   const handleTextChange = (event) => {
     setTextToSpeak(event.target.value);
   };
 
-  async function handleSpeak() {
+
+  async function handleSpeakNew(usecase) {
+    let answer;
+    console.log("usecase", usecase)
     if (speechSynthesis.speaking) {
       return; 
     }
     console.log("in handlespeak");
-  
+
+    if (usecase === "shoreleave"){
+      const answer = await getShoreleave();
+      console.log("answer:", answer);
+      await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
+      return answer
+    }
+    else if (usecase ==="scuttlebutt"){
+      const answer = await sendToFrontend();
+      console.log("answer:", answer);
+      await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
+      return answer
+    }
     // Wait for sendToFrontend to complete and return a value
-    const answer = await sendToFrontend();
-    console.log("answer:", answer);
+   
     // Wait for setMessage to complete and then call SpeechSynthesisUtterance
-    await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
-    return answer  
   };
-
-  async function say_scuttlebutt(){
-    const text = await handleSpeak();
-    console.log(text, "is the message then")
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    var voices = window.speechSynthesis.getVoices();
-    utterance.voice = voices[15];
-    utterance.lang = 'en-US'; 
-    speechSynthesis.speak(utterance);
-
-
-  }
   
-  
-
-  async function say_scuttlebutt2() {
+  async function say_scuttlebutt() {
     let val = ""
     try {
-      const text = await handleSpeak();
+      const text = await handleSpeakNew("scuttlebutt");
       console.log(text, "is the message then");
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1;
@@ -159,29 +151,9 @@ export function Home() {
     }
   }
   
-  
-  
-  
-  
-  
-  
-    
-  
-
   function timeout(delay) {
     return new Promise( res => setTimeout(res, delay) );
 }
-
-  const { transcript, resetTranscript } = useSpeechRecognition({
-    continuous: true,
-    lang: 'en-US'
-  });
-
-  if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
-    alert("This Browser doesn't support Speech-to-Text");
-    return null;
-  }
-
 
   async function sendTranscript(trans2) {
     let text = "";
@@ -220,11 +192,8 @@ export function Home() {
     speechSynthesis.speak(utterance);
   }
   
-  
-  
-
   async function sendToFrontend () {
-    const response = await fetch('http://127.0.0.1:5008/scuttlebutt')
+    const response = await fetch('http://127.0.0.1:5008/scuttlebutt'+ useridRef.current)
     const data = await response.json();
     console.log("this data",data.toString())
     if(data){
@@ -232,6 +201,71 @@ export function Home() {
       return data
     }
   };
+
+  async function getShoreleave(){
+    const response = await fetch('http://127.0.0.1:5013/shoreleave')
+    const data = await response.json();
+    console.log("this data",data.toString())
+    if(data){
+      setMessage(data)
+      return data
+    }
+  }
+
+   async function say_shoreleave() {
+    let val = ""
+    try {
+      const text = await handleSpeakNew("shoreleave");
+      console.log(text, "is the message then");
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      var voices = window.speechSynthesis.getVoices();
+      utterance.voice = voices[15];
+      utterance.lang = 'en-US';
+  
+      await new Promise((resolve, reject) => {
+        utterance.onend = resolve;
+        utterance.onerror = reject;
+        speechSynthesis.speak(utterance);
+      });
+  
+      console.log("After speak");
+  
+      const recognition = new window.webkitSpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.start();
+  
+      console.log("Listening...");
+  
+      // Wait for 3 seconds before stopping the recognition
+      setTimeout(() => {
+        recognition.stop();
+        console.log("Stopped listening");
+        console.log(Home.transcript," is the transcript");
+
+        recognition.onresult = function(event) {
+          const transcript2 = event.results[0][0].transcript;
+          console.log(transcript2," is the transcript");
+          if (transcript2 !== ""){
+            recognition.onend = function() {
+              console.log('Speech recognition service disconnected');
+              console.log(transcript2," is the transcript right before");
+    
+              //say_additional(transcript2);
+    
+            };
+          }
+        };  
+      }, 5000);
+  
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  
+
+
 
   return (
     <div className="App">
@@ -262,7 +296,13 @@ export function Home() {
             <div className="">
             <div className="notification-icon">
 
-            <button type="button" onClick={say_scuttlebutt2} className="settings-button">&#x2603;</button>           
+            <button type="button" onClick={say_scuttlebutt} className="settings-button">&#x2603;</button>           
+            </div>  
+            </div>
+            <div className="">
+            <div className="notification-icon">
+
+            <button type="button" onClick={say_shoreleave} className="settings-button">&#128062;</button>           
             </div>  
             </div>
           </div>
@@ -325,14 +365,15 @@ export function Home() {
           <textarea value={message} onChange={handleTextChange} className="converted-speech"></textarea>
         </div>
         <div>
-          <button onClick={SpeechRecognition.startListening}>Record</button>
-          <button onClick={SpeechRecognition.stopListening}>Stop</button>
-          <button onClick={say_scuttlebutt2}>Speak</button>
+          <button onClick={console.log("lol")}>Record</button>
+          <button onClick={console.log("lol")}>Stop</button>
+          <button onClick={say_scuttlebutt}>Speak</button>
           <button onClick={say_additional}>Submit</button>
         </div>
       </div>
       </div>
   );  
-}
+ 
+} 
 
 export default Home;

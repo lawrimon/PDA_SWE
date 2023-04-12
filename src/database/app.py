@@ -29,6 +29,7 @@ allowed_keys = [
     "news",
     "location",
     "books",
+    "coordinates",
 ]
 
 

@@ -20,16 +20,17 @@ from typing import Dict, List, Optional
 app = Flask(__name__)
 
 dotenv.load_dotenv()
-EVENT_API_KEY = os.getenv("EVENT_API_KEY")
+EVENTS_API_KEY = os.getenv("EVENTS_API_KEY")
+
 
 def missing_route_parameters(route_params: Dict) -> bool:
     """
-    Returns True if required parameters are missing from the route params 
+    Returns True if required parameters are missing from the route params
     """
     required_params = {
         "/events/location": ["location", "enddate"],
         "/events/artists": ["artists", "enddate"],
-        "/events/all": ["location", "artists", "enddate"]
+        "/events/all": ["location", "artists", "enddate"],
     }
 
     route_path = request.path
@@ -70,7 +71,6 @@ def invalid_query_parameters(query_params: Dict, valid_params: List[str]) -> boo
     return False
 
 
-
 @app.route("/events/location")
 def get_events_location():
     """Event location endpoint.
@@ -88,39 +88,36 @@ def get_events_location():
 
     location = request.args.get("location")
     enddate = request.args.get("enddate")
-    try: 
-        
+    try:
         url = f"https://app.ticketmaster.com/discovery/v2/events.json"
-        params = {
-            "apikey": EVENT_API_KEY,
-            "city": location,
-            "endDateTime": enddate
-        }
+        params = {"apikey": EVENTS_API_KEY, "city": location, "endDateTime": enddate}
 
         response = requests.get(url, params=params)
         if response.status_code != 200:
-            print (response.json())
+            print(response.json())
             return jsonify({"error": "Error getting user location information"}), 500
 
         data = response.json()
-        #print(data)
+        # print(data)
         event_list = data["_embedded"]["events"]
         print("here")
         for i in event_list:
-            try: 
-                event = {"name" :i["name"], 
-                         "date" :i["dates"]["start"]["localDate"], 
-                         "topic": i["classifications"][0]["segment"]["name"],
-                          "price" : str(i["priceRanges"][0]["min"]), 
-                          "location" : i["_embedded"]["venues"][0]["city"]["name"]}
+            try:
+                event = {
+                    "name": i["name"],
+                    "date": i["dates"]["start"]["localDate"],
+                    "topic": i["classifications"][0]["segment"]["name"],
+                    "price": str(i["priceRanges"][0]["min"]),
+                    "location": i["_embedded"]["venues"][0]["city"]["name"],
+                }
                 events.append(event)
             except:
                 pass
         return events
 
-
     except Exception as e:
         print(e)
+
 
 @app.route("/events/artists")
 def get_events_artists():
@@ -130,7 +127,7 @@ def get_events_artists():
 
     Returns:
         The event information.
-    
+
 
     if missing_route_parameters(request.args):
         return jsonify({"error": "Missing parameters"}), 400
@@ -143,7 +140,7 @@ def get_events_artists():
         return jsonify({"error": "Missing route parameters"}), 400
     if invalid_route_parameters(request.args):
         return jsonify({"error": "Invalid route parameters"}), 400
-    
+
     keyword_list = request.args.get("artists")
     if keyword_list is None:
         return jsonify({"error": "Missing artists parameter"}), 400
@@ -151,40 +148,45 @@ def get_events_artists():
     enddate = request.args.get("enddate")
     print(keyword_list, "keywordlist")
     print(enddate, "enddate")
-    print(EVENT_API_KEY,"APIKEY")
-    events =[]
-    try: 
+    print(EVENTS_API_KEY, "APIKEY")
+    events = []
+    try:
         for keyword in keyword_list:
-            print("keyword",keyword)
+            print("keyword", keyword)
             url = f"https://app.ticketmaster.com/discovery/v2/events.json"
             params = {
-                "apikey": EVENT_API_KEY,
+                "apikey": EVENTS_API_KEY,
                 "keyword": keyword,
-                "endDateTime": enddate
+                "endDateTime": enddate,
             }
             print("before request")
             response = requests.get(url, params=params)
             print(response)
             if response.status_code != 200:
-                return jsonify({"error": "Error getting user location information"}), 500
+                return (
+                    jsonify({"error": "Error getting user location information"}),
+                    500,
+                )
             print("lol")
             data = response.json()
-            print("this data",data)
+            print("this data", data)
             event_list = data["_embedded"]["events"]
             for i in event_list:
-                
-                event = {"name" :i["name"], 
-                         "date" :i["dates"]["start"]["localDate"], 
-                         "topic": i["classifications"][0]["segment"]["name"],
-                          "price" : str(i["priceRanges"][0]["min"]), 
-                          "location" : i["_embedded"]["venues"][0]["city"]["name"]}
+                event = {
+                    "name": i["name"],
+                    "date": i["dates"]["start"]["localDate"],
+                    "topic": i["classifications"][0]["segment"]["name"],
+                    "price": str(i["priceRanges"][0]["min"]),
+                    "location": i["_embedded"]["venues"][0]["city"]["name"],
+                }
                 events.append(event)
 
         return events
 
-    except Exception as e:  
+    except Exception as e:
         print(e)
         return None
+
 
 @app.route("/events/all")
 def get_events():
@@ -194,7 +196,7 @@ def get_events():
 
     Returns:
         Events based on preferences
-   
+
     """
     if missing_route_parameters(request.args):
         return jsonify({"error": "Missing route parameters"}), 400
@@ -207,41 +209,42 @@ def get_events():
     keyword_list = request.args.get("artists")
     keyword_list = json.loads(keyword_list)
     enddate = request.args.get("enddate")
-    events =[]
-    try: 
+    events = []
+    try:
         for keyword in keyword_list:
             url = f"https://app.ticketmaster.com/discovery/v2/events.json"
             params = {
-                "apikey": EVENT_API_KEY,
+                "apikey": EVENTS_API_KEY,
                 "city": location,
                 "keyword": keyword,
-                "endDateTime": enddate
+                "endDateTime": enddate,
             }
 
             response = requests.get(url, params=params)
             if response.status_code != 200:
-                return jsonify({"error": "Error getting user location information"}), 500
+                return (
+                    jsonify({"error": "Error getting user location information"}),
+                    500,
+                )
 
             data = response.json()
             event_list = data["_embedded"]["events"]
             for i in event_list:
-                event = {"name" :i["name"], 
-                         "date" :i["dates"]["start"]["localDate"], 
-                         "topic": i["classifications"][0]["segment"]["name"],
-                          "price" : str(i["priceRanges"][0]["min"]), 
-                          "location" : i["_embedded"]["venues"][0]["city"]["name"]}
+                event = {
+                    "name": i["name"],
+                    "date": i["dates"]["start"]["localDate"],
+                    "topic": i["classifications"][0]["segment"]["name"],
+                    "price": str(i["priceRanges"][0]["min"]),
+                    "location": i["_embedded"]["venues"][0]["city"]["name"],
+                }
                 events.append(event)
 
         return events
 
-    except Exception as e:  
+    except Exception as e:
         print(e)
         return jsonify({"error": "Error getting user location information"}), 500
 
 
 if __name__ == "__main__":
-    # app.run()
-    app.run(host="0.0.0.0", port=5010, debug=True)
-
-
-
+    app.run(host="0.0.0.0", port=5014, debug=True)
