@@ -1,11 +1,13 @@
 import pytest
 from coding_service.app import app
 
+
 @pytest.fixture
 def client():
     """Create a test client for the app."""
 
     return app.test_client()
+
 
 @pytest.mark.parametrize(
     "username, expected_status_code, expected_error",
@@ -35,4 +37,3 @@ def test_get_issues(client, username, expected_status_code, expected_error):
             assert isinstance(data[0]["updated_at"], str)
         else:
             assert data == []
-

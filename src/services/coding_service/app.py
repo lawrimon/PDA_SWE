@@ -19,22 +19,23 @@ app = Flask(__name__)
 dotenv.load_dotenv()
 CODING_API_KEY = os.getenv("CODING_API_KEY")
 
+
 @app.route("/issues")
 def get_issues():
     """Issues endpoint.
-    
+
     This endpoint provides the open issues assigned to a user.
-    
+
     Args:
         username: The username of the user. Only one username can be selected.
-        
+
     Returns:
         Information about the open issues assigned to the user.
     """
 
     if not request.args.get("username"):
         return jsonify({"error": "Missing parameters"}), 400
-    
+
     # check if user exists
     check_user_url = f"https://api.github.com/users/{request.args.get('username')}"
     check_user_headers = {
