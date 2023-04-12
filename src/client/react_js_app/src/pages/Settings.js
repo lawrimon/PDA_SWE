@@ -19,6 +19,7 @@ export function Settings() {
   const [user_calendar_link, setCalendar] = useState("/calender/url");
   const [user_artists, setArtist] = useState(["Justin Bieber"]);
   const [user_news, setNews] = useState(["National"]);
+  const [user_books, setBooks] = useState(["Non-Fiction"]);
 
   let user_pref = []
 
@@ -71,6 +72,13 @@ export function Settings() {
     { value: 'Lifestyle', label: 'Lifestyle' }
   ]
 
+  const book_options = [
+    { value: 'Non-Fiction', label: 'Non-Fiction' },
+    { value: 'Fiction', label: 'Fiction' },
+    { value: 'Miscellaneous', label: 'Miscellaneous' },
+    { value: 'Picture Books', label: 'Picture Books' }
+  ]
+
   const handleSave = (event) => {
     event.preventDefault();
     // save settings data here
@@ -82,6 +90,10 @@ export function Settings() {
 
   function handleNews(selectedOptions) {
     setNews(selectedOptions.map(option => option.value));
+  }
+
+  function handleBooks(selectedOptions) {
+    setBooks(selectedOptions.map(option => option.value));
   }
 
   function handleFootball(selectedOptions) {
@@ -137,6 +149,7 @@ export function Settings() {
       setSpotify(pref.spotify_link)
       setCalendar(pref.calendar_link)
       setArtist([pref.artists])
+      setBooks([pref.books])
     }
 
     setUserPreferences();
@@ -145,7 +158,7 @@ export function Settings() {
   
 
   const TestToggle = () => {
-    console.log(JSON.stringify({ "username": useridRef.current, "football_club": user_football_club, "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "user_stocks": user_stocks, "user_artists": user_artists }),
+    console.log(JSON.stringify({ "username": useridRef.current, "football_club": user_football_club, "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "user_stocks": user_stocks, "user_artists": user_artists, "user_books": user_books }),
     )
   }
 
@@ -228,6 +241,16 @@ export function Settings() {
             options={news_options}
             value={user_news.map(fc => ({ label: fc, value: fc }))}
             onChange={handleNews}
+          />
+        <br />
+        <h4>Favorite Book-Topics  </h4>
+          <Select
+            closeMenuOnSelect={false}
+            components={animatedComponents}
+            isMulti
+            options={book_options}
+            value={user_books.map(fc => ({ label: fc, value: fc }))}
+            onChange={handleBooks}
           />
         <br />
             <label>
