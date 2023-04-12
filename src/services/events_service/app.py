@@ -41,6 +41,7 @@ def missing_route_parameters(route_params: Dict) -> bool:
         return True
     return False
 
+
 def invalid_route_parameters(route_params: Dict) -> bool:
     """
     Returns True if any of the route params are invalid
@@ -51,6 +52,7 @@ def invalid_route_parameters(route_params: Dict) -> bool:
             return True
     return False
 
+
 def missing_query_parameters(query_params: Dict, required_params: List[str]) -> bool:
     """Returns True if required parameters are missing from the query string"""
     missing_params = [p for p in required_params if p not in query_params]
@@ -58,6 +60,7 @@ def missing_query_parameters(query_params: Dict, required_params: List[str]) -> 
         print(f"Missing query parameters: {missing_params}")
         return True
     return False
+
 
 def invalid_query_parameters(query_params: Dict, valid_params: List[str]) -> bool:
     """Returns True if any of the query params are invalid"""
