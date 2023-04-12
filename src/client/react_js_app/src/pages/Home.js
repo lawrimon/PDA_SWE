@@ -193,7 +193,7 @@ export function Home() {
   }
   
   async function sendToFrontend () {
-    const response = await fetch('http://127.0.0.1:5008/scuttlebutt')
+    const response = await fetch('http://127.0.0.1:5008/scuttlebutt'+ useridRef.current)
     const data = await response.json();
     console.log("this data",data.toString())
     if(data){
