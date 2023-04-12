@@ -140,6 +140,9 @@ def get_lookout():
     events = get_events(location_pref, artist_pref, enddate)
     sports = get_sports(football_shortcuts, footbal_pref)
 
+    if not events:
+        events = "No events found."
+
     lookout_string = (
         "We have following events based on your favorite artists: "
         + events
