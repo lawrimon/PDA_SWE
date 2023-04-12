@@ -59,7 +59,6 @@ def get_tagesschau_news():
         article = {"Title": info["title"], "Summary": info["firstSentence"]}
         news.append(article)
     # data = response.json()
-
     return jsonify(news)
 
 
