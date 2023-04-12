@@ -97,28 +97,28 @@ def get_stocks(pref):
 
     return data
 
+
 def get_stock_shortcuts(company_names):
     stocks = {
-    "Apple": "AAPL",
-    "Microsoft": "MSFT",
-    "Alphabet": "GOOG",
-    "Amazon": "AMZN",
-    "NVIDIA": "NVDA",
-    "Tesla": "TSLA",
-    "TSMC": "TSM",
-    "Ford": "F"
-}    
+        "Apple": "AAPL",
+        "Microsoft": "MSFT",
+        "Alphabet": "GOOG",
+        "Amazon": "AMZN",
+        "NVIDIA": "NVDA",
+        "Tesla": "TSLA",
+        "TSMC": "TSM",
+        "Ford": "F",
+    }
     stock_shortcuts = []
     for company_name in company_names:
         stock_shortcuts.append(stocks.get(company_name, "Stock shortcut not found"))
-    
+
     stock_shortcuts = ",".join(stock_shortcuts)
 
     return stock_shortcuts
 
 
 def get_stock_news(pref):
-
     symbols = get_stock_shortcuts(pref)
     print(symbols)
 
@@ -139,7 +139,11 @@ def get_stock_news(pref):
         if len(data[symbol]) > 0:
             # get the first article
             news_string = (
-                symbol + ": " + data[symbol][0]["headline"] + " " + data[symbol][0]["summary"]
+                symbol
+                + ": "
+                + data[symbol][0]["headline"]
+                + " "
+                + data[symbol][0]["summary"]
             )
             news.append(news_string)
 
@@ -147,8 +151,9 @@ def get_stock_news(pref):
     if len(news) == 0:
         answer = "There is no news for the stocks you are interested in."
     else:
-        answer = "Here are the news for the stocks you are interested in: " + " ".join(news)
-
+        answer = "Here are the news for the stocks you are interested in: " + " ".join(
+            news
+        )
 
     return answer
 
@@ -163,18 +168,18 @@ def get_user_preferences(user):
     data = response.json()
     print(data)
     return data
-    
+
 
 @app.route("/scuttlebutt")
 def get_scuttlebutt():
-    try: 
+    try:
         user = request.args["user"]
-    except: 
+    except:
         return jsonify("ERROR! : No User given!")
-    
+
     print("-----")
     user_pref = get_user_preferences(user)
-    
+
     news_pref = user_pref["news"].split(",")
     stock_pref = user_pref["stocks"].split(",")
     user_coords = user_pref["coordinates"].split(",")
@@ -183,14 +188,13 @@ def get_scuttlebutt():
     print("we HERE", user_location)
 
     print("lol", user)
-    '''
+    """
      user_pref = ""
     news_pref = ""
     user_coords = ["30,30"]
     stock_pref = ["Apple"]
-    '''
-   
-    
+    """
+
     news = get_news(news_pref)
     print("news----", news)
     weather = get_weather(user_coords)
