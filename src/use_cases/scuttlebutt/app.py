@@ -149,6 +149,7 @@ def get_stock_news(pref):
     else:
         answer = "Here are the news for the stocks you are interested in: " + " ".join(news)
 
+
     return answer
 
 
