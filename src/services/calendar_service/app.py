@@ -23,7 +23,6 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-# If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 app = Flask(__name__)
@@ -45,42 +44,32 @@ def get_calendar_appointments():
     """
 
     creds = get_creds()
+
     user = request.args.get("user")
 
     try:
         service = build('calendar', 'v3', credentials=creds)
 
-        now = datetime.datetime.utcnow().isoformat()
+        now = datetime.datetime.utcnow().isoformat() + 'Z' 
         events_result = service.events().list(calendarId='primary', timeMin=now, singleEvents=True,
                                               orderBy='startTime').execute()
         events = events_result.get('items', [])
-        
+
         if not events:
             return jsonify({"error": "No upcoming events found."}), 404
 
         events_list = []
         for event in events:
-            start = event['start'].get('dateTime', event['start'].get('date'))
-            summary = event['summary']
-            if "@" in summary:
-                event_user = summary.split("@")[1]
-                if event_user == user:
-                    events_list.append({"start": start, "summary": summary})
-            else:
-                events_list.append({"start": start, "summary": summary})
-
-        if request.args.get("requested_date") is not None:
-            filtered_dates = match_date(request.args.get("requested_date")).strftime("%d/%m/%Y")
-            filtered_events_list = []
-            for event in events_list:
-                if filtered_dates == event['start'][:10]:
-                    filtered_events_list.append(event)
-            events_list = filtered_events_list
-
+            if parse_username(event["summary"], user):
+                events_list.append({"user": user, "summary": event['summary'].split("@")[0], "location": event["location"], "start": event["start"], "end": event["end"]})
         return jsonify(events_list)
 
     except HttpError as error:
         return jsonify({"error": "An error occurred: %s" % error}), 500
+
+def parse_username(summary, user):
+    return "@" in summary and summary.split("@", 1)[1] == user
+
 
 @app.route("/calendar/addappointment")
 def add_calendar_appointments():
@@ -93,6 +82,7 @@ def add_calendar_appointments():
         start_time: The start time of the appointment, in ISO format.
         end_time: The end time of the appointment, in ISO format.
         user: The user for whom the appointment is being added.
+        location: The location of the appointment.
 
     Returns:
         A JSON response indicating success or failure.
@@ -100,18 +90,20 @@ def add_calendar_appointments():
 
     creds = get_creds()
 
-    if not request.args.get("summary") or not request.args.get("start_time") or not request.args.get("end_time") or not request.args.get("user"):
+    if not request.args.get("summary") or not request.args.get("start_time") or not request.args.get("end_time") or not request.args.get("user") or not request.args.get("location"):
         return jsonify({"error": "Missing parameters"}), 400
     
-    summary = request.args.get("summary") + f" @{request.args.get('user')}"
+    summary = request.args.get("summary") + f"@{request.args.get('user')}"
     start_time = request.args.get("start_time")
     end_time = request.args.get("end_time")
+    location = request.args.get("location")
     
     try:
         service = build('calendar', 'v3', credentials=creds)
 
         event = {
             'summary': summary,
+            'location': location,
             'start': {
                 'dateTime': start_time,
                 'timeZone': 'UTC',
@@ -124,10 +116,11 @@ def add_calendar_appointments():
 
         event = service.events().insert(calendarId='primary', body=event).execute()
 
-        return jsonify({"success": "Event added successfully."}), 200
+        return jsonify({"success": f"Event added successfully at {location}."}), 200
 
     except HttpError as error:
         return jsonify({"error": "An error occurred: %s" % error}), 500
+
 
 
 @app.route("/calendar/deleteappointment")
@@ -143,29 +136,28 @@ def delete_calendar_appointments():
         A JSON response containing either an error message or a success message.
     """
 
-
     creds = get_creds()
 
-    if not request.args.get("summary"):
+    if not request.args.get("summary") and request.args.get("user"):
         return jsonify({"error": "Missing summary parameter"}), 400
-
-    summary = request.args.get("summary")
+    
+    full_summary = request.args.get("summary") + f"@{request.args.get('user')}"
 
     try:
         service = build('calendar', 'v3', credentials=creds)
 
-        now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+        now = datetime.datetime.utcnow().isoformat() + 'Z'  
         events_result = service.events().list(calendarId='primary', timeMin=now, maxResults=50, singleEvents=True,
-                                              orderBy='startTime', q=summary).execute()
+                                              orderBy='startTime', q=full_summary).execute()
         events = events_result.get('items', [])
 
         if not events:
-            return jsonify({"error": "No events found with summary %s" % summary}), 404
+            return jsonify({"error": "No events found with summary %s" % full_summary}), 404
 
         for event in events:
             service.events().delete(calendarId='primary', eventId=event['id']).execute()
 
-        return jsonify({"success": "Events with summary %s deleted successfully." % summary}), 200
+        return jsonify({"success": "Events with summary %s deleted successfully." % full_summary}), 200
 
     except HttpError as error:
         return jsonify({"error": "An error occurred: %s" % error}), 500
@@ -189,42 +181,11 @@ def get_creds():
             flow = InstalledAppFlow.from_client_secrets_file(
                 'credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
+
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
     
     return creds
-
-def match_date(request):
-    """
-    Matches date based on the user input and returns a list of dates.
-
-    Args:
-        request: User input for the date query.
-
-    Returns:
-        A list of datetime objects representing the dates matching the user input, or the user input itself if no matches were found.
-    """
-
-    today = datetime.date.today()
-    if "today" in request.lower():
-        return today
-    elif "tomorrow" in request.lower():
-        return today + datetime.timedelta(days=1)
-    elif "this week" in request.lower():
-        current_day = today.weekday()
-        this_sunday = today + datetime.timedelta(days=(6 - current_day))
-        this_week = [this_sunday + datetime.timedelta(days=x-current_day) for x in range(7)]
-        return this_week
-    elif "next week" in request.lower():
-        next_monday = today + datetime.timedelta(days=-today.weekday(), weeks=1)
-        return [next_monday + datetime.timedelta(days=x) for x in range(7)]
-    elif "this month" in request.lower():
-        first_day = today.replace(day=1)
-        last_day = first_day.replace(month=first_day.month%12+1, day=1) - datetime.timedelta(days=1)
-        return [first_day + datetime.timedelta(days=x) for x in range((last_day-first_day).days+1)]
-    else:
-        return request
 
 if __name__ == '__main__':
     app.run()
