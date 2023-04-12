@@ -165,7 +165,7 @@ export function Settings() {
 
   const handleToggleChange = () => {
     console.log("handle triggered")
-    fetch('http://localhost:5000/users/' + useridRef.current, {
+    fetch('http://localhost:5009/users/' + useridRef.current, {
       method: 'PUT',
       body: JSON.stringify({ "username": useridRef.current, "football_club": user_football_club, "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "user_stocks": user_stocks, "user_artists": user_artists, "news": user_news}),
       headers: { 'Content-Type': 'application/json' },

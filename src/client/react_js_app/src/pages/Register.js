@@ -27,7 +27,7 @@ function RegisterPage() {
     console.log(password)
     console.log(username)
     console.log(userid)
-    fetch('http://localhost:5000/users',{
+    fetch('http://localhost:5009/users',{
       method: 'POST',
       body: JSON.stringify({"user_id":userid, "password":password, "username":username}),
       headers: { 'Content-Type': 'application/json' },

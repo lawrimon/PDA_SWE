@@ -203,7 +203,7 @@ export function Home() {
   };
 
   async function getShoreleave(){
-    const response = await fetch('http://127.0.0.1:5009/shoreleave')
+    const response = await fetch('http://127.0.0.1:5013/shoreleave')
     const data = await response.json();
     console.log("this data",data.toString())
     if(data){
