@@ -109,14 +109,18 @@ def get_stock_news():
 
     data = response.json()
 
-    news = []  
+    news = []
     # iterate over every symbol
     for symbol in symbols.split(","):
         # check if there is a news article for the symbol
         if len(data[symbol]) > 0:
             # get the first article
             news_string = (
-                symbol + ": " + data[symbol][0]["headline"] + " " + data[symbol][0]["summary"]
+                symbol
+                + ": "
+                + data[symbol][0]["headline"]
+                + " "
+                + data[symbol][0]["summary"]
             )
             news.append(news_string)
 
@@ -124,7 +128,9 @@ def get_stock_news():
     if len(news) == 0:
         answer = "There is no news for the stocks you are interested in."
     else:
-        answer = "Here are the news for the stocks you are interested in: " + " ".join(news)
+        answer = "Here are the news for the stocks you are interested in: " + " ".join(
+            news
+        )
 
     return answer
 
