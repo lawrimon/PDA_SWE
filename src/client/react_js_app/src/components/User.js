@@ -23,7 +23,7 @@ export function getUserPreferences() {
 
   export function getUserPreferencesDB(userid) {
     console.log("this userid gets searched", userid);
-    return fetch('http://localhost:5000/users/' + userid, {
+    return fetch('http://localhost:5009/users/' + userid, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
