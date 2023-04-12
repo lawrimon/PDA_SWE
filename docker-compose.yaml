@@ -29,7 +29,7 @@ services:
     ports:
       - "8001:8001"
 
-  app1:
+  data_source:
     build: ./src/use_cases/use_case_gateway/service_adapter
     ports:
       - "5006:5000"
@@ -38,7 +38,7 @@ services:
     depends_on:
       - rabbitmq
 
-  app2:
+  producer:
     build: ./src/use_cases/use_case_gateway/use_case
     ports:
       - "5007:5000"
@@ -46,7 +46,18 @@ services:
       - RABBITMQ_HOST=rabbitmq
     depends_on:
       - rabbitmq
-      - app1
+      - data_source
+    restart: on-failure
+    
+  websocket:
+    build: ./src/use_cases/use_case_gateway
+    ports:
+      - "5010:5010"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - rabbitmq
+    restart: on-failure
 
   react:
     build: ./src/client/react_js_app
@@ -56,6 +67,9 @@ services:
       - rabbitmq 
 
   news:
+    env_file: .env
+    environment:
+      NYTIMES_API_KEY: ${NYTIMES_API_KEY}
     build: ./src/services/news_service
     volumes:
       - ./src/services/news_service:/app
@@ -77,11 +91,14 @@ services:
       - rabbitmq
 
   maps:
+    env_file: .env
+    environment:
+      MAPS_API_KEY: ${MAPS_API_KEY}
     build: ./src/services/maps_service
     volumes:
       - ./src/services/maps_service:/app
     ports:
-      - 5003:5003
+      - 5003:5000
     depends_on:
       - rabbitmq
 
@@ -108,6 +125,30 @@ services:
       - ./src/services/stock_market_service:/app
     ports:
       - 5001:5000
+    depends_on:
+      - rabbitmq
+
+  books:
+    env_file: .env
+    environment:
+      NYTIMES_API_KEY: ${NYTIMES_API_KEY}
+    build: ./src/services/books_service
+    volumes:
+      - ./src/services/books_service:/app
+    ports:
+      - 5011:5000
+    depends_on:
+      - rabbitmq
+
+  sports:
+    env_file: .env
+    environment:
+      SPORTS_API_KEY: ${SPORTS_API_KEY}
+    build: ./src/services/sports_service
+    volumes:
+      - ./src/services/sports_service:/app
+    ports:
+      - 5012:5000
     depends_on:
       - rabbitmq
 
