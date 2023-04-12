@@ -20,15 +20,16 @@ def get_quotes():
 
     data = response.json()
     for i in data:
-        quotes += "From the author: " + i["author"] + ". " + "Following quote: " + i["quote"]
+        quotes += (
+            "From the author: " + i["author"] + ". " + "Following quote: " + i["quote"]
+        )
 
     return quotes
- 
+
 
 def get_nasa():
     nasa = "Here are you lates nasa-star news : "
     url = "http://wisdom:5000/wisdom/apod"
-
 
     response = requests.get(url)
     if response.status_code != 200:
@@ -38,6 +39,7 @@ def get_nasa():
     nasa += data["explanation"]
 
     return nasa
+
 
 def get_random_facts():
     facts = "Here are some random facts: "
@@ -53,12 +55,11 @@ def get_random_facts():
         facts += ". "
 
     return facts
-    
-
 
 
 def get_books():
-  return None
+    return None
+
 
 @app.route("/shoreleave")
 def get_scuttlebutt():
@@ -67,16 +68,20 @@ def get_scuttlebutt():
     nasa_facts = get_nasa()
     random_facts = get_random_facts()
 
-    return jsonify(quotes, nasa_facts, random_facts, 
-        "Thank you for listening. Do you want any additional information? "
+    return jsonify(
+        quotes,
+        nasa_facts,
+        random_facts,
+        "Thank you for listening. Do you want any additional information? ",
     )
 
 
 @app.route("/shoreleave/additional")
 def get_more_scuttlebutt():
     print("lol")
-   
+
     return None
+
 
 if __name__ == "__main__":
     app.run()
