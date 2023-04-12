@@ -23,7 +23,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-SCOPES = ['https://www.googleapis.com/auth/calendar']
+SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
 app = Flask(__name__)
 
@@ -51,10 +51,18 @@ def get_calendar_appointments():
     try:
         service = build("calendar", "v3", credentials=creds)
 
-        now = datetime.datetime.utcnow().isoformat() + 'Z' 
-        events_result = service.events().list(calendarId='primary', timeMin=now, singleEvents=True,
-                                              orderBy='startTime').execute()
-        events = events_result.get('items', [])
+        now = datetime.datetime.utcnow().isoformat() + "Z"
+        events_result = (
+            service.events()
+            .list(
+                calendarId="primary",
+                timeMin=now,
+                singleEvents=True,
+                orderBy="startTime",
+            )
+            .execute()
+        )
+        events = events_result.get("items", [])
 
         if not events:
             return jsonify({"error": "No upcoming events found."}), 404
@@ -62,11 +70,20 @@ def get_calendar_appointments():
         events_list = []
         for event in events:
             if parse_username(event["summary"], user):
-                events_list.append({"user": user, "summary": event['summary'].split("@")[0], "location": event["location"], "start": event["start"], "end": event["end"]})
+                events_list.append(
+                    {
+                        "user": user,
+                        "summary": event["summary"].split("@")[0],
+                        "location": event["location"],
+                        "start": event["start"],
+                        "end": event["end"],
+                    }
+                )
         return jsonify(events_list)
 
     except HttpError as error:
         return jsonify({"error": "An error occurred: %s" % error}), 500
+
 
 def parse_username(summary, user):
     return "@" in summary and summary.split("@", 1)[1] == user
@@ -91,23 +108,29 @@ def add_calendar_appointments():
 
     creds = get_creds()
 
-    if not request.args.get("summary") or not request.args.get("start_time") or not request.args.get("end_time") or not request.args.get("user") or not request.args.get("location"):
+    if (
+        not request.args.get("summary")
+        or not request.args.get("start_time")
+        or not request.args.get("end_time")
+        or not request.args.get("user")
+        or not request.args.get("location")
+    ):
         return jsonify({"error": "Missing parameters"}), 400
-    
+
     summary = request.args.get("summary") + f"@{request.args.get('user')}"
     start_time = request.args.get("start_time")
     end_time = request.args.get("end_time")
     location = request.args.get("location")
-    
+
     try:
         service = build("calendar", "v3", credentials=creds)
 
         event = {
-            'summary': summary,
-            'location': location,
-            'start': {
-                'dateTime': start_time,
-                'timeZone': 'UTC',
+            "summary": summary,
+            "location": location,
+            "start": {
+                "dateTime": start_time,
+                "timeZone": "UTC",
             },
             "end": {
                 "dateTime": end_time,
@@ -139,24 +162,45 @@ def delete_calendar_appointments():
 
     if not request.args.get("summary") and request.args.get("user"):
         return jsonify({"error": "Missing summary parameter"}), 400
-    
+
     full_summary = request.args.get("summary") + f"@{request.args.get('user')}"
 
     try:
         service = build("calendar", "v3", credentials=creds)
 
-        now = datetime.datetime.utcnow().isoformat() + 'Z'  
-        events_result = service.events().list(calendarId='primary', timeMin=now, maxResults=50, singleEvents=True,
-                                              orderBy='startTime', q=full_summary).execute()
-        events = events_result.get('items', [])
+        now = datetime.datetime.utcnow().isoformat() + "Z"
+        events_result = (
+            service.events()
+            .list(
+                calendarId="primary",
+                timeMin=now,
+                maxResults=50,
+                singleEvents=True,
+                orderBy="startTime",
+                q=full_summary,
+            )
+            .execute()
+        )
+        events = events_result.get("items", [])
 
         if not events:
-            return jsonify({"error": "No events found with summary %s" % full_summary}), 404
+            return (
+                jsonify({"error": "No events found with summary %s" % full_summary}),
+                404,
+            )
 
         for event in events:
             service.events().delete(calendarId="primary", eventId=event["id"]).execute()
 
-        return jsonify({"success": "Events with summary %s deleted successfully." % full_summary}), 200
+        return (
+            jsonify(
+                {
+                    "success": "Events with summary %s deleted successfully."
+                    % full_summary
+                }
+            ),
+            200,
+        )
 
     except HttpError as error:
         return jsonify({"error": "An error occurred: %s" % error}), 500
@@ -181,10 +225,11 @@ def get_creds():
             flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
             creds = flow.run_local_server(port=0)
 
-        with open('token.json', 'w') as token:
+        with open("token.json", "w") as token:
             token.write(creds.to_json())
 
     return creds
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run()
