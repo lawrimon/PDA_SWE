@@ -111,7 +111,7 @@ def get_user_preferences(user):
 
 
 @app.route("/lookout")
-def get_scuttlebutt():
+def get_lookout():
     try:
         user = request.args["user"]
     except:
