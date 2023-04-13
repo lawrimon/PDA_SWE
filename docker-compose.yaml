@@ -176,14 +176,28 @@ services:
     depends_on:
       - rabbitmq
 
-   calendar:
+  calendar:
     build: ./src/services/calendar_service
     volumes:
       - ./src/services/calendar_service:/app
     ports:
       - 5017:5000
     depends_on:
-      - rabbitmq   
+      - rabbitmq  
+
+  music: 
+    env_file: .env
+    environment:
+      SPOTIPY_CLIENT_ID: ${SPOTIPY_CLIENT_ID}
+      SPOTIPY_CLIENT_SECRET: ${SPOTIPY_CLIENT_SECRET}
+      SPOTIPY_REDIRECT_URI: ${SPOTIPY_REDIRECT_URI}
+    build: ./src/services/music_service
+    volumes:
+      - ./src/services/music_service:/app
+    ports:
+      - 5018:5000
+    depends_on:
+      - rabbitmq     
 
   scuttlebutt:
     build: ./src/use_cases/scuttlebutt
@@ -197,7 +211,6 @@ services:
       - weather
       - rabbitmq
 
-  
   shoreleave:
     build: ./src/use_cases/shoreleave
     volumes:
