@@ -5,6 +5,8 @@ import { getUserId, setUserId } from '../components/User.js';
 import { getUserPreferences, setUserPreferences } from '../components/User.js';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import Nominatim from 'nominatim-geocoder';
+
 
 function PreferencesPage() {
   const useridRef = useRef(null);
@@ -18,6 +20,8 @@ function PreferencesPage() {
   const [user_artists, setArtist] = useState(["Justin Bieber"]);
   const [user_news, setNews] = useState(["National"]);
   const [user_books, setBooks] = useState(["Non-Fiction"]);
+  const [user_location, setUserLocation] = useState("");
+
 
   let user_pref = [];
   let userid = null;
@@ -83,7 +87,71 @@ function PreferencesPage() {
       console.log("Userid", useridRef.current);
       setUserId(useridRef.current)
     }
+    componentDidMount()
+    let position = UserDidMount()
+    if (position) {
+      console.log(position.coords)
+      console.log(user_location, "userrr")
+    }
   }, [getUserId()]);
+
+  const getCityName = async (lat, lng) => {
+    const nominatim = new Nominatim();
+    const result = await nominatim.reverse({
+      lat: lat,
+      lon: lng,
+      addressdetails: 1,
+      zoom: 18
+    });
+    const city = result.address.city || result.address.town || result.address.village;
+    return city;
+  };
+  
+
+  function pushUserLocation(city){
+    let lat = user_location.latitude
+    let lon =  user_location.longitude
+     console.log("handle triggered")
+     fetch('http://localhost:5009/users/' + useridRef.current, {
+       method: 'PUT',
+       body: JSON.stringify({"location":city, "coordinates":[lat,lon].toString()}),
+       headers: { 'Content-Type': 'application/json' },
+     })
+       .then(response => response.json())
+       .then(data => {
+         if (data) {
+           console.log(data)
+           console.log("success location saved")
+         }
+         else {
+           console.log("Error");
+         }
+       })
+       .catch(error => {
+         console.error(error);
+       });
+   };
+
+   function componentDidMount() {
+    if ("geolocation" in navigator) {
+      console.log("Available");
+    } else {
+      console.log("Not Available");
+    }
+  }
+
+function UserDidMount() {
+    let coord = navigator.geolocation.getCurrentPosition(
+      function(position) {
+        console.log(position.coords);
+        setUserLocation(position.coords)
+      },
+      function(error) {
+        console.error("Error Code = " + error.code + " - " + error.message);
+    }
+);
+return coord
+ }
 
   function handleUsernameChange(event) {
     setUsername(event.target.value);
@@ -135,6 +203,9 @@ function PreferencesPage() {
   const uploadSubmit = async () => {
     console.log("handle triggered")
     console.log(useridRef.current)
+    const city = await getCityName(user_location.latitude, user_location.longitude);
+    console.log(city); // Output: London
+    await pushUserLocation(city)
     try {
       const response = await fetch('http://localhost:5009/users/'+useridRef.current, {
         method: 'PUT',
