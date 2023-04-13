@@ -204,6 +204,17 @@ def get_scuttlebutt():
     # stocks = get_stocks()
     # print("stocks----",stocks)
 
+    artist = "RIN"
+    track = "Sternenstaub"
+    music_url="http://music:5000/music"
+    params = {
+        "artist": artist, 
+        "track": track
+    }
+    music_response = requests.get(music_url, params)
+    if music_response.status_code != 200:
+        return jsonify({"error": "Error playing music"}), 500
+
     return jsonify(
         news,
         weather,
