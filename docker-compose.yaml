@@ -176,6 +176,15 @@ services:
     depends_on:
       - rabbitmq
 
+   calendar:
+    build: ./src/services/calendar_service
+    volumes:
+      - ./src/services/calendar_service:/app
+    ports:
+      - 5017:5000
+    depends_on:
+      - rabbitmq   
+
   scuttlebutt:
     build: ./src/use_cases/scuttlebutt
     volumes:
