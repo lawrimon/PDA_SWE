@@ -21,7 +21,7 @@ app = Flask(__name__)
 @app.route("/music")
 def get_music():
     """Music endpoint.
-    
+
     This endpoint plays the requested track.
 
     Args:
@@ -35,24 +35,31 @@ def get_music():
     scope = "user-read-playback-state,user-modify-playback-state"
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 
-    #check if parameters are given
-    if not request.args.get("artist") or not request.args.get("track"): 
+    # check if parameters are given
+    if not request.args.get("artist") or not request.args.get("track"):
         return jsonify({"error": "Missing parameters."}), 400
-    
+
     # check for valid parameters
-    tracklist = sp.search(q=f"artist:{request.args.get('artist')} track:{request.args.get('track')}", type="track")
-    if len(tracklist['tracks']['items']) == 0:
+    tracklist = sp.search(
+        q=f"artist:{request.args.get('artist')} track:{request.args.get('track')}",
+        type="track",
+    )
+    if len(tracklist["tracks"]["items"]) == 0:
         return jsonify({"error": "Invalid parameters."}), 400
 
     res = sp.devices()
     pprint(res)
-    
+
     # check if there is a device available
-    if len(res['devices']) == 0:
-        return jsonify({"error": "No device available. Please open Spotify on your device."}), 400
+    if len(res["devices"]) == 0:
+        return (
+            jsonify(
+                {"error": "No device available. Please open Spotify on your device."}
+            ),
+            400,
+        )
 
-    track_id = tracklist['tracks']['items'][0]['uri']
+    track_id = tracklist["tracks"]["items"][0]["uri"]
 
-    sp.start_playback(uris=[track_id], device_id=res['devices'][0]['id'])
+    sp.start_playback(uris=[track_id], device_id=res["devices"][0]["id"])
     return jsonify({"message": "Playing music"})
-
