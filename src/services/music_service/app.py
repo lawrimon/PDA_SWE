@@ -7,6 +7,8 @@ The functionality is based on the Spotify API.
 Typical endpoints usage:
 
     GET /music?artist=RIN&track=Sternenstaub
+    GET /music?artist=RIN
+    GET /music?track=Sternenstaub
 """
 
 from flask import Flask, jsonify, request
@@ -22,11 +24,11 @@ app = Flask(__name__)
 def get_music():
     """Music endpoint.
 
-    This endpoint plays the requested track.
+    This endpoint plays the requested track on the Spotify device.
 
     Args:
         artist: The artist of the track.
-        track: The track name.
+        track: The track name. Either artist or track must be given.
 
     Returns:
         Acknowledgement message.
@@ -35,15 +37,23 @@ def get_music():
     scope = "user-read-playback-state,user-modify-playback-state"
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 
-    # check if parameters are given
-    if not request.args.get("artist") or not request.args.get("track"):
+    # check if parameters are given, either artist or track must be given
+    if not request.args.get("artist") and not request.args.get("track"):
         return jsonify({"error": "Missing parameters."}), 400
 
     # check for valid parameters
-    tracklist = sp.search(
-        q=f"artist:{request.args.get('artist')} track:{request.args.get('track')}",
-        type="track",
-    )
+    if request.args.get("artist") and request.args.get("track"):
+        tracklist = sp.search(
+            q=f"artist:{request.args.get('artist')} track:{request.args.get('track')}",
+            type="track",
+        )
+    elif request.args.get("artist"):
+        tracklist = sp.search(
+            q=f"artist:{request.args.get('artist')}", type="track"
+        )
+    elif request.args.get("track"):
+        tracklist = sp.search(q=f"track:{request.args.get('track')}", type="track")
+
     if len(tracklist["tracks"]["items"]) == 0:
         return jsonify({"error": "Invalid parameters."}), 400
 
