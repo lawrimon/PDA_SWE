@@ -20,6 +20,8 @@ export function Settings() {
   const [user_artists, setArtist] = useState(["Justin Bieber"]);
   const [user_news, setNews] = useState(["National"]);
   const [user_books, setBooks] = useState(["Non-Fiction"]);
+  const [user_github, setUserGithub] = useState("");
+  const [user_event_location, setEventLocation] = useState(["Stuttgart"]);
 
   let user_pref = []
 
@@ -80,6 +82,13 @@ export function Settings() {
     { value: 'Picture Books', label: 'Picture Books' }
   ]
 
+  const event_location_options = [
+    { value: 'Stuttgart', label: 'Stuttgart' },
+    { value: 'Munich', label: 'München' },
+    { value: 'Berlin', label: 'Berlin' },
+    { value: 'Frankfurt', label: 'Frankfurt Books' }
+  ]
+
   const handleSave = (event) => {
     event.preventDefault();
     // save settings data here
@@ -91,6 +100,14 @@ export function Settings() {
 
   function handleNews(selectedOptions) {
     setNews(selectedOptions.map(option => option.value));
+  }
+
+  function handleGithub(event) {
+    setUserGithub(event.target.value);  
+  }
+
+  function handleEventLocation(selectedOptions) {
+    setEventLocation(selectedOptions.map(option => option.value));
   }
 
   function handleBooks(selectedOptions) {
@@ -152,6 +169,8 @@ export function Settings() {
       setArtist(pref.artists.split(","))
       setBooks(pref.books.split(","))
       setNews(pref.news.split(","))
+      setUserGithub(pref.github)
+      setEventLocation(pref.event_location.split(","))
     }
 
     setUserPreferences();
@@ -160,7 +179,7 @@ export function Settings() {
   
 
   const TestToggle = () => {
-    console.log(JSON.stringify({ "username": useridRef.current, "football_club": user_football_club, "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "user_stocks": user_stocks, "user_artists": user_artists, "user_books": user_books }),
+    console.log(JSON.stringify({ "username": useridRef.current, "football_club": user_football_club, "calendar_link": user_calendar_link, "spotify_link": user_spotify_link, "user_stocks": user_stocks, "user_artists": user_artists, "user_books": user_books }),
     )
   }
 
@@ -169,7 +188,7 @@ export function Settings() {
     console.log("handle triggered")
     fetch('http://localhost:5009/users/' + useridRef.current, {
       method: 'PUT',
-      body: JSON.stringify({ "username": useridRef.current, "football_club": user_football_club.join(","), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "user_stocks": user_stocks.join(","), "user_artists": user_artists.join(","), "news": user_news.join(","), "books": user_books.join(",")}),
+      body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString()}),
       headers: { 'Content-Type': 'application/json' },
     })
       .then(response => response.json())
@@ -255,14 +274,27 @@ export function Settings() {
             onChange={handleBooks}
           />
         <br />
-            <label>
+        <br />
+        <h4>Prefered Event Location</h4>
+          <Select
+            closeMenuOnSelect={false}
+            components={animatedComponents}
+            isMulti
+            options={event_location_options}
+            value={user_event_location.map(fc => ({ label: fc, value: fc }))}
+            onChange={handleEventLocation}
+          />
+        <br />
+        <br />
+        <h4>Github Name</h4>
+          <input type="text" value={user_github} onChange={handleGithub} />
+          <br />
               <h4>Spotify Link </h4>
               <input type="email" value={user_spotify_link} onChange={handleSpotify} />
-            </label>
-            <label>
+              <br />
               <h4>Calendar Link  </h4>
               <input type="email" value={user_calendar_link} onChange={handleCalendar} />
-            </label>
+              <br />
             <br />
             <button type="submit" onClick={handleToggleChange} >Save Changes</button>
             <Link to="/">
