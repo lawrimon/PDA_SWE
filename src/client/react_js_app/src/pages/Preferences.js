@@ -21,6 +21,8 @@ function PreferencesPage() {
   const [user_news, setNews] = useState(["National"]);
   const [user_books, setBooks] = useState(["Non-Fiction"]);
   const [user_location, setUserLocation] = useState("");
+  const [user_github, setGithub] = useState("");
+  const [user_event_location, setEventLocation] = useState(["Stuttgart"]);
 
 
   let user_pref = [];
@@ -74,6 +76,14 @@ function PreferencesPage() {
     { value: 'Miscellaneous', label: 'Miscellaneous' },
     { value: 'Picture Books', label: 'Picture Books' }
   ]
+
+  const event_location_options = [
+    { value: 'Stuttgart', label: 'Stuttgart' },
+    { value: 'Munich', label: 'München' },
+    { value: 'Berlin', label: 'Berlin' },
+    { value: 'Frankfurt', label: 'Frankfurt Books' }
+  ]
+
   const animatedComponents = makeAnimated();
 
   useEffect(() => {
@@ -172,6 +182,14 @@ return coord
     setNews(selectedOptions.map(option => option.value));
   }
 
+  function handleGithub(event) {
+    setGithub(event.target.value);  
+  }
+
+  function handleEventLocation(selectedOptions) {
+    setEventLocation(selectedOptions.map(option => option.value));
+  }
+
   function handleBooks(selectedOptions) {
     setBooks(selectedOptions.map(option => option.value));
   }
@@ -191,7 +209,7 @@ return coord
   async function handleSubmit(event) {
     event.preventDefault();
     await uploadSubmit();
-    setUserPreferences([user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link, user_news, user_books])
+    setUserPreferences([user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link, user_news, user_books, user_event_location, user_github])
     window.location.href = '/registersuccess';
   }
   
@@ -207,9 +225,10 @@ return coord
     console.log(city); // Output: London
     await pushUserLocation(city)
     try {
+      console.log({"football_club": user_football_club.toString(), "calendar_link": user_calendar_link, "spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString()})
       const response = await fetch('http://localhost:5009/users/'+useridRef.current, {
         method: 'PUT',
-        body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString()}),
+        body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString()}),
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await response.json();
@@ -284,6 +303,20 @@ return coord
             onChange={handleBooks}
           />
         <br />
+        <br />
+        <h4>Prefered Event Location</h4>
+          <Select
+            closeMenuOnSelect={false}
+            components={animatedComponents}
+            isMulti
+            options={event_location_options}
+            value={user_event_location.map(fc => ({ label: fc, value: fc }))}
+            onChange={handleEventLocation}
+          />
+        <br />
+
+        <h4>Github Name</h4>
+          <input type="text" value={user_github} onChange={handleGithub} />
         <h4>Spotify Link </h4>
           <input type="text" value={user_spotify_link} onChange={handleSpotify} />
         <label>

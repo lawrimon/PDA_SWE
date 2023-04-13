@@ -30,6 +30,9 @@ allowed_keys = [
     "location",
     "books",
     "coordinates",
+    "github",
+    "event_location"
+
 ]
 
 
