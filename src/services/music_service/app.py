@@ -48,9 +48,7 @@ def get_music():
             type="track",
         )
     elif request.args.get("artist"):
-        tracklist = sp.search(
-            q=f"artist:{request.args.get('artist')}", type="track"
-        )
+        tracklist = sp.search(q=f"artist:{request.args.get('artist')}", type="track")
     elif request.args.get("track"):
         tracklist = sp.search(q=f"track:{request.args.get('track')}", type="track")
 
