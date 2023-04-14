@@ -50,7 +50,7 @@ jobs:
           black .
       - name: Run Pytest with coverage
         run: |
-          pytest --cov
+          pytest --cov 
       - name: Fail if coverage is less than 80%
         run: |
           coverage report --fail-under=80
