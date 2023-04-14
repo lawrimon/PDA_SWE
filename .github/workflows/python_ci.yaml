@@ -48,9 +48,12 @@ jobs:
       - name: Run Black formatter
         run: |
           black .
-      - name: Run Pytest
+      - name: Run Pytest with coverage
         run: |
-          pytest
+          pytest --cov
+      - name: Fail if coverage is less than 90%
+        run: |
+          coverage report --fail-under=90
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
