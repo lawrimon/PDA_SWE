@@ -50,7 +50,10 @@ jobs:
           black .
       - name: Run Pytest
         run: |
-          pytest
+          pytest --cov 
+      - name: Check coverage 
+        run: |
+          coverage report --fail-under=80
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
