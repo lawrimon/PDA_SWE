@@ -48,10 +48,10 @@ jobs:
       - name: Run Black formatter
         run: |
           black .
-      - name: Run Pytest with coverage
+      - name: Run Pytest
         run: |
           pytest --cov 
-      - name: Fail if coverage is less than 80%
+      - name: Check coverage 
         run: |
           coverage report --fail-under=80
       - name: Commit and push changes
