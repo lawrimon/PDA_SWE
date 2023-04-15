@@ -216,7 +216,7 @@ def get_scuttlebutt():
         news,
         weather,
         stock_news,
-        "Thank you for listening. Do you want any additional information? ",
+        "Thank you for listening. Do you want any additional information?",
     )
 
 
