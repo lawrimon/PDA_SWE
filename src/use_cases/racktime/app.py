@@ -10,7 +10,7 @@ Typical endpoints usage:
 from flask import Flask, jsonify, request
 import requests
 import flask_cors
-
+from datetime import date, datetime
 app = Flask(__name__)
 flask_cors.CORS(app)
 
@@ -111,8 +111,49 @@ def get_user_preferences(user):
     return data
 
 # TODO: implement get_calendar_events
-def get_calendar_events():
-    return
+def get_calendar_events_tomorrow(user):
+    """
+    Get tomorrow's calendar events endpoint.
+
+    This endpoint makes a GET request to a specified URL to fetch tomorrow's calendar events for the given user. The user parameter is included in the request as a query parameter. If the response status code is not 200, an error message is returned. Otherwise, the response data is parsed as JSON and returned.
+
+    Args:
+        user: The username of the user whose calendar events to fetch.
+    
+    Returns:
+        data: A dictionary containing the calendar events for tomorrow.
+    """
+
+    url = "http://127.0.0.1:5000/calendar/appointments/tomorrow"
+
+    response = requests.get(url, params={"user": user})
+    if response.status_code != 200:
+        jsonify({"error": "Error getting tomorrows calendar events"}), 500
+
+    data = response.json()
+    return data
+    
+def summarize_tomorrows_events(events_tomorrow):
+    """Summarize tomorrow's events endpoint.
+
+    This endpoint takes a list of events for tomorrow and summarizes them into a single string. The resulting summary includes the start and end times, the event name, and the location (extracted from the event dictionary).
+
+    Args:
+        events_tomorrow: A list of event dictionaries for tomorrow.
+    
+    Returns:
+        summarize_events: A summary string of tomorrow's events.
+    """
+
+    summarize_events = "tomorrow "
+
+    for event in events_tomorrow:
+        start_time = datetime.fromisoformat(event["start"]["dateTime"]).strftime("%I:%M %p")
+        end_time = datetime.fromisoformat(event["end"]["dateTime"]).strftime("%I:%M %p")
+        location = event["location"].split(",")[0]
+        summarize_events += f"at {start_time} until {end_time} the {event['summary']} takes place in {location}. "
+
+    return summarize_events
 
 @app.route("/racktime")
 def get_racktime():
@@ -143,22 +184,31 @@ def get_racktime():
     github_user = user_preferences["github"]
     artist = user_preferences["artists"].split(",")[0]
     origin = user_preferences["coordinates"]
-    # TODO: Get destination from calendar
-    mode = user_preferences["transportation_mode"]
 
+    
+    mock_calendar_user = "maxkie1"
+    events_tomorrow = get_calendar_events_tomorrow(mock_calendar_user)
+    # TODO: Get destination from calendar => variable destination => for user maxkie1
+    if events_tomorrow:
+        destination = events_tomorrow[0].get("location")
+
+    mode = user_preferences["transportation_mode"]
     issues = get_issues(github_user)
     route = get_route(origin, destination, mode)
-    # TODO: Get calendar events
+    # TODO: Get calendar events => variable events_tomorrow => for user maxkie1
+ 
     play_music(artist)
 
     introduction = "Good evening, it's rack time. According to your sleep schedule, you should go to bed in one hour. "
     additional_information = "Thank you for listening. Do you want any additional information?"
+    # TODO: Add calendar events string => for user maxkie1
+    tomorrows_events_summarized = summarize_tomorrows_events(events_tomorrow)
 
-    # TODO: Add calendar events string
     return jsonify (
         introduction,
         issues,
         route,
         additional_information,
+        tomorrows_events_summarized
     )
 
