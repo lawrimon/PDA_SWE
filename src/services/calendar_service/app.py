@@ -40,7 +40,6 @@ def get_calendar_appointments():
 
     Returns:
         A JSON object containing the start time and summary of each upcoming event that matches the specified filter(s).
-        If no events are found, returns a 404 error.
         If an error occurs while retrieving the events, returns a 500 error with a JSON object containing the error message.
     """
 
@@ -64,21 +63,21 @@ def get_calendar_appointments():
         )
         events = events_result.get("items", [])
 
-        if not events:
-            return jsonify({"error": "No upcoming events found."}), 404
-
         events_list = []
-        for event in events:
-            if parse_username(event["summary"], user):
-                events_list.append(
-                    {
-                        "user": user,
-                        "summary": event["summary"].split("@")[0],
-                        "location": event["location"],
-                        "start": event["start"],
-                        "end": event["end"],
-                    }
-                )
+
+        if events:
+            for event in events:
+                if parse_username(event["summary"], user):
+                    events_list.append(
+                        {
+                            "user": user,
+                            "summary": event["summary"].split("@")[0],
+                            "location": event["location"],
+                            "start": event["start"],
+                            "end": event["end"],
+                        }
+                    )
+        
         return jsonify(events_list)
 
     except HttpError as error:
@@ -96,7 +95,6 @@ def get_calendar_appointments_tomorrow():
 
     Returns:
         A JSON object containing the start time and summary of each upcoming event that matches the specified filter(s).
-        If no events are found, returns a 404 error.
         If an error occurs while retrieving the events, returns a 500 error with a JSON object containing the error message.
     """
 
@@ -125,21 +123,21 @@ def get_calendar_appointments_tomorrow():
         )
         events = events_result.get("items", [])
 
-        if not events:
-            return jsonify({"error": "No upcoming events found."}), 404
-
         events_list = []
-        for event in events:
-            if parse_username(event["summary"], user):
-                events_list.append(
-                    {
-                        "user": user,
-                        "summary": event["summary"].split("@")[0],
-                        "location": event["location"],
-                        "start": event["start"],
-                        "end": event["end"],
-                    }
-                )
+
+        if events:
+            for event in events:
+                if parse_username(event["summary"], user):
+                    events_list.append(
+                        {
+                            "user": user,
+                            "summary": event["summary"].split("@")[0],
+                            "location": event["location"],
+                            "start": event["start"],
+                            "end": event["end"],
+                        }
+                    )
+
         return jsonify(events_list)
 
     except HttpError as error:

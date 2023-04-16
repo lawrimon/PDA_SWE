@@ -123,7 +123,7 @@ def get_calendar_events_tomorrow(user):
         data: A dictionary containing the calendar events for tomorrow.
     """
 
-    url = "http://127.0.0.1:5000/calendar/appointments/tomorrow"
+    url = "http://calendar:5000/calendar/appointments/tomorrow"
 
     response = requests.get(url, params={"user": user})
     if response.status_code != 200:
@@ -144,7 +144,7 @@ def summarize_tomorrows_events(events_tomorrow):
         summarize_events: A summary string of tomorrow's events.
     """
 
-    summarize_events = "tomorrow "
+    summarize_events = "Tomorrow "
 
     for event in events_tomorrow:
         start_time = datetime.fromisoformat(event["start"]["dateTime"]).strftime("%I:%M %p")
@@ -194,7 +194,7 @@ def get_racktime():
         route = get_route(origin, destination, mode)
         tomorrows_events_summarized = summarize_tomorrows_events(events_tomorrow)
     else:
-        route = ""
+        route = "There is no transportation needed tomorrow."
         tomorrows_events_summarized = "There are no events in your calendar tomorrow."
 
     issues = get_issues(github_user)
