@@ -178,6 +178,8 @@ def get_racktime():
     origin = "48.889124,9.122071"
     destination = "48.69047409776592,8.993838658674152"
     mode = "driving"
+    mock_calendar_user = "maxkie1"
+
 
     user_preferences = get_user_preferences(user)
     github_user = user_preferences["github"]
@@ -186,15 +188,17 @@ def get_racktime():
     mode = user_preferences["transportation_mode"]
 
     
-    mock_calendar_user = "maxkie1"
     events_tomorrow = get_calendar_events_tomorrow(mock_calendar_user)
     if events_tomorrow:
         destination = events_tomorrow[0].get("location")
+        route = get_route(origin, destination, mode)
+        tomorrows_events_summarized = summarize_tomorrows_events(events_tomorrow)
+    else:
+        route = ""
+        tomorrows_events_summarized = "There are no events in your calendar tomorrow."
 
     issues = get_issues(github_user)
-    route = get_route(origin, destination, mode)
-    tomorrows_events_summarized = summarize_tomorrows_events(events_tomorrow)
- 
+
     play_music(artist)
 
     introduction = "Good evening, it's rack time. According to your sleep schedule, you should go to bed in one hour. "
