@@ -23,6 +23,7 @@ function PreferencesPage() {
   const [user_location, setUserLocation] = useState("");
   const [user_github, setGithub] = useState("");
   const [user_event_location, setEventLocation] = useState(["Stuttgart"]);
+  const [user_transportation, setTransportation] = useState("Walking");
 
 
   let user_pref = [];
@@ -83,6 +84,14 @@ function PreferencesPage() {
     { value: 'Berlin', label: 'Berlin' },
     { value: 'Frankfurt', label: 'Frankfurt Books' }
   ]
+
+  const transportation_options = [
+    { value: 'Walking', label: 'Walking' },
+    { value: 'Car', label: 'Car' },
+    { value: 'Bicycle', label: 'Bicycle' },
+    { value: 'Public Transport', label: 'Public Transport' }
+  ]
+
 
   const animatedComponents = makeAnimated();
 
@@ -182,6 +191,11 @@ return coord
     setNews(selectedOptions.map(option => option.value));
   }
 
+  function handleTransportation(selectedOption) {
+    console.log("option",selectedOption)
+    setTransportation(selectedOption.value);
+  }
+
   function handleGithub(event) {
     setGithub(event.target.value);  
   }
@@ -209,7 +223,7 @@ return coord
   async function handleSubmit(event) {
     event.preventDefault();
     await uploadSubmit();
-    setUserPreferences([user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link, user_news, user_books, user_event_location, user_github])
+    setUserPreferences([user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link, user_news, user_books, user_event_location, user_github, user_transportation])
     window.location.href = '/registersuccess';
   }
   
@@ -225,10 +239,10 @@ return coord
     console.log(city); // Output: London
     await pushUserLocation(city)
     try {
-      console.log({"football_club": user_football_club.toString(), "calendar_link": user_calendar_link, "spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString()})
+      console.log({"football_club": user_football_club.toString(), "calendar_link": user_calendar_link, "spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(), "transportation" : user_transportation})
       const response = await fetch('http://localhost:5009/users/'+useridRef.current, {
         method: 'PUT',
-        body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString()}),
+        body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(),  "transportation": user_transportation}),
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await response.json();
@@ -308,11 +322,25 @@ return coord
           <Select
             closeMenuOnSelect={false}
             components={animatedComponents}
-            isMulti
             options={event_location_options}
             value={user_event_location.map(fc => ({ label: fc, value: fc }))}
             onChange={handleEventLocation}
           />
+        <br />
+        <br />
+
+        <h4>Prefered Transportation</h4>
+        <Select
+        value={user_transportation.value}
+        onChange={handleTransportation}
+        isMulti={false}
+        options={transportation_options}
+        isClearable
+        isSearchable
+        defaultValue={transportation_options[0].value}
+
+        />
+        <br /> 
         <br />
 
         <h4>Github Name</h4>

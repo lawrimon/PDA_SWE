@@ -9,8 +9,9 @@ export let user_spotify_link = null;
 export let user_calendar_link = null;
 export let user_github = null;
 export let user_event_location = null;
+export let user_transportation = null;
 
-export let user_preferences = [user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link, user_github, user_event_location]
+export let user_preferences = [user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link, user_event_location, user_github, user_transportation]
 
 export function setUserId(userId) {
   user_id = userId;
@@ -48,7 +49,7 @@ export function getUserPreferences() {
   }
   
 export function setUserPreferences(pref_list){
-    let old_list = [user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link, user_event_location, user_github]
+    let old_list = [user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link, user_event_location, user_github, user_transportation]
     for (let i = 0; i < pref_list.length; i++) {
       old_list.push(pref_list[i]);
     }
