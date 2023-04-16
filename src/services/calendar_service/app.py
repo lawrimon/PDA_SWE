@@ -287,7 +287,3 @@ def get_creds():
             token.write(creds.to_json())
 
     return creds
-
-
-if __name__ == "__main__":
-    app.run()
