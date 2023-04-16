@@ -110,7 +110,6 @@ def get_user_preferences(user):
     data = response.json()
     return data
 
-# TODO: implement get_calendar_events
 def get_calendar_events_tomorrow(user):
     """
     Get tomorrow's calendar events endpoint.
@@ -184,31 +183,28 @@ def get_racktime():
     github_user = user_preferences["github"]
     artist = user_preferences["artists"].split(",")[0]
     origin = user_preferences["coordinates"]
+    mode = user_preferences["transportation_mode"]
 
     
     mock_calendar_user = "maxkie1"
     events_tomorrow = get_calendar_events_tomorrow(mock_calendar_user)
-    # TODO: Get destination from calendar => variable destination => for user maxkie1
     if events_tomorrow:
         destination = events_tomorrow[0].get("location")
 
-    mode = user_preferences["transportation_mode"]
     issues = get_issues(github_user)
     route = get_route(origin, destination, mode)
-    # TODO: Get calendar events => variable events_tomorrow => for user maxkie1
+    tomorrows_events_summarized = summarize_tomorrows_events(events_tomorrow)
  
     play_music(artist)
 
     introduction = "Good evening, it's rack time. According to your sleep schedule, you should go to bed in one hour. "
     additional_information = "Thank you for listening. Do you want any additional information?"
-    # TODO: Add calendar events string => for user maxkie1
-    tomorrows_events_summarized = summarize_tomorrows_events(events_tomorrow)
 
     return jsonify (
         introduction,
+        tomorrows_events_summarized,
         issues,
         route,
         additional_information,
-        tomorrows_events_summarized
     )
 
