@@ -111,8 +111,7 @@ def get_user_preferences(user):
     return data
 
 def get_calendar_events_tomorrow(user):
-    """
-    Get tomorrow's calendar events endpoint.
+    """Get tomorrow's calendar events endpoint.
 
     This endpoint makes a GET request to a specified URL to fetch tomorrow's calendar events for the given user. The user parameter is included in the request as a query parameter. If the response status code is not 200, an error message is returned. Otherwise, the response data is parsed as JSON and returned.
 
@@ -131,26 +130,54 @@ def get_calendar_events_tomorrow(user):
 
     data = response.json()
     return data
-    
-def summarize_tomorrows_events(events_tomorrow):
-    """Summarize tomorrow's events endpoint.
 
-    This endpoint takes a list of events for tomorrow and summarizes them into a single string. The resulting summary includes the start and end times, the event name, and the location (extracted from the event dictionary).
+def parse_event_locations(events):
+    """Parse event locations function.
+
+    This function takes a list of event dictionaries and extracts the location information from each event. If the location string can be parsed, latitude, longitude, and city data are extracted and stored in a dictionary. If the location string cannot be parsed, an error message is printed to the console.
+
+    Args:
+        events: A list of event dictionaries.
+
+    Returns:
+        locations: A list of dictionaries containing latitude, longitude, and city data for each event.
+    """
+    
+    locations = []
+    for event in events:
+        location = event.get('location')
+        if location:
+            try:
+                lat, lon, city = location.split(' ')
+                data = {
+                    'lat': lat,
+                    'lon': lon,
+                    'city': city
+                }
+                locations.append(data)
+            except ValueError:
+                print(f"Error parsing location string: {location}")
+    return locations
+    
+def summarize_tomorrows_events(events_tomorrow, locations):
+    """Summarize tomorrow's events.
+
+    This function takes a list of events for tomorrow and summarizes them into a single string. The resulting summary includes the start and end times, the event name, and the location (extracted from the event dictionary).
 
     Args:
         events_tomorrow: A list of event dictionaries for tomorrow.
-    
+        locations: A list of location dictionaries.
+
     Returns:
         summarize_events: A summary string of tomorrow's events.
     """
 
-    summarize_events = "Tomorrow "
+    summarize_events = "tomorrow "
 
-    for event in events_tomorrow:
+    for event, location in zip(events_tomorrow, locations):
         start_time = datetime.fromisoformat(event["start"]["dateTime"]).strftime("%I:%M %p")
         end_time = datetime.fromisoformat(event["end"]["dateTime"]).strftime("%I:%M %p")
-        location = event["location"].split(",")[0]
-        summarize_events += f"at {start_time} until {end_time} the {event['summary']} takes place in {location}. "
+        summarize_events += f"at {start_time} until {end_time} the {event['summary']} takes place in {location.get('city')}. "
 
     return summarize_events
 
@@ -189,10 +216,12 @@ def get_racktime():
 
     
     events_tomorrow = get_calendar_events_tomorrow(mock_calendar_user)
+    locations = parse_event_locations(event_tomorrow)
+    
     if events_tomorrow:
-        destination = events_tomorrow[0].get("location")
+        destination = f"{locations[0].get('lat')},{locations[0].get('lon')}"
         route = get_route(origin, destination, mode)
-        tomorrows_events_summarized = summarize_tomorrows_events(events_tomorrow)
+        tomorrows_events_summarized = summarize_tomorrows_events(events_tomorrow, locations)
     else:
         route = "There is no transportation needed tomorrow."
         tomorrows_events_summarized = "There are no events in your calendar tomorrow."
