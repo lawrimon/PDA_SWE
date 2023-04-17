@@ -129,7 +129,7 @@ def notify_users():
             if(len(message) > 1):
                 print("Message from Scuttlebut received: " + str(message))
                 # convert the event object to a string before publishing
-                event_str = message
+                event_str = json.dumps(message)
                 # publish the event to the queue
                 channel.basic_publish(
                     exchange="notifications", routing_key=user_id, body=event_str
@@ -158,8 +158,7 @@ def notify_lookout():
     if users:
         for user in users:
             print(user)
-            user_id = user['user_id']
-
+            user_id = user
             channel.queue_declare(queue=user_id)
             channel.queue_bind(exchange="notifications", queue=user_id, routing_key=user_id)
 
