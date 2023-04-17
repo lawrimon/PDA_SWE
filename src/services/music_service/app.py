@@ -16,8 +16,15 @@ import requests
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from pprint import pprint
+import dotenv
+import os
 
 app = Flask(__name__)
+
+dotenv.load_dotenv()
+SPOTIPY_CLIENT_ID = os.getenv("SPOTIPY_CLIENT_ID")
+SPOTIPY_CLIENT_SECRET = os.getenv("SPOTIPY_CLIENT_SECRET")
+SPOTIPY_REDIRECT_URI = os.getenv("SPOTIPY_REDIRECT_URI")
 
 
 @app.route("/music")
@@ -35,11 +42,11 @@ def get_music():
     """
 
     scope = "user-read-playback-state,user-modify-playback-state"
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
+    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI))
 
     # check if parameters are given, either artist or track must be given
     if not request.args.get("artist") and not request.args.get("track"):
-        return jsonify({"error": "Missing parameters."}), 400
+        return jsonify({"error": "Missing parameters"}), 400
 
     # check for valid parameters
     if request.args.get("artist") and request.args.get("track"):
@@ -53,7 +60,7 @@ def get_music():
         tracklist = sp.search(q=f"track:{request.args.get('track')}", type="track")
 
     if len(tracklist["tracks"]["items"]) == 0:
-        return jsonify({"error": "Invalid parameters."}), 400
+        return jsonify({"error": "Invalid parameters"}), 400
 
     res = sp.devices()
     pprint(res)
