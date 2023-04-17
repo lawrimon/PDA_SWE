@@ -6,13 +6,13 @@ on:
       - main
     paths:
       - '**.py'
-      - '.github/workflows/python_ci.yaml'
+      - '.github/workflows/ci.yaml'
   pull_request:
     branches:
       - main
     paths:
       - '**.py'
-      - '.github/workflows/python_ci.yaml'
+      - '.github/workflows/ci.yaml'
   workflow_dispatch:    
 
 permissions:
