@@ -77,8 +77,8 @@ def get_issues():
                 "assignee": issue["assignee"]["login"],
                 "created_at": issue["created_at"],
                 "updated_at": issue["updated_at"],
-                #"description": issue["body"],
-                #"labels": [label["name"] for label in issue["labels"]],
+                # "description": issue["body"],
+                # "labels": [label["name"] for label in issue["labels"]],
             }
         )
         if issue["body"]:
@@ -89,7 +89,5 @@ def get_issues():
             issues[-1]["labels"] = [label["name"] for label in issue["labels"]]
         else:
             issues[-1]["labels"] = ["No labels provided"]
-
-
 
     return jsonify(issues)

@@ -11,17 +11,19 @@ from flask import Flask, jsonify, request
 import requests
 import flask_cors
 from datetime import date, datetime
+
 app = Flask(__name__)
 flask_cors.CORS(app)
 
+
 def get_issues(username):
     """Get assigned issues.
-    
+
     This functions call the issues endpoint of the coding service and returns the open issues assigned to a user.
-    
+
     Args:
         username: The username of the user. Only one username can be selected.
-        
+
     Returns:
         Information about the open issues assigned to the user wrappen in an answer sentence.
     """
@@ -31,23 +33,33 @@ def get_issues(username):
     response = requests.get(url, params=params)
     if response.status_code != 200:
         return jsonify({"error": "Error getting issues"}), 500
-    
+
     issues = response.json()
 
     if not issues:
         answer = "Congrats! There are no open issues assigned to you."
         return answer
-    
-    answer = "The following issue is a perfect candidate for your workday tomorrow: " + issues[0]["title"] + " in the " + issues[0]["repository"] + " repository." + " It is about " + issues[0]["description"] + ". These are the labels: "
+
+    answer = (
+        "The following issue is a perfect candidate for your workday tomorrow: "
+        + issues[0]["title"]
+        + " in the "
+        + issues[0]["repository"]
+        + " repository."
+        + " It is about "
+        + issues[0]["description"]
+        + ". These are the labels: "
+    )
     for label in issues[0]["labels"]:
         answer += label + ", "
     answer = answer[:-2] + ". "
 
     return answer
 
+
 def play_music(artist):
     """Play music.
-    
+
     This functions calls the play endpoint of the music service and plays music of a given artist.
 
     Args:
@@ -60,18 +72,19 @@ def play_music(artist):
     if response.status_code != 200:
         return jsonify({"error": "Error playing music"}), 500
 
-    return 
+    return
+
 
 def get_route(origin, destination, mode):
     """Get route.
-    
+
     This functions calls the route endpoint of the maps and returns the route from origin to destination.
 
     Args:
         origin: The origin of the route.
         destination: The destination of the route.
         mode: The mode of transportation. Can be "driving", "walking", "bicycling" or "transit". Only one mode can be selected.
-        
+
     Returns:
         Information about the route wrappen in an answer sentence.
     """
@@ -81,13 +94,21 @@ def get_route(origin, destination, mode):
     response = requests.get(url, params=params)
     if response.status_code != 200:
         return jsonify({"error": "Error getting route"}), 500
-    
+
     route = response.json()
 
-
-    answer = "The route from your home to your first appointment is " + route["distance"]["text"] + " long and will take " + route["duration"]["text"] + " with your preferred mode " + mode + ". "
+    answer = (
+        "The route from your home to your first appointment is "
+        + route["distance"]["text"]
+        + " long and will take "
+        + route["duration"]["text"]
+        + " with your preferred mode "
+        + mode
+        + ". "
+    )
 
     return answer
+
 
 def get_user_preferences(user):
     """Get user preferences.
@@ -110,6 +131,7 @@ def get_user_preferences(user):
     data = response.json()
     return data
 
+
 def get_calendar_events_tomorrow(user):
     """Get tomorrow's calendar events endpoint.
 
@@ -117,7 +139,7 @@ def get_calendar_events_tomorrow(user):
 
     Args:
         user: The username of the user whose calendar events to fetch.
-    
+
     Returns:
         data: A dictionary containing the calendar events for tomorrow.
     """
@@ -131,6 +153,7 @@ def get_calendar_events_tomorrow(user):
     data = response.json()
     return data
 
+
 def parse_event_locations(events):
     """Parse event locations function.
 
@@ -142,23 +165,20 @@ def parse_event_locations(events):
     Returns:
         locations: A list of dictionaries containing latitude, longitude, and city data for each event.
     """
-    
+
     locations = []
     for event in events:
-        location = event.get('location')
+        location = event.get("location")
         if location:
             try:
-                lat, lon, city = location.split(' ')
-                data = {
-                    'lat': lat,
-                    'lon': lon,
-                    'city': city
-                }
+                lat, lon, city = location.split(" ")
+                data = {"lat": lat, "lon": lon, "city": city}
                 locations.append(data)
             except ValueError:
                 print(f"Error parsing location string: {location}")
     return locations
-    
+
+
 def summarize_tomorrows_events(events_tomorrow, locations):
     """Summarize tomorrow's events.
 
@@ -175,28 +195,31 @@ def summarize_tomorrows_events(events_tomorrow, locations):
     summarize_events = "Here is a summary of your events for tomorrow: "
 
     for event, location in zip(events_tomorrow, locations):
-        start_time = datetime.fromisoformat(event["start"]["dateTime"]).strftime("%I:%M %p")
+        start_time = datetime.fromisoformat(event["start"]["dateTime"]).strftime(
+            "%I:%M %p"
+        )
         end_time = datetime.fromisoformat(event["end"]["dateTime"]).strftime("%I:%M %p")
         summarize_events += f"At {start_time} until {end_time} the {event['summary']} takes place in {location.get('city')}. "
 
     return summarize_events
 
+
 @app.route("/racktime")
 def get_racktime():
     """Rack time endpoint.
-    
-    This endpoint provides the rack time use case logic. 
+
+    This endpoint provides the rack time use case logic.
 
     Args:
         user: The username of the user. Only one username can be selected.
-    
+
     Returns:
         The rack time information.
     """
 
     if not request.args.get("user"):
         return jsonify({"error": "Missing parameters"}), 400
-    
+
     user = request.args.get("user")
 
     # TODO: Remove mock data
@@ -212,16 +235,18 @@ def get_racktime():
         "Walking": "walking",
         "Car": "driving",
         "Bicycle": "bicycling",
-        "Public Transport": "transit"
+        "Public Transport": "transit",
     }
-    
+
     events_tomorrow = get_calendar_events_tomorrow(mock_calendar_user)
     locations = parse_event_locations(events_tomorrow)
-    
+
     if events_tomorrow:
         destination = f"{locations[0].get('lat')},{locations[0].get('lon')}"
         route = get_route(origin, destination, transportation_modes[mode])
-        tomorrows_events_summarized = summarize_tomorrows_events(events_tomorrow, locations)
+        tomorrows_events_summarized = summarize_tomorrows_events(
+            events_tomorrow, locations
+        )
     else:
         route = "There is no transportation needed tomorrow. "
         tomorrows_events_summarized = "There are no events in your calendar tomorrow. "
@@ -231,13 +256,14 @@ def get_racktime():
     play_music(artist)
 
     introduction = "Good evening, it's rack time. According to your sleep schedule, you should go to bed in one hour. "
-    additional_information = "Thank you for listening. Do you want any additional information?"
+    additional_information = (
+        "Thank you for listening. Do you want any additional information?"
+    )
 
-    return jsonify (
+    return jsonify(
         introduction,
         tomorrows_events_summarized,
         issues,
         route,
         additional_information,
     )
-

@@ -77,11 +77,12 @@ def get_calendar_appointments():
                             "end": event["end"],
                         }
                     )
-        
+
         return jsonify(events_list)
 
     except HttpError as error:
         return jsonify({"error": "An error occurred: %s" % error}), 500
+
 
 @app.route("/calendar/appointments/tomorrow")
 def get_calendar_appointments_tomorrow():
@@ -107,8 +108,18 @@ def get_calendar_appointments_tomorrow():
 
         now = datetime.datetime.utcnow()
         tomorrow = now + datetime.timedelta(days=1)
-        start_of_tomorrow = datetime.datetime(tomorrow.year, tomorrow.month, tomorrow.day, 0, 0, 0).isoformat() + "Z"
-        end_of_tomorrow = datetime.datetime(tomorrow.year, tomorrow.month, tomorrow.day, 23, 59, 59).isoformat() + "Z"
+        start_of_tomorrow = (
+            datetime.datetime(
+                tomorrow.year, tomorrow.month, tomorrow.day, 0, 0, 0
+            ).isoformat()
+            + "Z"
+        )
+        end_of_tomorrow = (
+            datetime.datetime(
+                tomorrow.year, tomorrow.month, tomorrow.day, 23, 59, 59
+            ).isoformat()
+            + "Z"
+        )
 
         events_result = (
             service.events()
@@ -142,6 +153,7 @@ def get_calendar_appointments_tomorrow():
 
     except HttpError as error:
         return jsonify({"error": "An error occurred: %s" % error}), 500
+
 
 def parse_username(summary, user):
     return "@" in summary and summary.split("@", 1)[1] == user
