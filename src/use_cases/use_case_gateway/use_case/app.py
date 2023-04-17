@@ -226,7 +226,7 @@ def notify_racktime():
 
 # publish every 7 seconds
 scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(func=notify_users, trigger="interval", seconds=10)
+scheduler.add_job(func=notify_users, trigger="interval", seconds=60)
 # scheduler.add_job(func=notify_lookout, trigger="interval", seconds=40)
 # scheduler.add_job(func=notify_shoreleave, trigger="interval", seconds=60)
 

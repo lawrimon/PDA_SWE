@@ -20,8 +20,10 @@ export function Home() {
   const [text, setText] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [delivery_tag, setTag] = useState(null);
   
-  let userid = null;
+  let userid = "";
+  var next_message = true;
   const { textToSpeak, setTextToSpeak, speak, transcript, resetTranscript } = useSpeech();
 
   useEffect(() => {
@@ -79,7 +81,7 @@ export function Home() {
 
     // Listen for 'message' event and update messages state
     socket.on('message', (message) => {
-      
+      handleMessages(message)
     });
 
     // Listen for 'disconnect' event and log
@@ -115,9 +117,10 @@ export function Home() {
 
   // Function to handle incoming messages
   const handleMessages = (message) => {
-    console.log('Message received');
+    console.log('Message received', message);
     // Add message to messages state
-    setMessage(message);
+    setTag(message.delivery_tag)
+    say_use_case("rabbit", message.message)
   };
 
 
@@ -162,8 +165,8 @@ export function Home() {
     setTextToSpeak(event.target.value);
   };
   
-  async function say_use_case(use_case) {
-
+  async function say_use_case(use_case, speaking_text="") {
+    
     var text  = null;
     // get the right data to spreak
     if (use_case == "scuttlebutt"){
@@ -177,6 +180,12 @@ export function Home() {
     }
     else if (use_case == "shoreleave"){
        text = await getShoreleave();
+    }
+    else if (use_case="rabbit"){
+       text = speaking_text;
+    }
+    else{
+      
     }
       console.log( "Starts speaking...");
       let i = 0;
@@ -226,17 +235,22 @@ export function Home() {
         recognition.onresult = function(event) {
           const transcript2 = event.results[0][0].transcript;
           console.log(transcript2," is the transcript");
-          if (transcript2 !== ""){
+          if (transcript2 !== " "){
             recognition.onend = function() {
               console.log('Speech recognition service disconnected');
               console.log(transcript2," is the transcript right before");
     
+              next_message = false
               say_additional(transcript2);
     
             };
           }
         };  
       }, 5000);
+
+      if (next_message){
+        handleAcknowledge(delivery_tag)
+      }
   }
 
   async function sendTranscript(trans2) {
@@ -274,6 +288,8 @@ export function Home() {
     utterance.voice = voices[15];
     utterance.lang = 'en-US'; 
     speechSynthesis.speak(utterance);
+    next_message = true;
+    handleAcknowledge(delivery_tag)
   }
   
   async function getScuttlebutt () {
@@ -426,10 +442,10 @@ export function Home() {
           <textarea value={message} onChange={handleTextChange} className="converted-speech"></textarea>
         </div>
         <div>
-          <button onClick={console.log("lol")}>Record</button>
-          <button onClick={console.log("lol")}>Stop</button>
+          <button >Record</button>
+          <button >Stop</button>
           <button onClick={() => say_use_case("scuttlebutt")}>Speak</button>
-          <button onClick={say_additional}>Submit</button>
+          <button >Submit</button>
         </div>
       </div>
       </div>
