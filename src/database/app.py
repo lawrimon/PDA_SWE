@@ -32,7 +32,7 @@ allowed_keys = [
     "coordinates",
     "github",
     "event_location",
-    "transportation"
+    "transportation",
 ]
 
 
