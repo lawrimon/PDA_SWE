@@ -162,53 +162,17 @@ export function Home() {
   const handleTextChange = (event) => {
     setTextToSpeak(event.target.value);
   };
-
-
-  async function handleSpeakNew(usecase) {
-    console.log("usecase", usecase)
-    if (speechSynthesis.speaking) {
-      return; 
-    }
-    console.log("in handlespeak");
-
-    if (usecase === "shoreleave"){
-      const answer = await getShoreleave();
-      console.log("answer:", answer);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
-      return answer
-    }
-    else if (usecase ==="scuttlebutt"){
-      // get data to speak
-      const answer = await getScuttlebutt();
-      console.log("Scuttlebutt returned:", answer);
-      // await new Promise(resolve => setTimeout(resolve, 10000)); // wait for 1 second
-      return answer
-    }
-    else if (usecase ==="racktime"){
-      const answer = await getRackTime();
-      console.log("answer:", answer);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
-      return answer
-    }
-
-    else if (usecase ==="lookout"){
-      const answer = await getLooktout();
-      console.log("answer:", answer);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
-      return answer
-    }
-  };
   
   async function say_scuttlebutt() {
-    try {
-      const text = await handleSpeakNew("scuttlebutt");
+      const text = await getScuttlebutt();
       console.log( "Starts speaking...");
       let i = 0;
       
       for (const [key, value] of Object.entries(text)) {
         console.log("Part", i)
         console.log("Text:", value)
-        const utterance = new SpeechSynthesisUtterance(value);
+        speechSynthesis.cancel()
+        var utterance = new SpeechSynthesisUtterance(value);
         utterance.rate = 1;
         utterance.pitch = 1;
         var voices = window.speechSynthesis.getVoices();
@@ -216,8 +180,14 @@ export function Home() {
         utterance.lang = 'en-US';
       
         await new Promise((resolve, reject) => {
-          utterance.onend = resolve;
-          utterance.onerror = reject;
+          utterance.addEventListener('start', function () {
+            console.log("speaking")
+          })
+       
+          utterance.addEventListener('end', function () {
+            resolve();
+          })
+          
           speechSynthesis.speak(utterance);
         });
         i += 1;
@@ -250,15 +220,7 @@ export function Home() {
           }
         };  
       }, 5000);
-  
-    } catch (error) {
-      console.error(error);
-    }
   }
-  
-  function timeout(delay) {
-    return new Promise( res => setTimeout(res, delay) );
-}
 
   async function sendTranscript(trans2) {
     let text = "";
@@ -338,9 +300,8 @@ export function Home() {
   }
 
   async function say_lookout() {
-    let val = ""
     try {
-      const text = await handleSpeakNew("lookout");
+      const text = await getLooktout();
       console.log(text, "is the message then");
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1;
@@ -390,9 +351,8 @@ export function Home() {
   }
 
    async function say_shoreleave() {
-    let val = ""
     try {
-      const text = await handleSpeakNew("shoreleave");
+      const text = await getShoreleave();
       console.log(text, "is the message then");
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1;
@@ -444,7 +404,7 @@ export function Home() {
   async function say_racktime() {
     let val = ""
     try {
-      const text = await handleSpeakNew("racktime");
+      const text = await getRackTime();
       console.log(text, "is the message then");
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1;
