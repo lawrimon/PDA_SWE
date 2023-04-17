@@ -89,8 +89,15 @@ def get_route(origin, destination, mode):
         Information about the route wrappen in an answer sentence.
     """
 
+    transportation_modes = {
+        "Walking": "walking",
+        "Car": "driving",
+        "Bicycle": "bicycling",
+        "Public Transport": "transit",
+    }
+
     url = f"http://maps:5000/route"
-    params = {"origin": origin, "destination": destination, "mode": mode}
+    params = {"origin": origin, "destination": destination, "mode": transportation_modes[mode]}
     response = requests.get(url, params=params)
     if response.status_code != 200:
         return jsonify({"error": "Error getting route"}), 500
@@ -231,19 +238,12 @@ def get_racktime():
     origin = user_preferences["coordinates"]
     mode = user_preferences["transportation"]
 
-    transportation_modes = {
-        "Walking": "walking",
-        "Car": "driving",
-        "Bicycle": "bicycling",
-        "Public Transport": "transit",
-    }
-
     events_tomorrow = get_calendar_events_tomorrow(mock_calendar_user)
     locations = parse_event_locations(events_tomorrow)
 
     if events_tomorrow:
         destination = f"{locations[0].get('lat')},{locations[0].get('lon')}"
-        route = get_route(origin, destination, transportation_modes[mode])
+        route = get_route(origin, destination, mode)
         tomorrows_events_summarized = summarize_tomorrows_events(
             events_tomorrow, locations
         )
