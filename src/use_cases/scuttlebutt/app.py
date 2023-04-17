@@ -35,8 +35,9 @@ def get_weather(coords):
         + str(max_temp)
         + " and the minimum temperature is "
         + str(min_temp)
-        + " . The weather today is looking like "
+        + ". The weather today is looking like "
         + description
+        + ". "
     )
 
     print(Answer)
@@ -73,7 +74,7 @@ def get_news(pref):
     more_news.append(compromised_data[3])
 
     Answer = (
-        "These are the headline storys for the day : "
+        "These are the headline storys for the day: "
         + str(compromised_data[0])
         + " Here is your next Article: "
         + str(compromised_data[1])
@@ -154,6 +155,8 @@ def get_stock_news(pref):
         answer = "Here are the news for the stocks you are interested in: " + " ".join(
             news
         )
+        if answer[-1] not in [".", "?", "!"]:
+            answer += ". "
 
     return answer
 

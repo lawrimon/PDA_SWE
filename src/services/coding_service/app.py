@@ -77,11 +77,19 @@ def get_issues():
                 "assignee": issue["assignee"]["login"],
                 "created_at": issue["created_at"],
                 "updated_at": issue["updated_at"],
-                "description": issue["body"],
-                "labels": [label["name"] for label in issue["labels"]],
+                #"description": issue["body"],
+                #"labels": [label["name"] for label in issue["labels"]],
             }
         )
+        if issue["body"]:
+            issues[-1]["description"] = issue["body"]
+        else:
+            issues[-1]["description"] = "No description provided"
+        if issue["labels"]:
+            issues[-1]["labels"] = [label["name"] for label in issue["labels"]]
+        else:
+            issues[-1]["labels"] = ["No labels provided"]
 
-    pprint(issues)
+
 
     return jsonify(issues)

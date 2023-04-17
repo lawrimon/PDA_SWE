@@ -41,7 +41,7 @@ def get_issues(username):
     answer = "The following issue is a perfect candidate for your workday tomorrow: " + issues[0]["title"] + " in the " + issues[0]["repository"] + " repository." + " It is about " + issues[0]["description"] + ". These are the labels: "
     for label in issues[0]["labels"]:
         answer += label + ", "
-    answer = answer[:-2] + "."
+    answer = answer[:-2] + ". "
 
     return answer
 
@@ -85,7 +85,7 @@ def get_route(origin, destination, mode):
     route = response.json()
 
 
-    answer = "The route from your home to your first appointment is " + route["distance"]["text"] + " long and will take " + route["duration"]["text"] + " with your preferred mode " + mode + "."
+    answer = "The route from your home to your first appointment is " + route["distance"]["text"] + " long and will take " + route["duration"]["text"] + " with your preferred mode " + mode + ". "
 
     return answer
 
@@ -172,12 +172,12 @@ def summarize_tomorrows_events(events_tomorrow, locations):
         summarize_events: A summary string of tomorrow's events.
     """
 
-    summarize_events = "tomorrow "
+    summarize_events = "Here is a summary of your events for tomorrow: "
 
     for event, location in zip(events_tomorrow, locations):
         start_time = datetime.fromisoformat(event["start"]["dateTime"]).strftime("%I:%M %p")
         end_time = datetime.fromisoformat(event["end"]["dateTime"]).strftime("%I:%M %p")
-        summarize_events += f"at {start_time} until {end_time} the {event['summary']} takes place in {location.get('city')}. "
+        summarize_events += f"At {start_time} until {end_time} the {event['summary']} takes place in {location.get('city')}. "
 
     return summarize_events
 
@@ -200,10 +200,6 @@ def get_racktime():
     user = request.args.get("user")
 
     # TODO: Remove mock data
-    github_user = "maxkie1"
-    artist = "Ski Aggu"
-    origin = "48.889124,9.122071"
-    destination = "48.69047409776592,8.993838658674152"
     mode = "driving"
     mock_calendar_user = "maxkie1"
 
@@ -212,19 +208,19 @@ def get_racktime():
     github_user = user_preferences["github"]
     artist = user_preferences["artists"].split(",")[0]
     origin = user_preferences["coordinates"]
-    mode = user_preferences["transportation_mode"]
+    #mode = user_preferences["transportation_mode"]
 
     
     events_tomorrow = get_calendar_events_tomorrow(mock_calendar_user)
-    locations = parse_event_locations(event_tomorrow)
+    locations = parse_event_locations(events_tomorrow)
     
     if events_tomorrow:
         destination = f"{locations[0].get('lat')},{locations[0].get('lon')}"
         route = get_route(origin, destination, mode)
         tomorrows_events_summarized = summarize_tomorrows_events(events_tomorrow, locations)
     else:
-        route = "There is no transportation needed tomorrow."
-        tomorrows_events_summarized = "There are no events in your calendar tomorrow."
+        route = "There is no transportation needed tomorrow. "
+        tomorrows_events_summarized = "There are no events in your calendar tomorrow. "
 
     issues = get_issues(github_user)
 
