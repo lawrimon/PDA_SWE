@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  width: 100%;
   padding-bottom: 40px;
 }
 
@@ -18,7 +19,6 @@
 nots {
   height:200px;
   display: block;
-  width: 100%;
   padding-bottom: 20px;
   margin: 30px;
 }
@@ -59,6 +59,8 @@ button {
 button:hover {
   background-color: #6CA06C;
 }
+
+
 
 .header-container {
   display: flex;
@@ -101,6 +103,58 @@ button:hover {
   justify-content: center;
 
 }
+.settings-button:hover {
+  background-color: sandybrown;
+}
+
+.scuttlebutt{
+  background-color: gray;
+  color: black;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+
+}
+.scuttlebutt:hover{
+  background-color: sandybrown;
+
+}
+
+.shoreleave{
+  background-color: lightpink;
+  color: black;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+
+}
+.shoreleave:hover{
+  background-color: sandybrown;
+}
+
+.lookout{
+  background-color: lightgreen;
+  color: black;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+}
+.lookout:hover{
+  background-color: sandybrown;
+}
+
 
 .record-container {
   display: block;

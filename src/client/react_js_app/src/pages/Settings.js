@@ -22,7 +22,7 @@ export function Settings() {
   const [user_books, setBooks] = useState(["Non-Fiction"]);
   const [user_github, setUserGithub] = useState("");
   const [user_event_location, setEventLocation] = useState(["Stuttgart"]);
-  const [user_transportation, setTransportation] = useState("");
+  const [user_transportation, setTransportation] = useState([""]);
 
 
   let user_pref = []
@@ -185,7 +185,7 @@ export function Settings() {
       setNews(pref.news.split(","))
       setUserGithub(pref.github)
       setEventLocation(pref.event_location.split(","))
-      setTransportation(pref.transportation)
+      setTransportation(pref.transportation.split(","))
 
     }
 

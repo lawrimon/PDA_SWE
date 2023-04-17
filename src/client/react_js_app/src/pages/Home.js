@@ -3,7 +3,7 @@ import './NotificationCenter.css'
 import logo from '../resources/cAPItan_Logo.jpg';
 import logo2 from '../resources/spongie2.gif';
 
-import React, { useState, useEffect, useRef }  from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { Link } from 'react-router-dom';
 import { getUserId, setUserId, user_id } from '../components/User.js';
@@ -12,6 +12,8 @@ import { useSpeech } from '../components/SpeechFunctions';
 
 
 export function Home() {
+  var originalColor;
+
   const useridRef = useRef(null);
   const [notifications, setNotifications] = useState([]);
 
@@ -24,17 +26,17 @@ export function Home() {
   let userid = null;
   const { textToSpeak, setTextToSpeak, speak, transcript, resetTranscript } = useSpeech();
 
-  
-    const addNotification = (message) => {
-      const newNotifications = [message, ...notifications];
-      setNotifications(newNotifications);
-    }
-  
-    const removeNotification = (index) => {
-      const newNotifications = [...notifications];
-      newNotifications.splice(index, 1);
-      setNotifications(newNotifications);
-    }
+
+  const addNotification = (message) => {
+    const newNotifications = [message, ...notifications];
+    setNotifications(newNotifications);
+  }
+
+  const removeNotification = (index) => {
+    const newNotifications = [...notifications];
+    newNotifications.splice(index, 1);
+    setNotifications(newNotifications);
+  }
 
   useEffect(() => {
     // Call your function here
@@ -78,106 +80,128 @@ export function Home() {
     addNotification("New Notification", notifications, setNotifications);
     handleLogo()
   };
-  
+
   //STT and TTS
   const handleTextChange = (event) => {
     setTextToSpeak(event.target.value);
   };
+
+  function changeColor(div) {
+    var button = document.getElementById(div);
+    if (!button.classList.contains('red')) {
+      originalColor = button.style.backgroundColor;
+      button.style.backgroundColor = 'red';
+    }
+  }
+
+  function setColor(div){
+    var button = document.getElementById(div);
+    if (button.classList.contains('red')) {
+      button.style.backgroundColor = originalColor;
+    }
+  }
+  
 
 
   async function handleSpeakNew(usecase) {
     let answer;
     console.log("usecase", usecase)
     if (speechSynthesis.speaking) {
-      return; 
+      return;
     }
     console.log("in handlespeak");
 
-    if (usecase === "shoreleave"){
+    if (usecase === "shoreleave") {
       const answer = await getShoreleave();
       console.log("answer:", answer);
       await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
       return answer
     }
-    else if (usecase ==="scuttlebutt"){
+    else if (usecase === "scuttlebutt") {
       const answer = await sendToFrontend();
       console.log("answer:", answer);
       await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
       return answer
     }
 
-    else if (usecase ==="lookout"){
+    else if (usecase === "lookout") {
       const answer = await getLooktout();
       console.log("answer:", answer);
       await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
       return answer
     }
     // Wait for sendToFrontend to complete and return a value
-   
+
     // Wait for setMessage to complete and then call SpeechSynthesisUtterance
   };
-  
+
   async function say_scuttlebutt() {
     let val = ""
+    await changeColor('scuttlebutt')
+
     try {
       const text = await handleSpeakNew("scuttlebutt");
       console.log(text, "is the message then");
       addNotification(text, notifications, setNotifications);
+      handleLogo(logo2)
+
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1;
       utterance.pitch = 1;
       var voices = window.speechSynthesis.getVoices();
       utterance.voice = voices[15];
       utterance.lang = 'en-US';
-  
+
       await new Promise((resolve, reject) => {
         utterance.onend = resolve;
         utterance.onerror = reject;
         speechSynthesis.speak(utterance);
       });
-  
+
       console.log("After speak");
-  
+
       const recognition = new window.webkitSpeechRecognition();
       recognition.lang = 'en-US';
       recognition.start();
-  
+
       console.log("Listening...");
-  
+      handleLogo(logo)
+      await setColor('scuttlebutt')
       // Wait for 3 seconds before stopping the recognition
       setTimeout(() => {
         recognition.stop();
         console.log("Stopped listening");
-        console.log(transcript," is the transcript");
 
-        recognition.onresult = function(event) {
+        console.log(transcript, " is the transcript");
+
+        recognition.onresult = function (event) {
           const transcript2 = event.results[0][0].transcript;
-          console.log(transcript2," is the transcript");
-          if (transcript2 !== ""){
-            recognition.onend = function() {
+          console.log(transcript2, " is the transcript");
+          if (transcript2 !== "") {
+            recognition.onend = function () {
               console.log('Speech recognition service disconnected');
-              console.log(transcript2," is the transcript right before");
-    
+              console.log(transcript2, " is the transcript right before");
+
               say_additional(transcript2);
-    
+
             };
           }
-        };  
+        };
       }, 5000);
-  
+
     } catch (error) {
       console.error(error);
     }
   }
-  
+
   function timeout(delay) {
-    return new Promise( res => setTimeout(res, delay) );
-}
+    return new Promise(res => setTimeout(res, delay));
+  }
 
   async function sendTranscript(trans2) {
     let text = "";
-    console.log("transcript in sendTranscript",trans2)
-   
+    console.log("transcript in sendTranscript", trans2)
+
     if (trans2.toLowerCase() === "no") {
       setMessage("Alright, have a nice day!");
       return null;
@@ -198,7 +222,7 @@ export function Home() {
       console.log("User did not request more information.");
     }
   }
-  
+
   async function say_additional(trans2) {
     const text = await sendTranscript(trans2);
     console.log(text, "is the message then")
@@ -207,35 +231,35 @@ export function Home() {
     utterance.pitch = 1;
     var voices = window.speechSynthesis.getVoices();
     utterance.voice = voices[15];
-    utterance.lang = 'en-US'; 
+    utterance.lang = 'en-US';
     speechSynthesis.speak(utterance);
   }
-  
-  async function sendToFrontend () {
-    const response = await fetch('http://127.0.0.1:5008/scuttlebutt?user='+ useridRef.current)
+
+  async function sendToFrontend() {
+    const response = await fetch('http://127.0.0.1:5008/scuttlebutt?user=' + useridRef.current)
     const data = await response.json();
-    console.log("this data",data.toString())
-    if(data){
+    console.log("this data", data.toString())
+    if (data) {
       setMessage(data)
       return data
     }
   };
 
-  async function getShoreleave(){
+  async function getShoreleave() {
     const response = await fetch('http://127.0.0.1:5013/shoreleave')
     const data = await response.json();
-    console.log("this data",data.toString())
-    if(data){
+    console.log("this data", data.toString())
+    if (data) {
       setMessage(data)
       return data
     }
   }
 
-  async function getLooktout(){
-    const response = await fetch('http://127.0.0.1:5016/lookout?user='+ user_id)
+  async function getLooktout() {
+    const response = await fetch('http://127.0.0.1:5016/lookout?user=' + user_id)
     const data = await response.json();
-    console.log("this data",data.toString())
-    if(data){
+    console.log("this data", data.toString())
+    if (data) {
       setMessage(data)
       return data
     }
@@ -243,6 +267,8 @@ export function Home() {
 
   async function say_lookout() {
     let val = ""
+    await changeColor('lookout')
+
     try {
       const text = await handleSpeakNew("lookout");
       console.log(text, "is the message then");
@@ -256,177 +282,152 @@ export function Home() {
       var voices = window.speechSynthesis.getVoices();
       utterance.voice = voices[15];
       utterance.lang = 'en-US';
-  
+
       await new Promise((resolve, reject) => {
         utterance.onend = resolve;
         utterance.onerror = reject;
         speechSynthesis.speak(utterance);
-        
+
       });
       handleLogo(logo)
       console.log("After speak");
       const recognition = new window.webkitSpeechRecognition();
       recognition.lang = 'en-US';
       recognition.start();
-  
-      console.log("Listening...");
-  
+      await setColor('lookout')
+
       // Wait for 3 seconds before stopping the recognition
       setTimeout(() => {
         recognition.stop();
         console.log("Stopped listening");
-        console.log(Home.transcript," is the transcript");
 
-        recognition.onresult = function(event) {
+        console.log(transcript, " is the transcript");
+
+        recognition.onresult = function (event) {
           const transcript2 = event.results[0][0].transcript;
-          console.log(transcript2," is the transcript");
-          if (transcript2 !== ""){
-            recognition.onend = function() {
+          console.log(transcript2, " is the transcript");
+          if (transcript2 !== "") {
+            recognition.onend = function () {
               console.log('Speech recognition service disconnected');
-              console.log(transcript2," is the transcript right before");
-    
-              //say_additional(transcript2);
-    
+              console.log(transcript2, " is the transcript right before");
+
+              say_additional(transcript2);
+
             };
           }
-        };  
+        };
       }, 5000);
-  
+
     } catch (error) {
       console.error(error);
     }
   }
 
-   async function say_shoreleave() {
+  async function say_shoreleave() {
     let val = ""
+    await changeColor('shoreleave')
     try {
       const text = await handleSpeakNew("shoreleave");
       console.log(text, "is the message then");
-      for (let i = 0; i < text.length; i++) {
-        console.log(text[i])
-        addNotification(text[i], notifications, setNotifications);
-      }
-    
-      //addNotification(text, notifications, setNotifications);
+      
+      //setColor("shoreleave")
+      handleLogo(logo2)
+      addNotification(text, notifications, setNotifications);
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1;
       utterance.pitch = 1;
       var voices = window.speechSynthesis.getVoices();
       utterance.voice = voices[15];
       utterance.lang = 'en-US';
-  
+
       await new Promise((resolve, reject) => {
         utterance.onend = resolve;
         utterance.onerror = reject;
         speechSynthesis.speak(utterance);
       });
-  
       console.log("After speak");
-  
+      await setColor('shoreleave')
+
       const recognition = new window.webkitSpeechRecognition();
       recognition.lang = 'en-US';
       recognition.start();
-  
+
       console.log("Listening...");
-  
+      
       // Wait for 3 seconds before stopping the recognition
       setTimeout(() => {
         recognition.stop();
         console.log("Stopped listening");
-        console.log(Home.transcript," is the transcript");
+        handleLogo(logo)
+        console.log(transcript, " is the transcript");
 
-        recognition.onresult = function(event) {
+        recognition.onresult = function (event) {
           const transcript2 = event.results[0][0].transcript;
-          console.log(transcript2," is the transcript");
-          if (transcript2 !== ""){
-            recognition.onend = function() {
+          console.log(transcript2, " is the transcript");
+          if (transcript2 !== "") {
+            recognition.onend = function () {
               console.log('Speech recognition service disconnected');
-              console.log(transcript2," is the transcript right before");
-    
-              //say_additional(transcript2);
-    
+              console.log(transcript2, " is the transcript right before");
             };
           }
-        };  
+        };
       }, 5000);
-  
+
     } catch (error) {
       console.error(error);
     }
   }
-  
-
 
 
   return (
     <div className="App">
       <div style={{ marginTop: "3%" }}>
-        <img src={logoSrc} style={{width: "20%"}} alt="Logo" className="logo" />
+        <img src={logoSrc} style={{ width: "20%" }} alt="Logo" className="logo" />
       </div>
       <h1 style={{ color: "white", paddingTop: "1%" }}>cAPItan</h1>
       <div className="search-container">
-        <input type="text" value={text} onChange={handleChange} onClick={() => setShowPopup(false)} 
-        placeholder="Search..." />
-        <div>
+        <input type="text" value={text} onChange={handleChange} onClick={() => setShowPopup(false)}
+          placeholder="Search..." />
           <button type="button" onClick={handleSubmit}>Search</button>
-        </div>
         <div className="settings-button-container">
-          <div>
-          <button type="button"onClick={handleButtonClick}  className="settings-button">✉</button>
-                </div>
-      
+
           <Link to="/settings">
             <button type="button" className="settings-button">&#x2699;</button>
           </Link>
-          <div className="">
-            <div className="notification-icon">
 
-            <button type="button" onClick={Logout} className="settings-button">&#10149;</button>           
-            </div>  
-            </div>
-            <div className="">
-            <div className="notification-icon">
 
-            <button type="button" style={{backgroundColor: "gray"}} onClick={say_scuttlebutt} className="settings-button">&#x2603;</button>           
-            </div>  
-            </div>
-            <div className="">
-            <div className="notification-icon">
+          <button type="button" id ="scuttlebutt"  onClick={say_scuttlebutt} className="scuttlebutt">&#x2603;</button>
 
-            <button type="button" style={{backgroundColor: "orange"}} onClick={say_shoreleave} className="settings-button">&#128062;</button>           
-            </div>  
-            </div>
-            <div className="">
-            <div className="notification-icon" >
+          <button type="button" id="shoreleave" onClick={say_shoreleave} className="shoreleave">&#128062;</button>
 
-            <button type="button" style={{backgroundColor: "lightgreen"}} onClick={say_lookout} className="settings-button">&#x2656;</button>           
-            </div>  
-            </div>
+          <button type="button" id="lookout" onClick={say_lookout} className="lookout">&#x2656;</button>
 
-          </div>
-          </div>
-                  
-          <div className="nots">
-                <div className="notification-centerNew">
-            <div className="notification-containerNew">
-              {notifications.map((notification, index) => (
-                <div key={index} className="notificationNew">
-                  <div className="notification-iconNew"></div>
-                  <div className="notification-textNew">{notification}</div>
-                  <button onClick={() => removeNotification(index)} className="notification-closeNew">×</button>
-                </div>
-              ))}
-            </div>
-            <button onClick={() => addNotification("New Notification")} className="add-notification-btnNew">
-              Add Notification
-            </button>
-          </div>
-          </div>
-      
+          <button type="button" id ="Logout" onClick={Logout} className="settings-button">&#10149;</button>
+
+        </div>
       </div>
-      
-  );  
- 
-} 
+
+      <div className="nots">
+        <div className="notification-centerNew">
+          <div className="notification-containerNew">
+            {notifications.map((notification, index) => (
+              <div key={index} className="notificationNew">
+                <div className="notification-iconNew"></div>
+                <div className="notification-textNew">{notification}</div>
+                <button onClick={() => removeNotification(index)} className="notification-closeNew">×</button>
+              </div>
+            ))}
+          </div>
+          <button onClick={() => addNotification("New Notification")} className="add-notification-btnNew">
+            Add Notification
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  );
+
+}
 
 export default Home;
