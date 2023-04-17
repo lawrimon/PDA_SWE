@@ -97,7 +97,11 @@ def get_route(origin, destination, mode):
     }
 
     url = f"http://maps:5000/route"
-    params = {"origin": origin, "destination": destination, "mode": transportation_modes[mode]}
+    params = {
+        "origin": origin,
+        "destination": destination,
+        "mode": transportation_modes[mode],
+    }
     response = requests.get(url, params=params)
     if response.status_code != 200:
         return jsonify({"error": "Error getting route"}), 500
