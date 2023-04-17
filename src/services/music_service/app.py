@@ -46,8 +46,15 @@ def get_music():
         return jsonify({"error": "Missing parameters"}), 400
 
     scope = "user-read-playback-state,user-modify-playback-state"
-    sp_oauth = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI))
-    
+    sp_oauth = spotipy.Spotify(
+        auth_manager=SpotifyOAuth(
+            scope=scope,
+            client_id=SPOTIPY_CLIENT_ID,
+            client_secret=SPOTIPY_CLIENT_SECRET,
+            redirect_uri=SPOTIPY_REDIRECT_URI,
+        )
+    )
+
     invalid, tracklist = invalid_music_parameters(request.args, sp_oauth)
 
     if invalid:
