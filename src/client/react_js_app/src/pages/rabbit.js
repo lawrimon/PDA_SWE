@@ -119,7 +119,10 @@ function RabbitMqConsumer() {
       {messages.map((message, index) => (
         <div key={index}>
           <p>User ID: {message.user_id}</p>
-          <p>Message: {message.message}</p>
+          <p>News: {message.message.news}</p>
+          <p>Stock: {message.message.stock_news}</p>
+          <p>Weather: {message.message.weather}</p>
+          <p>Outro: {message.message.outro}</p>
           <button onClick={() => handleAcknowledge(message.delivery_tag)}>Acknowledge</button>
         </div>
       ))}

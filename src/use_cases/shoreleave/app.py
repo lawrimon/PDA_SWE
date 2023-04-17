@@ -62,7 +62,7 @@ def get_books():
 
 
 @app.route("/shoreleave")
-def get_scuttlebutt():
+def get_shoreleave():
     print("lol")
     quotes = get_quotes()
     nasa_facts = get_nasa()
@@ -74,13 +74,6 @@ def get_scuttlebutt():
         random_facts,
         "Thank you for listening. Do you want any additional information? ",
     )
-
-
-@app.route("/shoreleave/additional")
-def get_more_scuttlebutt():
-    print("lol")
-
-    return None
 
 
 if __name__ == "__main__":
