@@ -42,17 +42,18 @@ def get_music():
         Acknowledgement message.
     """
 
-    sp_client_credentials = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET))
-
     if not request.args.get("artist") and not request.args.get("track"):
         return jsonify({"error": "Missing parameters"}), 400
 
-    invalid, tracklist = invalid_music_parameters(request.args, sp_client_credentials)
+    scope = "user-read-playback-state,user-modify-playback-state"
+    sp_oauth = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI))
+    
+    invalid, tracklist = invalid_music_parameters(request.args, sp_oauth)
 
     if invalid:
         return jsonify({"error": "Invalid parameters"}), 400
 
-    res = sp_client_credentials.devices()
+    res = sp_oauth.devices()
     pprint(res)
 
     # check if there is a device available
@@ -66,10 +67,7 @@ def get_music():
 
     track_id = tracklist["tracks"]["items"][0]["uri"]
 
-    scope = "user-read-playback-state,user-modify-playback-state"
-    #sp_oauth = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI))
-
-    #sp_oauth.start_playback(uris=[track_id], device_id=res["devices"][0]["id"])
+    sp_oauth.start_playback(uris=[track_id], device_id=res["devices"][0]["id"])
     return jsonify({"message": "Playing music"})
 
 
