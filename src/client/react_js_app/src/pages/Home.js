@@ -1,14 +1,18 @@
 import './Home.css';
+import './NotificationCenter.css'
 import logo from '../resources/cAPItan_Logo.jpg';
 import React, { useState, useEffect, useRef }  from 'react';
 
 import { Link } from 'react-router-dom';
-import NotificationPopup from './Notification';
 import { getUserId, setUserId, user_id } from '../components/User.js';
 import { useSpeech } from '../components/SpeechFunctions';
 
+
+
 export function Home() {
   const useridRef = useRef(null);
+  const [notifications, setNotifications] = useState([]);
+
 
   const [text, setText] = useState('');
   const [showPopup, setShowPopup] = useState(false);
@@ -16,6 +20,18 @@ export function Home() {
   const [message, setMessage] = useState('');
   let userid = null;
   const { textToSpeak, setTextToSpeak, speak, transcript, resetTranscript } = useSpeech();
+
+  
+    const addNotification = (message) => {
+      const newNotifications = [message, ...notifications];
+      setNotifications(newNotifications);
+    }
+  
+    const removeNotification = (index) => {
+      const newNotifications = [...notifications];
+      newNotifications.splice(index, 1);
+      setNotifications(newNotifications);
+    }
 
   useEffect(() => {
     // Call your function here
@@ -52,20 +68,7 @@ export function Home() {
   };
 
   const handleSubmit = () => {
-    fetch('http://141.31.86.15:8000//postText', {
-      method: 'POST',
-      body: JSON.stringify({ "text": text }),
-      headers: { 'Content-Type': 'application/json' },
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.message) {
-          console.log(data.message)
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    addNotification("New Notification", notifications, setNotifications);
   };
   
   //STT and TTS
@@ -111,6 +114,7 @@ export function Home() {
     try {
       const text = await handleSpeakNew("scuttlebutt");
       console.log(text, "is the message then");
+      addNotification(text, notifications, setNotifications);
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1;
       utterance.pitch = 1;
@@ -234,6 +238,9 @@ export function Home() {
     try {
       const text = await handleSpeakNew("lookout");
       console.log(text, "is the message then");
+      console.log(text, "is the message then");
+      addNotification(text, notifications, setNotifications);
+
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1;
       utterance.pitch = 1;
@@ -286,6 +293,12 @@ export function Home() {
     try {
       const text = await handleSpeakNew("shoreleave");
       console.log(text, "is the message then");
+      for (let i = 0; i < text.length; i++) {
+        console.log(text[i])
+        addNotification(text[i], notifications, setNotifications);
+      }
+    
+      //addNotification(text, notifications, setNotifications);
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1;
       utterance.pitch = 1;
@@ -380,73 +393,29 @@ export function Home() {
             <button type="button" style={{backgroundColor: "lightgreen"}} onClick={say_lookout} className="settings-button">&#x2656;</button>           
             </div>  
             </div>
+
           </div>
           </div>
                   
-         
-          {showPopup && (
-        <div className="sidebar">
-          <div className="sidebar-header">
-            <h2>Notifications</h2>
-            <button className="close-button" onClick={handleClosePopup}>
-              X
+          <div className="nots">
+                <div className="notification-centerNew">
+            <div className="notification-containerNew">
+              {notifications.map((notification, index) => (
+                <div key={index} className="notificationNew">
+                  <div className="notification-iconNew"></div>
+                  <div className="notification-textNew">{notification}</div>
+                  <button onClick={() => removeNotification(index)} className="notification-closeNew">×</button>
+                </div>
+              ))}
+            </div>
+            <button onClick={() => addNotification("New Notification")} className="add-notification-btnNew">
+              Add Notification
             </button>
           </div>
-          <div className="sidebar-content">
-            <div className="notification">
-              <div className="notification-icon">
-                <i className="fas fa-user-circle"></i>
-              </div>
-              <div className="notification-text">
-                <p>
-                  You have a new follower on Twitter! Click here to view your
-                  profile.
-                </p>
-                <small>2 mins ago</small>
-              </div>
-            </div>
-            <div className="notification">
-              <div className="notification-icon">
-                <i className="fas fa-heart"></i>
-              </div>
-              <div className="notification-text">
-                <p>
-                  Someone liked your photo on Instagram! Click here to view
-                  their profile.
-                </p>
-                <small>5 mins ago</small>
-              </div>
-            </div>
-            <div className="notification">
-              <div className="notification-icon">
-                <i className="fas fa-comment"></i>
-              </div>
-              <div className="notification-text">
-                <p>
-                  You have a new comment on your blog post! Click here to view
-                  it.
-                </p>
-                <small>10 mins ago</small>
-                </div>
-
-            </div>
-              </div>
-
-            </div>
-          )}
-          <div className="record-container">
-        <div >
-          <textarea value={transcript} onChange={handleTextChange} className="converted-speech"></textarea>
-          <textarea value={message} onChange={handleTextChange} className="converted-speech"></textarea>
-        </div>
-        <div>
-          <button onClick={console.log("lol")}>Record</button>
-          <button onClick={console.log("lol")}>Stop</button>
-          <button onClick={say_scuttlebutt}>Speak</button>
-          <button onClick={say_additional}>Submit</button>
-        </div>
+          </div>
+      
       </div>
-      </div>
+      
   );  
  
 } 
