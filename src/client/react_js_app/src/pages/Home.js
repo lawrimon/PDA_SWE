@@ -120,7 +120,6 @@ export function Home() {
     setMessage(message);
   };
 
-  const toggleModal = () => setShowModal(!showModal);
 
   const Logout = () => {
     console.log("Logging out!");
@@ -163,8 +162,22 @@ export function Home() {
     setTextToSpeak(event.target.value);
   };
   
-  async function say_scuttlebutt() {
-      const text = await getScuttlebutt();
+  async function say_use_case(use_case) {
+
+    var text  = null;
+    // get the right data to spreak
+    if (use_case == "scuttlebutt"){
+       text = await getScuttlebutt();
+    }
+    else if (use_case == "lookout"){
+       text = await getLooktout();
+    }
+    else if (use_case == "racktime"){
+       text = await getRackTime();
+    }
+    else if (use_case == "shoreleave"){
+       text = await getShoreleave();
+    }
       console.log( "Starts speaking...");
       let i = 0;
       
@@ -181,8 +194,12 @@ export function Home() {
       
         await new Promise((resolve, reject) => {
           utterance.addEventListener('start', function () {
+            setMessage(value)
             console.log("speaking")
           })
+          utterance.addEventListener("error", (event) => {
+            reject();
+          });
        
           utterance.addEventListener('end', function () {
             resolve();
@@ -192,7 +209,7 @@ export function Home() {
         });
         i += 1;
       }
-      console.log("After speak");
+      console.log("Finished Speaking");
   
       const recognition = new window.webkitSpeechRecognition();
       recognition.lang = 'en-US';
@@ -299,162 +316,6 @@ export function Home() {
     }
   }
 
-  async function say_lookout() {
-    try {
-      const text = await getLooktout();
-      console.log(text, "is the message then");
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      var voices = window.speechSynthesis.getVoices();
-      utterance.voice = voices[15];
-      utterance.lang = 'en-US';
-  
-      await new Promise((resolve, reject) => {
-        utterance.onend = resolve;
-        utterance.onerror = reject;
-        speechSynthesis.speak(utterance);
-      });
-  
-      console.log("After speak");
-  
-      const recognition = new window.webkitSpeechRecognition();
-      recognition.lang = 'en-US';
-      recognition.start();
-  
-      console.log("Listening...");
-  
-      // Wait for 3 seconds before stopping the recognition
-      setTimeout(() => {
-        recognition.stop();
-        console.log("Stopped listening");
-        console.log(Home.transcript," is the transcript");
-
-        recognition.onresult = function(event) {
-          const transcript2 = event.results[0][0].transcript;
-          console.log(transcript2," is the transcript");
-          if (transcript2 !== ""){
-            recognition.onend = function() {
-              console.log('Speech recognition service disconnected');
-              console.log(transcript2," is the transcript right before");
-    
-              //say_additional(transcript2);
-    
-            };
-          }
-        };  
-      }, 5000);
-  
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-   async function say_shoreleave() {
-    try {
-      const text = await getShoreleave();
-      console.log(text, "is the message then");
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      var voices = window.speechSynthesis.getVoices();
-      utterance.voice = voices[15];
-      utterance.lang = 'en-US';
-  
-      await new Promise((resolve, reject) => {
-        utterance.onend = resolve;
-        utterance.onerror = reject;
-        speechSynthesis.speak(utterance);
-      });
-  
-      console.log("After speak");
-  
-      const recognition = new window.webkitSpeechRecognition();
-      recognition.lang = 'en-US';
-      recognition.start();
-  
-      console.log("Listening...");
-  
-      // Wait for 3 seconds before stopping the recognition
-      setTimeout(() => {
-        recognition.stop();
-        console.log("Stopped listening");
-        console.log(Home.transcript," is the transcript");
-
-        recognition.onresult = function(event) {
-          const transcript2 = event.results[0][0].transcript;
-          console.log(transcript2," is the transcript");
-          if (transcript2 !== ""){
-            recognition.onend = function() {
-              console.log('Speech recognition service disconnected');
-              console.log(transcript2," is the transcript right before");
-    
-              //say_additional(transcript2);
-    
-            };
-          }
-        };  
-      }, 5000);
-  
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  
-  async function say_racktime() {
-    let val = ""
-    try {
-      const text = await getRackTime();
-      console.log(text, "is the message then");
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      var voices = window.speechSynthesis.getVoices();
-      utterance.voice = voices[15];
-      utterance.lang = 'en-US';
-  
-      await new Promise((resolve, reject) => {
-        utterance.onend = resolve;
-        utterance.onerror = reject;
-        speechSynthesis.speak(utterance);
-      });
-  
-      console.log("After speak");
-  
-      const recognition = new window.webkitSpeechRecognition();
-      recognition.lang = 'en-US';
-      recognition.start();
-  
-      console.log("Listening...");
-  
-      // Wait for 3 seconds before stopping the recognition
-      setTimeout(() => {
-        recognition.stop();
-        console.log("Stopped listening");
-        console.log(Home.transcript," is the transcript");
-
-        recognition.onresult = function(event) {
-          const transcript2 = event.results[0][0].transcript;
-          console.log(transcript2," is the transcript");
-          if (transcript2 !== ""){
-            recognition.onend = function() {
-              console.log('Speech recognition service disconnected');
-              console.log(transcript2," is the transcript right before");
-    
-              //say_additional(transcript2);
-    
-            };
-          }
-        };  
-      }, 5000);
-  
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-
-
   return (
     <div className="App">
       <div style={{ marginTop: "3%" }}>
@@ -484,25 +345,25 @@ export function Home() {
             <div className="">
             <div className="notification-icon">
 
-            <button type="button" style={{backgroundColor: "gray"}} onClick={say_scuttlebutt} className="settings-button">&#x2603;</button>           
+            <button type="button" style={{backgroundColor: "gray"}} onClick={() => say_use_case("scuttlebutt")} className="settings-button">&#x2603;</button>           
             </div>  
             </div>
             <div className="">
             <div className="notification-icon">
 
-            <button type="button" style={{backgroundColor: "orange"}} onClick={say_shoreleave} className="settings-button">&#128062;</button>           
+            <button type="button" style={{backgroundColor: "orange"}} onClick={() => say_use_case("lookout")} className="settings-button">&#128062;</button>           
             </div>  
             </div>
             <div className="">
             <div className="notification-icon" >
 
-            <button type="button" style={{backgroundColor: "lightgreen"}} onClick={say_lookout} className="settings-button">&#x2656;</button>           
+            <button type="button" style={{backgroundColor: "lightgreen"}} onClick={() => say_use_case("shoreleave")} className="settings-button">&#x2656;</button>           
             </div>  
             </div>
             <div className="">
             <div className="notification-icon" >
 
-            <button type="button" style={{backgroundColor: "lightbrown"}} onClick={say_racktime} className="settings-button">&#9742;</button>           
+            <button type="button" style={{backgroundColor: "lightbrown"}} onClick={() => say_use_case("racktime")} className="settings-button">&#9742;</button>           
             </div>  
             </div>
           </div>
@@ -567,7 +428,7 @@ export function Home() {
         <div>
           <button onClick={console.log("lol")}>Record</button>
           <button onClick={console.log("lol")}>Stop</button>
-          <button onClick={say_scuttlebutt}>Speak</button>
+          <button onClick={() => say_use_case("scuttlebutt")}>Speak</button>
           <button onClick={say_additional}>Submit</button>
         </div>
       </div>
