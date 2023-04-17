@@ -20,7 +20,14 @@ export function Home() {
   const [text, setText] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [delivery_tag, setTag] = useState(null);
+  
+  
+  const deliveryTagRef = useRef("");
+
+  // function to update delivery tag
+  function updateDeliveryTag(tag) {
+    deliveryTagRef.current = tag;
+  }
   
   let userid = "";
   var next_message = true;
@@ -119,9 +126,16 @@ export function Home() {
   const handleMessages = (message) => {
     console.log('Message received', message);
     // Add message to messages state
-    setTag(message.delivery_tag)
+    updateDeliveryTag(message.delivery_tag)
+    console.log("Delivery Tag", deliveryTagRef.current)
     say_use_case("rabbit", message.message)
-  };
+    .then(() => {
+      if (next_message){
+      handleAcknowledge(deliveryTagRef.current)
+        }
+    })
+    .catch((error) => console.error("Error occurred:", error));
+    };
 
 
   const Logout = () => {
@@ -185,7 +199,7 @@ export function Home() {
        text = speaking_text;
     }
     else{
-      
+
     }
       console.log( "Starts speaking...");
       let i = 0;
@@ -213,6 +227,12 @@ export function Home() {
           utterance.addEventListener('end', function () {
             resolve();
           })
+
+          utterance.onend = function(event) {
+            console.log('Speech finished after ' + event.elapsedTime + ' seconds.');
+            // Do something here after the speech has finished
+            resolve();
+          };
           
           speechSynthesis.speak(utterance);
         });
@@ -248,9 +268,7 @@ export function Home() {
         };  
       }, 5000);
 
-      if (next_message){
-        handleAcknowledge(delivery_tag)
-      }
+      
   }
 
   async function sendTranscript(trans2) {
@@ -289,7 +307,7 @@ export function Home() {
     utterance.lang = 'en-US'; 
     speechSynthesis.speak(utterance);
     next_message = true;
-    handleAcknowledge(delivery_tag)
+    handleAcknowledge(deliveryTagRef.current)
   }
   
   async function getScuttlebutt () {
