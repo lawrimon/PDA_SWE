@@ -49,7 +49,7 @@ def get_news(pref):
 
     response = requests.get(url)
     if response.status_code != 200:
-        jsonify({"error": "Error getting weather information"}), 500
+        return jsonify({"error": "Error getting weather information"}), 500
 
     data = response.json()
     compromised_data = []
