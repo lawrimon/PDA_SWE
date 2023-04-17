@@ -221,6 +221,7 @@ export function Home() {
             console.log("speaking")
           })
           utterance.addEventListener("error", (event) => {
+            console.log("Error: rejected");
             reject();
           });
        
@@ -460,10 +461,10 @@ export function Home() {
           <textarea value={message} onChange={handleTextChange} className="converted-speech"></textarea>
         </div>
         <div>
-          <button >Record</button>
-          <button >Stop</button>
+          <button onClick={() => console.log("record")}>Record</button>
+          <button onClick={() => console.log("stop")}>Stop</button>
           <button onClick={() => say_use_case("scuttlebutt")}>Speak</button>
-          <button >Submit</button>
+          <button onClick={() => console.log("record")}>Submit</button>
         </div>
       </div>
       </div>
