@@ -6,14 +6,21 @@ import { Link } from 'react-router-dom';
 import NotificationPopup from './Notification';
 import { getUserId, setUserId, user_id } from '../components/User.js';
 import { useSpeech } from '../components/SpeechFunctions';
+import io from 'socket.io-client';
 
 export function Home() {
   const useridRef = useRef(null);
 
+  // Rabbit
+  const [queueName, setQueueName] = useState(null);
+  const socketRef = useRef(null);
+  const [message, setMessage] = useState("");
+  const ENDPOINT = 'http://localhost:5010/';
+
   const [text, setText] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [message, setMessage] = useState('');
+  
   let userid = null;
   const { textToSpeak, setTextToSpeak, speak, transcript, resetTranscript } = useSpeech();
 
@@ -23,18 +30,101 @@ export function Home() {
     const storedUserId = localStorage.getItem('user_id');
 
     // Set the value of useridRef.current to the retrieved user ID, if it exists
-    if (storedUserId) {
+    if (storedUserId || storedUserId.length()) {
       useridRef.current = storedUserId;
-      console.log("Userid", useridRef.current);
+      console.log("Userid: ", useridRef.current);
       setUserId(useridRef.current)
+      setQueueName(storedUserId)
+
+      // connect to websocket server on mount
+      handleConnect()
     }
+    // invalid login user
+    else{
+      // disconnect current socket
+      if (socketRef.current) {
+        console.log(`Disconnected from ${queueName} room Print4`);
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+      Logout()
+      
+    }
+
+    // disconnect socket on unmount
+    return () => {
+      if (socketRef.current) {
+        console.log(`Disconnected from ${queueName} room Print4`);
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+    };
   }, [getUserId()]);
+
+   // Function to connect to the socket server
+   const handleConnect = () => {
+    // Disconnect from previous socket room
+    if (socketRef.current) {
+      console.log(`Disconnected from ${queueName} room Print1`);
+      socketRef.current.disconnect();
+      socketRef.current = null;
+    }
+
+    // Connect to the socket server and emit 'start' event with user_id
+    const socket = io(ENDPOINT, {});
+    socketRef.current = socket;
+
+    socket.emit('start', { user_id: queueName });
+    console.log(`Connected to ${queueName} room Print2`);
+
+    // Listen for 'message' event and update messages state
+    socket.on('message', (message) => {
+      
+    });
+
+    // Listen for 'disconnect' event and log
+    socket.on('disconnect', () => {
+      console.log(`Disconnected from server Print3`);
+    });
+
+    // Return cleanup function to disconnect from socket
+    return () => {
+      socket.disconnect();
+    };
+  };
+
+  // Function to acknowledge a message
+  const handleAcknowledge = (deliveryTag) => {
+
+    try {
+    // Check if the delivery tag is a valid integer
+    if (deliveryTag) {
+      // Acknowledge Message by emitting 'ack' event with delivery_tag
+      socketRef.current.emit('ack', { delivery_tag: deliveryTag });
+
+      // Remove acknowledged message from messages array
+      console.log("Message Acknowledged")
+      setMessage(null);
+    } else {
+      console.error('Invalid delivery tag:', deliveryTag);
+    }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Function to handle incoming messages
+  const handleMessages = (message) => {
+    console.log('Message received');
+    // Add message to messages state
+    setMessage(message);
+  };
 
   const toggleModal = () => setShowModal(!showModal);
 
   const Logout = () => {
     console.log("Logging out!");
-    const storedUserId = ""
+    setUserId("")
     localStorage.clear()
     window.location.href = '/login';
   };
@@ -75,7 +165,6 @@ export function Home() {
 
 
   async function handleSpeakNew(usecase) {
-    let answer;
     console.log("usecase", usecase)
     if (speechSynthesis.speaking) {
       return; 
@@ -89,9 +178,10 @@ export function Home() {
       return answer
     }
     else if (usecase ==="scuttlebutt"){
-      const answer = await sendToFrontend();
-      console.log("answer:", answer);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
+      // get data to speak
+      const answer = await getScuttlebutt();
+      console.log("Scuttlebutt returned:", answer);
+      // await new Promise(resolve => setTimeout(resolve, 10000)); // wait for 1 second
       return answer
     }
     else if (usecase ==="racktime"){
@@ -107,29 +197,31 @@ export function Home() {
       await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
       return answer
     }
-    // Wait for sendToFrontend to complete and return a value
-   
-    // Wait for setMessage to complete and then call SpeechSynthesisUtterance
   };
   
   async function say_scuttlebutt() {
-    let val = ""
     try {
       const text = await handleSpeakNew("scuttlebutt");
-      console.log(text, "is the message then");
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      var voices = window.speechSynthesis.getVoices();
-      utterance.voice = voices[15];
-      utterance.lang = 'en-US';
-  
-      await new Promise((resolve, reject) => {
-        utterance.onend = resolve;
-        utterance.onerror = reject;
-        speechSynthesis.speak(utterance);
-      });
-  
+      console.log( "Starts speaking...");
+      let i = 0;
+      
+      for (const [key, value] of Object.entries(text)) {
+        console.log("Part", i)
+        console.log("Text:", value)
+        const utterance = new SpeechSynthesisUtterance(value);
+        utterance.rate = 1;
+        utterance.pitch = 1;
+        var voices = window.speechSynthesis.getVoices();
+        utterance.voice = voices[15];
+        utterance.lang = 'en-US';
+      
+        await new Promise((resolve, reject) => {
+          utterance.onend = resolve;
+          utterance.onerror = reject;
+          speechSynthesis.speak(utterance);
+        });
+        i += 1;
+      }
       console.log("After speak");
   
       const recognition = new window.webkitSpeechRecognition();
@@ -205,10 +297,10 @@ export function Home() {
     speechSynthesis.speak(utterance);
   }
   
-  async function sendToFrontend () {
+  async function getScuttlebutt () {
     const response = await fetch('http://127.0.0.1:5008/scuttlebutt?user='+ useridRef.current)
-    const data = await response.json();
-    console.log("this data",data.toString())
+    const data = response.json();
+    console.log("this data", data)
     if(data){
       setMessage(data)
       return data
@@ -218,7 +310,7 @@ export function Home() {
   async function getShoreleave(){
     const response = await fetch('http://127.0.0.1:5013/shoreleave')
     const data = await response.json();
-    console.log("this data",data.toString())
+    console.log("this data",data)
     if(data){
       setMessage(data)
       return data
@@ -228,7 +320,7 @@ export function Home() {
   async function getLooktout(){
     const response = await fetch('http://127.0.0.1:5016/lookout?user='+ user_id)
     const data = await response.json();
-    console.log("this data",data.toString())
+    console.log("this data",data)
     if(data){
       setMessage(data)
       return data
@@ -238,7 +330,7 @@ export function Home() {
   async function getRackTime(){
     const response = await fetch('http://127.0.0.1:5019/racktime?user='+ user_id)
     const data = await response.json();
-    console.log("this data",data.toString())
+    console.log("this data",data)
     if(data){
       setMessage(data)
       return data
