@@ -231,3 +231,16 @@ services:
       - sports
       - events
       - rabbitmq
+
+  racktime:
+    build: ./src/use_cases/racktime
+    volumes:
+      - ./src/use_cases/racktime:/app
+    ports:
+      - 5019:5000
+    depends_on:
+      - music
+      - coding
+      - calendar
+      - maps
+      - rabbitmq
