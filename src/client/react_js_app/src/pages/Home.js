@@ -1,6 +1,8 @@
 import './Home.css';
 import './NotificationCenter.css'
 import logo from '../resources/cAPItan_Logo.jpg';
+import logo2 from '../resources/spongie2.gif';
+
 import React, { useState, useEffect, useRef }  from 'react';
 
 import { Link } from 'react-router-dom';
@@ -13,6 +15,7 @@ export function Home() {
   const useridRef = useRef(null);
   const [notifications, setNotifications] = useState([]);
 
+  const [logoSrc, setLogoSrc] = useState(logo);
 
   const [text, setText] = useState('');
   const [showPopup, setShowPopup] = useState(false);
@@ -48,6 +51,10 @@ export function Home() {
 
   const toggleModal = () => setShowModal(!showModal);
 
+  const handleLogo = (insertlogo) => {
+    setLogoSrc(insertlogo);
+  };
+
   const Logout = () => {
     console.log("Logging out!");
     const storedUserId = ""
@@ -69,6 +76,7 @@ export function Home() {
 
   const handleSubmit = () => {
     addNotification("New Notification", notifications, setNotifications);
+    handleLogo()
   };
   
   //STT and TTS
@@ -240,6 +248,7 @@ export function Home() {
       console.log(text, "is the message then");
       console.log(text, "is the message then");
       addNotification(text, notifications, setNotifications);
+      handleLogo(logo2)
 
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1;
@@ -252,10 +261,10 @@ export function Home() {
         utterance.onend = resolve;
         utterance.onerror = reject;
         speechSynthesis.speak(utterance);
+        
       });
-  
+      handleLogo(logo)
       console.log("After speak");
-  
       const recognition = new window.webkitSpeechRecognition();
       recognition.lang = 'en-US';
       recognition.start();
@@ -352,7 +361,7 @@ export function Home() {
   return (
     <div className="App">
       <div style={{ marginTop: "3%" }}>
-        <img src={logo} alt="Logo" className="logo" />
+        <img src={logoSrc} style={{width: "20%"}} alt="Logo" className="logo" />
       </div>
       <h1 style={{ color: "white", paddingTop: "1%" }}>cAPItan</h1>
       <div className="search-container">
