@@ -221,11 +221,12 @@ export function Home() {
             console.log("speaking")
           })
           utterance.addEventListener("error", (event) => {
-            console.log("Error: rejected");
+            console.log("rejected");
             reject();
           });
-       
+
           utterance.addEventListener('end', function () {
+            console.log("resolved")
             resolve();
           })
 
