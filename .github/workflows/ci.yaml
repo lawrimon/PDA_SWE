@@ -1,4 +1,4 @@
-name: Python CI
+name: Continuous Integration
 
 on:
   push:
@@ -6,13 +6,13 @@ on:
       - main
     paths:
       - '**.py'
-      - '.github/workflows/python_ci.yaml'
+      - '.github/workflows/ci.yaml'
   pull_request:
     branches:
       - main
     paths:
       - '**.py'
-      - '.github/workflows/python_ci.yaml'
+      - '.github/workflows/ci.yaml'
   workflow_dispatch:    
 
 permissions:
@@ -29,12 +29,16 @@ env:
   SPORTS_API_KEY: ${{ secrets.SPORTS_API_KEY }}
   CODING_API_KEY: ${{ secrets.CODING_API_KEY }}
   EVENTS_API_KEY: ${{ secrets.EVENTS_API_KEY }}
+  SPOTIPY_CLIENT_ID: ${{ secrets.SPOTIPY_CLIENT_ID }}
+  SPOTIPY_CLIENT_SECRET: ${{ secrets.SPOTIPY_CLIENT_SECRET }}
+  SPOTIPY_REDIRECT_URI: ${{ secrets.SPOTIPY_REDIRECT_URI }}
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
         with: 
           ref: ${{ github.head_ref }}
       - name: Set up Python 3.10

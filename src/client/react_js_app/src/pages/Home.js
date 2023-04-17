@@ -94,6 +94,12 @@ export function Home() {
       await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
       return answer
     }
+    else if (usecase ==="racktime"){
+      const answer = await getRackTime();
+      console.log("answer:", answer);
+      await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 1 second
+      return answer
+    }
 
     else if (usecase ==="lookout"){
       const answer = await getLooktout();
@@ -229,6 +235,16 @@ export function Home() {
     }
   }
 
+  async function getRackTime(){
+    const response = await fetch('http://127.0.0.1:5019/racktime?user='+ user_id)
+    const data = await response.json();
+    console.log("this data",data.toString())
+    if(data){
+      setMessage(data)
+      return data
+    }
+  }
+
   async function say_lookout() {
     let val = ""
     try {
@@ -333,6 +349,57 @@ export function Home() {
     }
   }
   
+  async function say_racktime() {
+    let val = ""
+    try {
+      const text = await handleSpeakNew("racktime");
+      console.log(text, "is the message then");
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      var voices = window.speechSynthesis.getVoices();
+      utterance.voice = voices[15];
+      utterance.lang = 'en-US';
+  
+      await new Promise((resolve, reject) => {
+        utterance.onend = resolve;
+        utterance.onerror = reject;
+        speechSynthesis.speak(utterance);
+      });
+  
+      console.log("After speak");
+  
+      const recognition = new window.webkitSpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.start();
+  
+      console.log("Listening...");
+  
+      // Wait for 3 seconds before stopping the recognition
+      setTimeout(() => {
+        recognition.stop();
+        console.log("Stopped listening");
+        console.log(Home.transcript," is the transcript");
+
+        recognition.onresult = function(event) {
+          const transcript2 = event.results[0][0].transcript;
+          console.log(transcript2," is the transcript");
+          if (transcript2 !== ""){
+            recognition.onend = function() {
+              console.log('Speech recognition service disconnected');
+              console.log(transcript2," is the transcript right before");
+    
+              //say_additional(transcript2);
+    
+            };
+          }
+        };  
+      }, 5000);
+  
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
 
 
@@ -378,6 +445,12 @@ export function Home() {
             <div className="notification-icon" >
 
             <button type="button" style={{backgroundColor: "lightgreen"}} onClick={say_lookout} className="settings-button">&#x2656;</button>           
+            </div>  
+            </div>
+            <div className="">
+            <div className="notification-icon" >
+
+            <button type="button" style={{backgroundColor: "lightbrown"}} onClick={say_racktime} className="settings-button">&#9742;</button>           
             </div>  
             </div>
           </div>

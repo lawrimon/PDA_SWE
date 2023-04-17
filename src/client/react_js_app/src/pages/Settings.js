@@ -22,6 +22,8 @@ export function Settings() {
   const [user_books, setBooks] = useState(["Non-Fiction"]);
   const [user_github, setUserGithub] = useState("");
   const [user_event_location, setEventLocation] = useState(["Stuttgart"]);
+  const [user_transportation, setTransportation] = useState("");
+
 
   let user_pref = []
 
@@ -89,6 +91,13 @@ export function Settings() {
     { value: 'Frankfurt', label: 'Frankfurt Books' }
   ]
 
+  const transportation_options = [
+    { value: 'Walking', label: 'Walking' },
+    { value: 'Car', label: 'Car' },
+    { value: 'Bicycle', label: 'Bicycle' },
+    { value: 'Public Transport', label: 'Public Transport' }
+  ]
+
   const handleSave = (event) => {
     event.preventDefault();
     // save settings data here
@@ -104,6 +113,11 @@ export function Settings() {
 
   function handleGithub(event) {
     setUserGithub(event.target.value);  
+  }
+
+  function handleTransportation(selectedOption) {
+    console.log("option",selectedOption)
+    setTransportation(selectedOption.value);
   }
 
   function handleEventLocation(selectedOptions) {
@@ -171,6 +185,8 @@ export function Settings() {
       setNews(pref.news.split(","))
       setUserGithub(pref.github)
       setEventLocation(pref.event_location.split(","))
+      setTransportation(pref.transportation)
+
     }
 
     setUserPreferences();
@@ -179,7 +195,7 @@ export function Settings() {
   
 
   const TestToggle = () => {
-    console.log(JSON.stringify({ "username": useridRef.current, "football_club": user_football_club, "calendar_link": user_calendar_link, "spotify_link": user_spotify_link, "user_stocks": user_stocks, "user_artists": user_artists, "user_books": user_books }),
+    console.log(JSON.stringify({ "username": useridRef.current, "football_club": user_football_club, "calendar_link": user_calendar_link, "spotify_link": user_spotify_link, "user_stocks": user_stocks, "user_artists": user_artists, "user_books": user_books, "transportation": user_transportation }),
     )
   }
 
@@ -188,7 +204,7 @@ export function Settings() {
     console.log("handle triggered")
     fetch('http://localhost:5009/users/' + useridRef.current, {
       method: 'PUT',
-      body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString()}),
+      body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(),  "transportation": user_transportation.toString()}),
       headers: { 'Content-Type': 'application/json' },
     })
       .then(response => response.json())
@@ -286,6 +302,19 @@ export function Settings() {
           />
         <br />
         <br />
+
+        <h4>Prefered Transportation</h4>
+          <Select
+            closeMenuOnSelect={false}
+            components={animatedComponents}
+            options={transportation_options}
+            isMulti={false}
+            value={user_transportation.value}
+            onChange={handleTransportation}
+          />
+        <br /> 
+        <br />
+
         <h4>Github Name</h4>
           <input type="text" value={user_github} onChange={handleGithub} />
           <br />
