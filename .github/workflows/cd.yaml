@@ -1,0 +1,41 @@
+name: Continuous Deployment
+
+on:
+  push: 
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  cd:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with: 
+          ref: ${{ github.head_ref }}
+      - name: Create environment variables
+        run: |
+          touch .env
+          echo "MAPS_API_KEY=${{ secrets.MAPS_API_KEY }}" >> .env
+          echo "STOCK_MARKET_API_KEY=${{ secrets.STOCK_MARKET_API_KEY }}" >> .env
+          echo "STOCK_MARKET_SECRET_KEY=${{ secrets.STOCK_MARKET_SECRET_KEY }}" >> .env
+          echo "NYTIMES_API_KEY=${{ secrets.NYTIMES_API_KEY }}" >> .env
+          echo "NINJAS_API_KEY=${{ secrets.NINJAS_API_KEY }}" >> .env
+          echo "NASA_API_KEY=${{ secrets.NASA_API_KEY }}" >> .env
+          echo "WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }}" >> .env
+          echo "SPORTS_API_KEY=${{ secrets.SPORTS_API_KEY }}" >> .env
+          echo "CODING_API_KEY=${{ secrets.CODING_API_KEY }}" >> .env
+          echo "EVENTS_API_KEY=${{ secrets.EVENTS_API_KEY }}" >> .env
+          echo "SPOTIPY_CLIENT_ID=${{ secrets.SPOTIPY_CLIENT_ID }}" >> .env
+          echo "SPOTIPY_CLIENT_SECRET=${{ secrets.SPOTIPY_CLIENT_SECRET }}" >> .env
+          echo "SPOTIPY_REDIRECT_URI=${{ secrets.SPOTIPY_REDIRECT_URI }}" >> .env
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build images
+        run: docker compose -f docker-compose.yaml build
+      - name: Push images
+        run: docker compose -f docker-compose.yaml push
