@@ -21,15 +21,17 @@ def get_scuttlebutt(user):
     """
     This function retrieves the scuttlebutt usecase.
     """
-    url = ENDPOINT + "/scuttlebutt?user="+ user
-    print("inside get_scuttlebutt")
-    response = requests.get(url)
-    if response.status_code != 200:
-        return jsonify({"error": "Error getting books information"}), 500
+    with app.app_context():
+        url = ENDPOINT + "/scuttlebutt?user="+ user
+        print("inside get_scuttlebutt")
+        response = requests.get(url)
+        if response.status_code != 200:
+            # no error handling ?
+            print("Error requesting Scuttlebut: " + str(response.text))
+            return ""
 
-    message = response.json()
-
-    return message
+        message = response.json()
+        return message
 
 def get_lookout(user):
     """
@@ -53,7 +55,9 @@ def get_shoreleave(user):
     print("inside get_shoreleave")
     response = requests.get(url)
     if response.status_code != 200:
-        return jsonify({"error": "Error getting books information"}), 500
+        
+        # no error handling ?
+        return ""
 
     message = response.json()
 
@@ -109,7 +113,7 @@ def notify_users():
     if users:
         for user in users:
             print(user)
-            user_id = user['user_id']
+            user_id = user
 
             channel.queue_declare(queue=user_id)
             channel.queue_bind(exchange="notifications", queue=user_id, routing_key=user_id)
@@ -118,12 +122,14 @@ def notify_users():
             Todo: call the scuttlebutt function and check for problems 
             -> Checking for problems should happen using the calendar service!
             '''
-            message = get_scuttlebutt(user_id)
+            
+             # no error handling ?
+            message = get_scuttlebutt(user)
 
-            if(message):
-                print("Message from Scuttlebut received")
+            if(len(message) > 1):
+                print("Message from Scuttlebut received: " + str(message))
                 # convert the event object to a string before publishing
-                event_str = json.dumps(message)
+                event_str = message
                 # publish the event to the queue
                 channel.basic_publish(
                     exchange="notifications", routing_key=user_id, body=event_str
@@ -187,7 +193,7 @@ def notify_shoreleave():
     if users:
         for user in users:
             print(user)
-            user_id = user['user_id']
+            user_id = user
 
             channel.queue_declare(queue=user_id)
             channel.queue_bind(exchange="notifications", queue=user_id, routing_key=user_id)
@@ -211,9 +217,9 @@ def notify_racktime():
 
 # publish every 7 seconds
 scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(func=notify_users, trigger="interval", seconds=20)
-scheduler.add_job(func=notify_lookout, trigger="interval", seconds=40)
-scheduler.add_job(func=notify_shoreleave, trigger="interval", seconds=60)
+scheduler.add_job(func=notify_users, trigger="interval", seconds=10)
+# scheduler.add_job(func=notify_lookout, trigger="interval", seconds=40)
+# scheduler.add_job(func=notify_shoreleave, trigger="interval", seconds=60)
 
 scheduler.start()
 

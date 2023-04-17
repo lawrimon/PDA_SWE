@@ -29,15 +29,6 @@ services:
     ports:
       - "8001:8001"
 
-  data_source:
-    build: ./src/use_cases/use_case_gateway/service_adapter
-    ports:
-      - "5006:5000"
-    environment:
-      - RABBITMQ_HOST=rabbitmq
-    depends_on:
-      - rabbitmq
-
   producer:
     build: ./src/use_cases/use_case_gateway/use_case
     ports:
