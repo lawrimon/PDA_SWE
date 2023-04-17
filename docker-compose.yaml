@@ -37,7 +37,6 @@ services:
       - RABBITMQ_HOST=rabbitmq
     depends_on:
       - rabbitmq
-      - data_source
     restart: on-failure
     
   websocket:
