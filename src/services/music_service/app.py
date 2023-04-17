@@ -67,9 +67,9 @@ def get_music():
     track_id = tracklist["tracks"]["items"][0]["uri"]
 
     scope = "user-read-playback-state,user-modify-playback-state"
-    sp_oauth = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI))
+    #sp_oauth = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI))
 
-    sp_oauth.start_playback(uris=[track_id], device_id=res["devices"][0]["id"])
+    #sp_oauth.start_playback(uris=[track_id], device_id=res["devices"][0]["id"])
     return jsonify({"message": "Playing music"})
 
 
