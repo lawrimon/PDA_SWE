@@ -14,7 +14,7 @@ Typical endpoints usage:
 from flask import Flask, jsonify, request
 import requests
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
 from pprint import pprint
 import dotenv
 import os
@@ -36,33 +36,23 @@ def get_music():
     Args:
         artist: The artist of the track.
         track: The track name. Either artist or track must be given.
+        prod: If True, the production spotipy object is used. Otherwise the test spotipy object is used.
 
     Returns:
         Acknowledgement message.
     """
 
-    scope = "user-read-playback-state,user-modify-playback-state"
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI))
+    sp_client_credentials = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET))
 
-    # check if parameters are given, either artist or track must be given
     if not request.args.get("artist") and not request.args.get("track"):
         return jsonify({"error": "Missing parameters"}), 400
 
-    # check for valid parameters
-    if request.args.get("artist") and request.args.get("track"):
-        tracklist = sp.search(
-            q=f"artist:{request.args.get('artist')} track:{request.args.get('track')}",
-            type="track",
-        )
-    elif request.args.get("artist"):
-        tracklist = sp.search(q=f"artist:{request.args.get('artist')}", type="track")
-    elif request.args.get("track"):
-        tracklist = sp.search(q=f"track:{request.args.get('track')}", type="track")
+    invalid, tracklist = invalid_music_parameters(request.args, sp_client_credentials)
 
-    if len(tracklist["tracks"]["items"]) == 0:
+    if invalid:
         return jsonify({"error": "Invalid parameters"}), 400
 
-    res = sp.devices()
+    res = sp_client_credentials.devices()
     pprint(res)
 
     # check if there is a device available
@@ -76,5 +66,36 @@ def get_music():
 
     track_id = tracklist["tracks"]["items"][0]["uri"]
 
-    sp.start_playback(uris=[track_id], device_id=res["devices"][0]["id"])
+    scope = "user-read-playback-state,user-modify-playback-state"
+    sp_oauth = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI))
+
+    sp_oauth.start_playback(uris=[track_id], device_id=res["devices"][0]["id"])
     return jsonify({"message": "Playing music"})
+
+
+def invalid_music_parameters(args, sp):
+    """Check if the music parameters are invalid.
+
+    The parameters are invalid if no song is found.
+
+    Args:
+        args: The music parameters.
+        sp: The spotipy object.
+
+    Returns:
+        True if the parameters are invalid, otherwise False and the tracklist.
+    """
+
+    if args.get("artist") and args.get("track"):
+        tracklist = sp.search(
+            q=f"artist:{args.get('artist')} track:{args.get('track')}", type="track"
+        )
+    elif args.get("artist"):
+        tracklist = sp.search(q=f"artist:{args.get('artist')}", type="track")
+    elif args.get("track"):
+        tracklist = sp.search(q=f"track:{args.get('track')}", type="track")
+
+    if len(tracklist["tracks"]["items"]) == 0:
+        return True, None
+    else:
+        return False, tracklist
