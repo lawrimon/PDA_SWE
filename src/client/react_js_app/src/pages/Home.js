@@ -174,17 +174,16 @@ export function Home() {
   };
 
   async function listenForSpeech() {
-    
-  
+
     const recognition = new window.webkitSpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = 'en-US';
-  
+
     recognition.onresult = event => {
       let interimTranscript = '';
       let finalTranscript = '';
-  
+
       for (let i = event.resultIndex; i < event.results.length; i++) {
         let transcript = event.results[i][0].transcript;
         if (event.results[i].isFinal) {
@@ -193,27 +192,27 @@ export function Home() {
           interimTranscript += transcript;
         }
       }
-  
+
       setTranscript(finalTranscript.trim());
     };
-  
+
     recognition.onerror = event => {
       console.error('Speech recognition error:', event);
     };
-  
+
     return new Promise((resolve, reject) => {
       recognition.start();
-  
+
       let timeoutId = setTimeout(() => {
         recognition.stop();
         resolve(transcript.trim());
       }, 5000);
-  
+
       recognition.onend = () => {
         clearTimeout(timeoutId);
         resolve(transcript.trim());
       };
-  
+
       recognition.onerror = () => {
         clearTimeout(timeoutId);
         reject('Speech recognition error');
@@ -238,7 +237,7 @@ export function Home() {
       // handle the case where use_case is not recognized
       return;
     }
-    
+
     console.log("Starts speaking...");
     let i = 0;
     const keysInOrder = Object.keys(text);
@@ -250,10 +249,10 @@ export function Home() {
       await say_text(value)
       i += 1;
     }
-  
+
     console.log("Finished Speaking");
     console.log("Listening...");
-  
+
     try {
       const tmp_transcript = await listenForSpeech();
       console.log("Transcript:", tmp_transcript);
