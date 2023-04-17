@@ -87,7 +87,7 @@ function LoginPage() {
           },
           function(error) {
             console.error("Error Code = " + error.code + " - " + error.message);
-          }
+        }
     );
     return coord
      }
@@ -131,6 +131,12 @@ function LoginPage() {
     setPassword(event.target.value);
   }
 
+  function showErrorMessage(message) {
+    const errorMessageElement = document.getElementById('error-message');
+    errorMessageElement.innerText = message;
+    errorMessageElement.style.color = 'red';
+  }
+
   async function handleSubmit (){
     await fetch('http://localhost:5009/users/' + user_id, {
       method: 'GET',
@@ -141,6 +147,8 @@ function LoginPage() {
         console.log(data);
         if (data["error"]){
           console.log("login failed")
+          showErrorMessage('Wrong credentials, try again!');
+
 
         }
         else if (data) {
@@ -180,9 +188,13 @@ function LoginPage() {
             <label>
               Not a Sailor yet? Get on board <Link to="/register">here</Link>.
             </label>
+            <div id="error-message"></div> {/* Add this div for displaying error message */}
+
           </div>
           <button type="submit" onClick={handleSubmit}>Log In</button>
+
         </div>
+
       </div>
     </div>
   );
