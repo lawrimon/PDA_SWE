@@ -1,4 +1,4 @@
-name: Python CI
+name: Continuous Integration
 
 on:
   push:
@@ -37,7 +37,8 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
         with: 
           ref: ${{ github.head_ref }}
       - name: Set up Python 3.10
