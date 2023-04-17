@@ -15,7 +15,6 @@ services:
 
   db:
     build: ./src/database/
-    image: maxkie/db:latest
     ports:
       - "5009:5000"
     depends_on:
@@ -42,7 +41,6 @@ services:
     
   websocket:
     build: ./src/use_cases/use_case_gateway
-    image: maxkie/websocket:latest
     ports:
       - "5010:5010"
     environment:
@@ -53,7 +51,6 @@ services:
 
   react:
     build: ./src/client/react_js_app
-    image: maxkie/react:latest
     ports:
       - 3000:3000
     depends_on:
@@ -64,7 +61,6 @@ services:
     environment:
       NYTIMES_API_KEY: ${NYTIMES_API_KEY}
     build: ./src/services/news_service
-    image: maxkie/news:latest
     volumes:
       - ./src/services/news_service:/app
     ports:
@@ -77,7 +73,6 @@ services:
     environment:
       WEATHER_API_KEY: ${WEATHER_API_KEY}
     build: ./src/services/weather_service
-    image: maxkie/weather:latest
     volumes:
       - ./src/services/weather_service:/app
     ports:
@@ -90,7 +85,6 @@ services:
     environment:
       MAPS_API_KEY: ${MAPS_API_KEY}
     build: ./src/services/maps_service
-    image: maxkie/maps:latest
     volumes:
       - ./src/services/maps_service:/app
     ports:
@@ -104,7 +98,6 @@ services:
       NINJAS_API_KEY: ${NINJAS_API_KEY}
       NASA_API_KEY: ${NASA_API_KEY}
     build: ./src/services/wisdom_service
-    image: maxkie/wisdom:latest
     volumes:
       - ./src/services/wisdom_service:/app
     ports:
@@ -118,7 +111,6 @@ services:
       STOCK_MARKET_API_KEY: ${STOCK_MARKET_API_KEY}
       STOCK_MARKET_SECRET_KEY: ${STOCK_MARKET_SECRET_KEY}
     build: ./src/services/stock_market_service
-    image: maxkie/stockmarket:latest
     volumes:
       - ./src/services/stock_market_service:/app
     ports:
@@ -131,7 +123,6 @@ services:
     environment:
       NYTIMES_API_KEY: ${NYTIMES_API_KEY}
     build: ./src/services/books_service
-    image: maxkie/books:latest
     volumes:
       - ./src/services/books_service:/app
     ports:
@@ -144,7 +135,6 @@ services:
     environment:
       SPORTS_API_KEY: ${SPORTS_API_KEY}
     build: ./src/services/sports_service
-    image: maxkie/sports:latest
     volumes:
       - ./src/services/sports_service:/app
     ports:
@@ -157,7 +147,6 @@ services:
     environment:
       CODING_API_KEY: ${CODING_API_KEY}
     build: ./src/services/coding_service
-    image: maxkie/coding:latest
     volumes:
       - ./src/services/coding_service:/app
     ports:
@@ -170,7 +159,6 @@ services:
     environment:
       EVENTS_API_KEY: ${EVENTS_API_KEY}
     build: ./src/services/events_service
-    image: maxkie/events:latest
     volumes:
       - ./src/services/events_service:/app
     ports:
@@ -180,7 +168,6 @@ services:
 
   calendar:
     build: ./src/services/calendar_service
-    image: maxkie/calendar:latest
     volumes:
       - ./src/services/calendar_service:/app
     ports:
@@ -195,7 +182,6 @@ services:
       SPOTIPY_CLIENT_SECRET: ${SPOTIPY_CLIENT_SECRET}
       SPOTIPY_REDIRECT_URI: ${SPOTIPY_REDIRECT_URI}
     build: ./src/services/music_service
-    image: maxkie/music:latest
     volumes:
       - ./src/services/music_service:/app
     ports:
@@ -205,7 +191,6 @@ services:
 
   scuttlebutt:
     build: ./src/use_cases/scuttlebutt
-    image: maxkie/scuttlebutt:latest
     volumes:
       - ./src/use_cases/scuttlebutt:/app
     ports:
@@ -218,7 +203,6 @@ services:
 
   shoreleave:
     build: ./src/use_cases/shoreleave
-    image: maxkie/shoreleave:latest
     volumes:
       - ./src/use_cases/shoreleave:/app
     ports:
@@ -229,7 +213,6 @@ services:
 
   lookoutduty:
     build: ./src/use_cases/lookoutduty
-    image: maxkie/lookoutduty:latest
     volumes:
       - ./src/use_cases/lookoutduty:/app
     ports:
@@ -241,7 +224,6 @@ services:
 
   racktime:
     build: ./src/use_cases/racktime
-    image: maxkie/racktime:latest
     volumes:
       - ./src/use_cases/racktime:/app
     ports:
