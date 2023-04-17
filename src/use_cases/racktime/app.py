@@ -200,23 +200,27 @@ def get_racktime():
     user = request.args.get("user")
 
     # TODO: Remove mock data
-    mode = "driving"
     mock_calendar_user = "maxkie1"
-
 
     user_preferences = get_user_preferences(user)
     github_user = user_preferences["github"]
     artist = user_preferences["artists"].split(",")[0]
     origin = user_preferences["coordinates"]
-    #mode = user_preferences["transportation_mode"]
+    mode = user_preferences["transportation"]
 
+    transportation_modes = {
+        "Walking": "walking",
+        "Car": "driving",
+        "Bicycle": "bicycling",
+        "Public Transport": "transit"
+    }
     
     events_tomorrow = get_calendar_events_tomorrow(mock_calendar_user)
     locations = parse_event_locations(events_tomorrow)
     
     if events_tomorrow:
         destination = f"{locations[0].get('lat')},{locations[0].get('lon')}"
-        route = get_route(origin, destination, mode)
+        route = get_route(origin, destination, transportation_modes[mode])
         tomorrows_events_summarized = summarize_tomorrows_events(events_tomorrow, locations)
     else:
         route = "There is no transportation needed tomorrow. "
