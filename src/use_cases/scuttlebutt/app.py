@@ -68,6 +68,7 @@ def get_news(news_cateogories):
         return "No news found for the categories you are interested in."
         # jsonify({"error": "Error getting weather information"}), 500
 
+
     data = response.json()
     compromised_data = []
     compromised_data.append(data[0]["Summary"])
