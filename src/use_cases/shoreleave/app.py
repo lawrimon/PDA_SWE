@@ -96,7 +96,7 @@ def get_books(book_genre):
         "Miscellaneous": "advice-how-to-and-miscellaneous",
     }
 
-    url = "http://wisdom:5000/wisdom/books"
+    url = "http://books:5000/books"
     params = {"genre": genres[book_genre]}
     response = requests.get(url, params=params)
     if response.status_code != 200:
