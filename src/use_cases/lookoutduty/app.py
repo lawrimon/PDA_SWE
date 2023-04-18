@@ -198,11 +198,7 @@ def get_lookout():
     sports = get_sports(football_ids, fotball_clubs)
 
     name = "lookout"
-    return jsonify({
-        "_name" : name,
-        "events": events, 
-        "sports": sports})
-
+    return jsonify({"_name": name, "events": events, "sports": sports})
 
 
 if __name__ == "__main__":

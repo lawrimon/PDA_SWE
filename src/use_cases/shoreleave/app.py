@@ -173,8 +173,8 @@ def get_shoreleave():
     books = get_books(book_genre)
     name = "shoreleave"
     return jsonify(
-        {           
-            "_name" : name,
+        {
+            "_name": name,
             "quotes": quotes,
             "nasa_fact": nasa_fact,
             "random_facts": random_facts,

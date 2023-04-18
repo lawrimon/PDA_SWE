@@ -273,8 +273,8 @@ def get_scuttlebutt():
     name = "scuttlebutt"
 
     return jsonify(
-        {   
-            "_name":name,
+        {
+            "_name": name,
             "news": news,
             "weather": weather,
             "stock_news": stock_news,

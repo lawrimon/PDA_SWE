@@ -271,8 +271,8 @@ def get_racktime():
 
     name = "racktime"
     return jsonify(
-        {   
-            "_name" : name,
+        {
+            "_name": name,
             "1introduction": introduction,
             "tomorrows_events": tomorrows_events_summarized,
             "route": route,
