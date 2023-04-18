@@ -171,7 +171,6 @@ def get_shoreleave():
     nasa_fact = get_nasa_apod()
     random_facts = get_random_facts()
     books = get_books(book_genre)
-    additional = "Thank you for listening. Do you want any additional information? "
 
     return jsonify(
         {
@@ -179,7 +178,6 @@ def get_shoreleave():
             "nasa_fact": nasa_fact,
             "random_facts": random_facts,
             "books": books,
-            "additional": additional,
         }
     )
 
