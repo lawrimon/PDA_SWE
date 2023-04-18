@@ -243,16 +243,14 @@ def get_racktime():
 
     user = request.args.get("user")
 
-    # TODO: Remove mock data
-    mock_calendar_user = "maxkie1"
-
     user_preferences = get_user_preferences(user)
+    calendar_user = user_preferences["calendar_link"]
     github_user = user_preferences["github"]
     artist = user_preferences["artists"].split(",")[0]
     origin = user_preferences["coordinates"]
     mode = user_preferences["transportation"]
 
-    events_tomorrow = get_calendar_events_tomorrow(mock_calendar_user)
+    events_tomorrow = get_calendar_events_tomorrow(calendar_user)
     event_locations = parse_event_locations(events_tomorrow)
 
     if events_tomorrow:
