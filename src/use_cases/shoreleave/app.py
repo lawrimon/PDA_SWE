@@ -119,7 +119,7 @@ def get_books(book_genre):
     answer = "Here are some books that might be interesting for you: "
     for book in data:
         answer += book["title"] + " by the author " + book["author"] + ". "
-        answer += "This is the description: " + book["description"] + ". "
+        answer += "This is the description: " + book["description"] + " "
 
     return answer
 
@@ -171,9 +171,10 @@ def get_shoreleave():
     nasa_fact = get_nasa_apod()
     random_facts = get_random_facts()
     books = get_books(book_genre)
-
+    name = "shoreleave"
     return jsonify(
         {
+            "_name": name,
             "quotes": quotes,
             "nasa_fact": nasa_fact,
             "random_facts": random_facts,

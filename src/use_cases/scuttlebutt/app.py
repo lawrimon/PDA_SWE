@@ -48,9 +48,9 @@ def get_weather(user_coordinates):
     answer = (
         "Tomorrow the maximum temperature will be "
         + str(max_temp)
-        + " and the minimum temperature will be "
+        + " degree Celcius and the minimum temperature will be "
         + str(min_temp)
-        + ". The weather will be looking like "
+        + " degree Celcius. The weather will be looking like "
         + description
         + ". "
     )
@@ -210,13 +210,11 @@ def get_stock_news(stocks):
             stock_news.append(news_string)
 
     if len(stock_news) == 0:
-        answer = "There is no news for the stocks you are interested in."
+        answer = "There is no news for the stocks you are interested in. "
     else:
         answer = "Here are the news for the stocks you are interested in: " + " ".join(
             stock_news
         )
-        if answer[-1] not in [".", "?", "!"]:
-            answer += ". "
 
     return answer
 
@@ -270,9 +268,11 @@ def get_scuttlebutt():
     news = get_news(news_cateogories)
     weather = get_weather(user_coordinates)
     stock_news = get_stock_news(stocks)
+    name = "scuttlebutt"
 
     return jsonify(
         {
+            "_name": name,
             "news": news,
             "weather": weather,
             "stock_news": stock_news,

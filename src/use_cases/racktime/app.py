@@ -244,7 +244,7 @@ def get_racktime():
     user = request.args.get("user")
 
     user_preferences = get_user_preferences(user)
-    calendar_user = user_preferences["calendar_link"]
+    calendar_user = user_preferences["user_calendar_link"]
     github_user = user_preferences["github"]
     artist = user_preferences["artists"].split(",")[0]
     origin = user_preferences["coordinates"]
@@ -269,8 +269,10 @@ def get_racktime():
 
     introduction = "Good evening, it's rack time. According to your sleep schedule, you should go to bed in one hour. "
 
+    name = "racktime"
     return jsonify(
         {
+            "_name": name,
             "1introduction": introduction,
             "tomorrows_events": tomorrows_events_summarized,
             "route": route,
