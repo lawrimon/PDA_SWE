@@ -15,15 +15,14 @@ function PreferencesPage() {
   const [password, setPassword] = useState("");
   const [user_football_club, setFootballClub] = useState(["Bayern München"]);
   const [user_stocks, setStocks] = useState(["Apple"]);
-  const [user_spotify_link, setSpotify] = useState("/spotify/url");
-  const [user_calendar_link, setCalendar] = useState("/calender/url");
+  const [user_calendar_link, setCalendar] = useState("");
   const [user_artists, setArtist] = useState(["Justin Bieber"]);
   const [user_news, setNews] = useState(["National"]);
   const [user_books, setBooks] = useState(["Non-Fiction"]);
   const [user_location, setUserLocation] = useState("");
   const [user_github, setGithub] = useState("");
   const [user_event_location, setEventLocation] = useState(["Stuttgart"]);
-  const [user_transportation, setTransportation] = useState("Walking");
+  const [user_transportation, setTransportation] = useState({ value: 'Public Transport', label: 'Public Transport' });
 
 
   let user_pref = [];
@@ -105,6 +104,7 @@ function PreferencesPage() {
       useridRef.current = storedUserId;
       console.log("Userid", useridRef.current);
       setUserId(useridRef.current)
+      setCalendar(useridRef.current)
     }
     componentDidMount()
     let position = UserDidMount()
@@ -193,7 +193,7 @@ return coord
 
   function handleTransportation(selectedOption) {
     console.log("option",selectedOption)
-    setTransportation(selectedOption.value);
+    setTransportation(selectedOption);
   }
 
   function handleGithub(event) {
@@ -208,10 +208,6 @@ return coord
     setBooks(selectedOptions.map(option => option.value));
   }
 
-  function handleSpotify(event) {
-    setSpotify(event.target.value);
-  }
-
   function handleStocks(selectedOptions) {
     setStocks(selectedOptions.map(option => option.value));
   }
@@ -223,7 +219,7 @@ return coord
   async function handleSubmit(event) {
     event.preventDefault();
     await uploadSubmit();
-    setUserPreferences([user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link, user_news, user_books, user_event_location, user_github, user_transportation])
+    setUserPreferences([user_football_club, user_stocks, user_artists, user_calendar_link, user_news, user_books, user_event_location, user_github, user_transportation.value])
     window.location.href = '/registersuccess';
   }
   
@@ -239,10 +235,10 @@ return coord
     console.log(city); // Output: London
     await pushUserLocation(city)
     try {
-      console.log({"football_club": user_football_club.toString(), "calendar_link": user_calendar_link, "spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(), "transportation" : user_transportation})
+      console.log({"football_club": user_football_club.toString(), "calendar_link": user_calendar_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(), "transportation" : user_transportation.value})
       const response = await fetch('http://localhost:5009/users/'+useridRef.current, {
         method: 'PUT',
-        body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(),  "transportation": user_transportation}),
+        body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(),  "transportation": user_transportation.value}),
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await response.json();
@@ -331,13 +327,13 @@ return coord
 
         <h4>Prefered Transportation</h4>
         <Select
-        value={user_transportation.value}
+        value={user_transportation}
         onChange={handleTransportation}
         isMulti={false}
         options={transportation_options}
         isClearable
         isSearchable
-        defaultValue={transportation_options[0].value}
+        defaultValue={user_transportation}
 
         />
         <br /> 
@@ -345,12 +341,10 @@ return coord
 
         <h4>Github Name</h4>
           <input type="text" value={user_github} onChange={handleGithub} />
-        <h4>Spotify Link </h4>
-          <input type="text" value={user_spotify_link} onChange={handleSpotify} />
-        <label>
-        <h4>Calendar Link  </h4>
-          <input type="text" value={user_calendar_link} onChange={handleCalendar} />
-        </label>
+          <br />
+        <h4>Calendar Name</h4>
+          <input type="text" value={user_calendar_link} defaultValue={getUserId} onChange={handleCalendar} />
+          <br />
         
         <button type="submit">Finish Setup</button>
      

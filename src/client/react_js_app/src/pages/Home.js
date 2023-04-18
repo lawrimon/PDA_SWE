@@ -1,14 +1,23 @@
 import './Home.css';
+import './NotificationCenter.css'
 import logo from '../resources/cAPItan_Logo.jpg';
+import logo2 from '../resources/spongie2.gif';
 import React, { useState, useEffect, useRef } from 'react';
 
 import { Link } from 'react-router-dom';
-import NotificationPopup from './Notification';
 import { getUserId, setUserId, user_id } from '../components/User.js';
 import io from 'socket.io-client';
 
+
+
+
 export function Home() {
+  var originalColor;
+
   const useridRef = useRef(null);
+  const [notifications, setNotifications] = useState([]);
+
+  const [logoSrc, setLogoSrc] = useState(logo);
 
   // Rabbit
   const [queueName, setQueueName] = useState(null);
@@ -30,6 +39,26 @@ export function Home() {
   let userid = "";
   var next_message = true;
 
+
+
+
+  const NotificationColors = {
+    Scuttlebutt: "gray",
+    Shoreleave: "lightpink",
+    Lookout: "lightgreen",
+    Racktime: "brown"
+  };
+
+  const addNotification = (message, color) => {
+    const newNotifications = [...notifications, { message, color }];
+    setNotifications(newNotifications);
+  };
+
+  const removeNotification = (index) => {
+    const newNotifications = [...notifications];
+    newNotifications.splice(index, 1);
+    setNotifications(newNotifications);
+  };
 
   useEffect(() => {
     // Call your function here
@@ -137,6 +166,10 @@ export function Home() {
   };
 
 
+  const handleLogo = (insertlogo) => {
+    setLogoSrc(insertlogo);
+  };
+
   const Logout = () => {
     console.log("Logging out!");
     setUserId("")
@@ -156,22 +189,27 @@ export function Home() {
     setText(event.target.value);
   };
 
-  const handleSubmit = () => {
-    fetch('http://141.31.86.15:8000//postText', {
-      method: 'POST',
-      body: JSON.stringify({ "text": text }),
-      headers: { 'Content-Type': 'application/json' },
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.message) {
-          console.log(data.message)
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  };
+  const handleSubmit = () => {    
+    addNotification("Error Notification", NotificationColors.Lookout)
+    };
+
+  function changeColor(div) {
+    var button = document.getElementById(div);
+    if (!button.classList.contains('red')) {
+      originalColor = button.style.backgroundColor;
+      button.style.backgroundColor = 'red';
+    }
+  }
+
+  function setColor(div) {
+    console.log("in Setcolor")
+    console.log(div)
+    var button = document.getElementById(div);
+      button.style.backgroundColor = originalColor;
+    
+  }
+
+
 
   async function listenForSpeech() {
 
@@ -318,6 +356,7 @@ export function Home() {
     }
   }
 
+
   async function getScuttlebutt() {
     const response = await fetch('http://127.0.0.1:5008/scuttlebutt?user=' + useridRef.current)
     const data = await response.json();
@@ -329,9 +368,11 @@ export function Home() {
   };
 
   async function getShoreleave() {
-    const response = await fetch('http://127.0.0.1:5013/shoreleave')
+
+    const response = await fetch('http://127.0.0.1:5013/shoreleave?user=' + user_id)
     const data = await response.json();
     console.log("this data", data)
+
     if (data) {
       setMessage(data)
       return data
@@ -341,12 +382,14 @@ export function Home() {
   async function getLooktout() {
     const response = await fetch('http://127.0.0.1:5016/lookout?user=' + user_id)
     const data = await response.json();
+
     console.log("this data", data)
     if (data) {
       setMessage(data)
       return data
     }
   }
+
 
   async function getRackTime() {
     const response = await fetch('http://127.0.0.1:5019/racktime?user=' + user_id)
@@ -358,123 +401,54 @@ export function Home() {
     }
   }
 
+
   return (
     <div className="App">
       <div style={{ marginTop: "3%" }}>
-        <img src={logo} alt="Logo" className="logo" />
+        <img src={logoSrc} style={{ width: "12%" }} alt="Logo" className="logo" />
       </div>
       <h1 style={{ color: "white", paddingTop: "1%" }}>cAPItan</h1>
       <div className="search-container">
         <input type="text" value={text} onChange={handleChange} onClick={() => setShowPopup(false)}
           placeholder="Search..." />
-        <div>
-          <button type="button" onClick={handleSubmit}>Search</button>
-        </div>
+
+        <button type="button" onClick={() => handleSubmit()}>Search</button>
         <div className="settings-button-container">
-          <div>
-            <button type="button" onClick={handleButtonClick} className="settings-button">✉</button>
-          </div>
 
           <Link to="/settings">
             <button type="button" className="settings-button">&#x2699;</button>
           </Link>
-          <div className="">
-            <div className="notification-icon">
 
-              <button type="button" onClick={Logout} className="settings-button">&#10149;</button>
-            </div>
-          </div>
-          <div className="">
-            <div className="notification-icon">
+          <button type="button" id="scuttlebutt" onClick={() => say_use_case("scuttlebutt")} className="scuttlebutt">&#x2603;</button>
 
-              <button type="button" style={{ backgroundColor: "gray" }} onClick={() => say_use_case("scuttlebutt")} className="settings-button">&#x2603;</button>
-            </div>
-          </div>
-          <div className="">
-            <div className="notification-icon">
+          <button type="button" id="shoreleave" onClick={() => say_use_case("shoreleave")} className="shoreleave">&#128062;</button>
 
-              <button type="button" style={{ backgroundColor: "orange" }} onClick={() => say_use_case("lookout")} className="settings-button">&#128062;</button>
-            </div>
-          </div>
-          <div className="">
-            <div className="notification-icon" >
+          <button type="button" id="lookout" onClick={() => say_use_case("lookout")}  className="lookout">&#x2656;</button>
+          
+          <button type="button" style={{ backgroundColor: "lightbrown" }} onClick={() => say_use_case("racktime")} className="settings-button">&#9742;</button>
 
-              <button type="button" style={{ backgroundColor: "lightgreen" }} onClick={() => say_use_case("shoreleave")} className="settings-button">&#x2656;</button>
-            </div>
-          </div>
-          <div className="">
-            <div className="notification-icon" >
+          <button type="button" id="Logout" onClick={() => Logout()} className="settings-button">&#10149;</button>
 
-              <button type="button" style={{ backgroundColor: "lightbrown" }} onClick={() => say_use_case("racktime")} className="settings-button">&#9742;</button>
-            </div>
+        </div>
+      </div>
+
+      <div className="nots">
+        <div className="notification-centerNew">
+          <div className="notification-containerNew">
+            {notifications.map((notification, index) => (
+              <div key={index} className={`notificationNew ${notification.color}`}>
+                <div className={`notification-iconNew`} style={{ backgroundColor: notification.color }}></div>
+                <div className="notification-textNew">{notification.message}</div>
+                <button onClick={() => removeNotification(index)} className="notification-closeNew">×</button>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-
-      {showPopup && (
-        <div className="sidebar">
-          <div className="sidebar-header">
-            <h2>Notifications</h2>
-            <button className="close-button" onClick={handleClosePopup}>
-              X
-            </button>
-          </div>
-          <div className="sidebar-content">
-            <div className="notification">
-              <div className="notification-icon">
-                <i className="fas fa-user-circle"></i>
-              </div>
-              <div className="notification-text">
-                <p>
-                  You have a new follower on Twitter! Click here to view your
-                  profile.
-                </p>
-                <small>2 mins ago</small>
-              </div>
-            </div>
-            <div className="notification">
-              <div className="notification-icon">
-                <i className="fas fa-heart"></i>
-              </div>
-              <div className="notification-text">
-                <p>
-                  Someone liked your photo on Instagram! Click here to view
-                  their profile.
-                </p>
-                <small>5 mins ago</small>
-              </div>
-            </div>
-            <div className="notification">
-              <div className="notification-icon">
-                <i className="fas fa-comment"></i>
-              </div>
-              <div className="notification-text">
-                <p>
-                  You have a new comment on your blog post! Click here to view
-                  it.
-                </p>
-                <small>10 mins ago</small>
-              </div>
-
-            </div>
-          </div>
-
-        </div>
-      )}
-      <div className="record-container">
-        <div >
-          <textarea value={transcript} className="converted-speech"></textarea>
-          <textarea value={message} className="converted-speech"></textarea>
-        </div>
-        <div>
-          <button onClick={() => console.log("record")}>Record</button>
-          <button onClick={() => console.log("stop")}>Stop</button>
-          <button onClick={() => say_use_case("scuttlebutt")}>Speak</button>
-          <button onClick={() => console.log("record")}>Submit</button>
-        </div>
-      </div>
     </div>
+
+
   );
 
 }

@@ -15,7 +15,6 @@ services:
 
   db:
     build: ./src/database/
-    image: maxkie/db:latest
     ports:
       - "5009:5000"
     depends_on:
@@ -209,6 +208,7 @@ services:
     ports:
       - 5013:5000
     depends_on:
+      - books
       - wisdom
       - rabbitmq
 

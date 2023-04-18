@@ -7,8 +7,8 @@
   <a href="https://conventionalcommits.org">
     <img src="https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white" />
   </a>
-    <a href=https://github.com/lawrimon/PDA_SWE/actions/workflows/python_ci.yaml>
-    <img src="https://github.com/lawrimon/PDA_SWE/actions/workflows/python_ci.yaml/badge.svg" />
+    <a href=https://github.com/lawrimon/PDA_SWE/actions/workflows/ci.yaml>
+    <img src="https://github.com/lawrimon/PDA_SWE/actions/workflows/ci.yaml/badge.svg" />
   </a>
 </p>
 

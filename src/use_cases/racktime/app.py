@@ -25,23 +25,22 @@ def get_issues(username):
         username: The username of the user. Only one username can be selected.
 
     Returns:
-        Information about the open issues assigned to the user wrappen in an answer sentence.
+        Information about the open issues assigned to the user or an explanatory string if no issues information could be retrieved.
     """
 
     url = f"http://coding:5000/issues"
     params = {"username": username}
     response = requests.get(url, params=params)
     if response.status_code != 200:
-        return jsonify({"error": "Error getting issues"}), 500
+        return "No open issues found for the provided user."
+        # return jsonify({"error": "Error getting issues"}), 500
 
     issues = response.json()
-
     if not issues:
         answer = "Congrats! There are no open issues assigned to you."
         return answer
-
     answer = (
-        "The following issue is a perfect candidate for your workday tomorrow: "
+        "The following issue is a perfect start for your day tomorrow: "
         + issues[0]["title"]
         + " in the "
         + issues[0]["repository"]
@@ -64,15 +63,21 @@ def play_music(artist):
 
     Args:
         artist: The artist of the song to be played. Only one artist can be selected.
+
+    Returns:
+        Acknowledgement that the music is playing or an explanatory string if no music could be played.
     """
 
     url = f"http://music:5000/music"
     params = {"artist": artist}
     response = requests.get(url, params=params)
     if response.status_code != 200:
-        return jsonify({"error": "Error playing music"}), 500
+        return "No music found for the provided artist. "
+        # return jsonify({"error": "Error playing music"}), 500
 
-    return
+    answer = "Music of your favorite artist " + artist + " is playing. Groove on! "
+
+    return answer
 
 
 def get_route(origin, destination, mode):
@@ -86,7 +91,7 @@ def get_route(origin, destination, mode):
         mode: The mode of transportation. Can be "driving", "walking", "bicycling" or "transit". Only one mode can be selected.
 
     Returns:
-        Information about the route wrappen in an answer sentence.
+        Information about the route or an explanatory string if no route information could be retrieved.
     """
 
     transportation_modes = {
@@ -104,16 +109,16 @@ def get_route(origin, destination, mode):
     }
     response = requests.get(url, params=params)
     if response.status_code != 200:
-        return jsonify({"error": "Error getting route"}), 500
+        return "No route found for the provided origin and destination. "
+        # return jsonify({"error": "Error getting route"}), 500
 
     route = response.json()
-
     answer = (
         "The route from your home to your first appointment is "
         + route["distance"]["text"]
         + " long and will take "
         + route["duration"]["text"]
-        + " with your preferred mode "
+        + " with your preferred means of transportation "
         + mode
         + ". "
     )
@@ -134,47 +139,50 @@ def get_user_preferences(user):
     """
 
     url = "http://db:5000/users/" + user
-
     response = requests.get(url)
     if response.status_code != 200:
-        jsonify({"error": "Error getting stock news information"}), 500
+        jsonify({"error": "Error getting user preferences"}), 500
 
     data = response.json()
+
     return data
 
 
 def get_calendar_events_tomorrow(user):
-    """Get tomorrow's calendar events endpoint.
+    """Get tomorrow's calendar events.
 
-    This endpoint makes a GET request to a specified URL to fetch tomorrow's calendar events for the given user. The user parameter is included in the request as a query parameter. If the response status code is not 200, an error message is returned. Otherwise, the response data is parsed as JSON and returned.
+    This function calls the calendar service and returns the calendar events for tomorrow.
 
     Args:
         user: The username of the user whose calendar events to fetch.
 
     Returns:
-        data: A dictionary containing the calendar events for tomorrow.
+        A list of calendar events for tomorrow.
     """
 
     url = "http://calendar:5000/calendar/appointments/tomorrow"
-
     response = requests.get(url, params={"user": user})
     if response.status_code != 200:
-        jsonify({"error": "Error getting tomorrows calendar events"}), 500
+        return None
+        # return jsonify({"error": "Error getting tomorrows calendar events"}), 500
 
     data = response.json()
+
     return data
 
 
 def parse_event_locations(events):
-    """Parse event locations function.
+    """Parse event locations.
 
-    This function takes a list of event dictionaries and extracts the location information from each event. If the location string can be parsed, latitude, longitude, and city data are extracted and stored in a dictionary. If the location string cannot be parsed, an error message is printed to the console.
+    This function takes a list of event dictionaries and extracts the location information from each event.
+    If the location string can be parsed, latitude, longitude, and city data are extracted and stored in a dictionary.
+    If the location string cannot be parsed, an error message is printed to the console.
 
     Args:
         events: A list of event dictionaries.
 
     Returns:
-        locations: A list of dictionaries containing latitude, longitude, and city data for each event.
+        A list of dictionaries containing latitude, longitude, and city data for each event.
     """
 
     locations = []
@@ -187,20 +195,22 @@ def parse_event_locations(events):
                 locations.append(data)
             except ValueError:
                 print(f"Error parsing location string: {location}")
+
     return locations
 
 
 def summarize_tomorrows_events(events_tomorrow, locations):
     """Summarize tomorrow's events.
 
-    This function takes a list of events for tomorrow and summarizes them into a single string. The resulting summary includes the start and end times, the event name, and the location (extracted from the event dictionary).
+    This function takes a list of events for tomorrow and summarizes them into a single string.
+    The resulting summary includes the start and end times, the event name, and the location (extracted from the event dictionary).
 
     Args:
         events_tomorrow: A list of event dictionaries for tomorrow.
         locations: A list of location dictionaries.
 
     Returns:
-        summarize_events: A summary string of tomorrow's events.
+        A summary of tomorrow's events or an explanatory string if no events could be found.
     """
 
     summarize_events = "Here is a summary of your events for tomorrow: "
@@ -225,7 +235,7 @@ def get_racktime():
         user: The username of the user. Only one username can be selected.
 
     Returns:
-        The rack time information.
+        The rack time use case response containing tomorrow's calendar events, the route to the first event and open issues.
     """
 
     if not request.args.get("user"):
@@ -243,31 +253,32 @@ def get_racktime():
     mode = user_preferences["transportation"]
 
     events_tomorrow = get_calendar_events_tomorrow(mock_calendar_user)
-    locations = parse_event_locations(events_tomorrow)
+    event_locations = parse_event_locations(events_tomorrow)
 
     if events_tomorrow:
-        destination = f"{locations[0].get('lat')},{locations[0].get('lon')}"
+        destination = f"{event_locations[0].get('lat')},{event_locations[0].get('lon')}"
         route = get_route(origin, destination, mode)
         tomorrows_events_summarized = summarize_tomorrows_events(
-            events_tomorrow, locations
+            events_tomorrow, event_locations
         )
     else:
-        route = "There is no transportation needed tomorrow. "
+        route = "There is no transportation needed. You can stay in your bed all day. "
         tomorrows_events_summarized = "There are no events in your calendar tomorrow. "
 
     issues = get_issues(github_user)
 
-    play_music(artist)
+    music = play_music(artist)
 
     introduction = "Good evening, it's rack time. According to your sleep schedule, you should go to bed in one hour. "
-    additional_information = (
-        "Thank you for listening. Do you want any additional information?"
-    )
+    additional = "Thank you for listening. Do you want any additional information?"
 
     return jsonify(
-        introduction,
-        tomorrows_events_summarized,
-        issues,
-        route,
-        additional_information,
+        {
+            "introduction": introduction,
+            "tomorrows_events": tomorrows_events_summarized,
+            "route": route,
+            "issues": issues,
+            "music": music,
+            "additional": additional,
+        }
     )

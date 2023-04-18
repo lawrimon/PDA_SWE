@@ -16,14 +16,14 @@ if lokal:
     SCUTTLEBUTT = "http://localhost:5008"
     LOOKOUT = "http://localhost:5016"
     SHORELEAVE = "http://localhost:5013"
-    RACKTIME ="http://localhost:5018"
+    RACKTIME = "http://localhost:5018"
     DATABASE = "http://localhost:5009"
 else:
     RABBITMQ_HOST = "rabbitmq"
     SCUTTLEBUTT = "http://scuttlebutt:5000"
     LOOKOUT = "http://lookoutduty:5000"
     SHORELEAVE = "http://shoreleave:5000"
-    RACKTIME ="http://racktime:5000"
+    RACKTIME = "http://racktime:5000"
     DATABASE = "http://db:5000"
 
 

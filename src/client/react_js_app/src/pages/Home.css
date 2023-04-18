@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  width: 100%;
+  padding-bottom: 40px;
 }
 
 
@@ -14,6 +16,12 @@
   }
 }
 
+nots {
+  height:200px;
+  display: block;
+  padding-bottom: 20px;
+  margin: 30px;
+}
 
 input {
   font-size: 24px;
@@ -38,7 +46,6 @@ input {
   padding: 20px;
 }
 
-
 button {
   background-color: #7EC07A;
   color: white;
@@ -52,6 +59,8 @@ button {
 button:hover {
   background-color: #6CA06C;
 }
+
+
 
 .header-container {
   display: flex;
@@ -74,19 +83,6 @@ button:hover {
 }
 
 
-.logo:after {
-  content: '';
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 50%;
-  height: 50%;
-  background-color: #000000;
-  padding-top: 20px;
-
-}
-
 .settings-button-container {
   position: absolute;
   top: 0;
@@ -107,32 +103,58 @@ button:hover {
   justify-content: center;
 
 }
-
-.notification-popup {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: white;
-  border-top: 1px solid #ccc;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
-  z-index: 1;
+.settings-button:hover {
+  background-color: sandybrown;
 }
 
-.notification-popup__content {
+.scuttlebutt{
+  background-color: gray;
+  color: black;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16px;
+  justify-content: center;
+
+}
+.scuttlebutt:hover{
+  background-color: sandybrown;
+
 }
 
-.notification-popup__header {
+.shoreleave{
+  background-color: lightpink;
+  color: black;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 16
+  justify-content: center;
+
 }
+.shoreleave:hover{
+  background-color: sandybrown;
+}
+
+.lookout{
+  background-color: lightgreen;
+  color: black;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+}
+.lookout:hover{
+  background-color: sandybrown;
+}
+
 
 .record-container {
   display: block;

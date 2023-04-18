@@ -15,14 +15,14 @@ export function Settings() {
   const [password, setPassword] = useState("");
   const [user_football_club, setFootballClub] = useState(["Bayern München"]);
   const [user_stocks, setStocks] = useState(["Apple"]);
-  const [user_spotify_link, setSpotify] = useState("/spotify/url");
-  const [user_calendar_link, setCalendar] = useState("/calender/url");
+  const [user_calendar_link, setCalendar] = useState("");
   const [user_artists, setArtist] = useState(["Justin Bieber"]);
   const [user_news, setNews] = useState(["National"]);
   const [user_books, setBooks] = useState(["Non-Fiction"]);
   const [user_github, setUserGithub] = useState("");
   const [user_event_location, setEventLocation] = useState(["Stuttgart"]);
-  const [user_transportation, setTransportation] = useState("");
+  const [user_transportation, setTransportation] = useState({ value: 'Public Transport', label: 'Public Transport' }
+  );
 
 
   let user_pref = []
@@ -117,7 +117,7 @@ export function Settings() {
 
   function handleTransportation(selectedOption) {
     console.log("option",selectedOption)
-    setTransportation(selectedOption.value);
+    setTransportation(selectedOption);
   }
 
   function handleEventLocation(selectedOptions) {
@@ -142,10 +142,6 @@ export function Settings() {
 
   function handleCalendar(event) {
     setCalendar(event.target.value);
-  }
-
-  function handleSpotify(event) {
-    setSpotify(event.target.value);
   }
 
   function handleStocks(selectedOptions) {
@@ -178,14 +174,14 @@ export function Settings() {
       setUsername(useridRef.current)
       setFootballClub(pref.football_club.split(","))
       setStocks(pref.stocks.split(","))
-      setSpotify(pref.spotify_link)
-      setCalendar(pref.calendar_link)
+      setCalendar(useridRef.current)
       setArtist(pref.artists.split(","))
       setBooks(pref.books.split(","))
       setNews(pref.news.split(","))
       setUserGithub(pref.github)
       setEventLocation(pref.event_location.split(","))
-      setTransportation(pref.transportation)
+      setTransportation({ value: pref.transportation, label: pref.transportation })
+      console.log(user_transportation)
 
     }
 
@@ -195,16 +191,18 @@ export function Settings() {
   
 
   const TestToggle = () => {
-    console.log(JSON.stringify({ "username": useridRef.current, "football_club": user_football_club, "calendar_link": user_calendar_link, "spotify_link": user_spotify_link, "user_stocks": user_stocks, "user_artists": user_artists, "user_books": user_books, "transportation": user_transportation }),
+    console.log(JSON.stringify({ "username": useridRef.current, "football_club": user_football_club, "calendar_link": user_calendar_link, "user_stocks": user_stocks, "user_artists": user_artists, "user_books": user_books, "transportation": user_transportation }),
     )
   }
 
 
   const handleToggleChange = () => {
     console.log("handle triggered")
+    console.log(JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(),  "transportation": user_transportation.value}))
+
     fetch('http://localhost:5009/users/' + useridRef.current, {
       method: 'PUT',
-      body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(),  "transportation": user_transportation.toString()}),
+      body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link,  "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(),  "transportation": user_transportation.value}),
       headers: { 'Content-Type': 'application/json' },
     })
       .then(response => response.json())
@@ -309,7 +307,7 @@ export function Settings() {
             components={animatedComponents}
             options={transportation_options}
             isMulti={false}
-            value={user_transportation.value}
+            value={user_transportation}
             onChange={handleTransportation}
           />
         <br /> 
@@ -318,11 +316,8 @@ export function Settings() {
         <h4>Github Name</h4>
           <input type="text" value={user_github} onChange={handleGithub} />
           <br />
-              <h4>Spotify Link </h4>
-              <input type="email" value={user_spotify_link} onChange={handleSpotify} />
-              <br />
-              <h4>Calendar Link  </h4>
-              <input type="email" value={user_calendar_link} onChange={handleCalendar} />
+              <h4>Calendar Name </h4>
+              <input type="text" value={user_calendar_link} onChange={handleCalendar} />
               <br />
             <br />
             <button type="submit" onClick={handleToggleChange} >Save Changes</button>
