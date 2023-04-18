@@ -18,7 +18,6 @@ flask_cors.CORS(app)
 
 more_news = []
 
-
 def get_weather(user_coordinates):
     """Get weather.
 
@@ -80,40 +79,42 @@ def get_news(news_cateogories):
 
     data = response.json()
     compromised_data = []
-    compromised_data.append(data[0]["Summary"])
-    compromised_data.append(data[1]["Summary"])
-    compromised_data.append(data[2]["Summary"])
-    compromised_data.append(data[3]["Summary"])
 
-    translator = Translator()
+    if(data):
+        len = len(data)
+        for index, message in data:
+            compromised_data.append(message["Summary"])
 
-    german_text = compromised_data[0]
-    compromised_data[0] = translator.translate(german_text, src="de", dest="en").text
-    compromised_data[0] = compromised_data[0].replace(".", ". ")
+        translator = Translator()
 
-    german_text = compromised_data[1]
-    compromised_data[1] = translator.translate(german_text, src="de", dest="en").text
-    compromised_data[1] = compromised_data[1].replace(".", ". ")
+        data_TTS = []
 
-    german_text = compromised_data[2]
-    compromised_data[2] = translator.translate(german_text, src="de", dest="en").text
-    compromised_data[2] = compromised_data[2].replace(".", ". ")
+        for ind, text in compromised_data:
+            if ind < 2:
+                germnan_text = translator.translate(text, src="de", dest="en").text
+                text = germnan_text.replace(".", ". ")
+                data_TTS.append(text)
+            else:
+                germnan_text = translator.translate(text, src="de", dest="en").text
+                text = germnan_text.replace(".", ". ")
+                more_news.append(text)
 
-    german_text = compromised_data[3]
-    compromised_data[3] = translator.translate(german_text, src="de", dest="en").text
-    compromised_data[3] = compromised_data[3].replace(".", ". ")
 
-    more_news.append(compromised_data[2])
-    more_news.append(compromised_data[3])
-
-    answer = (
-        "These are the headline storys for the day: "
-        + str(compromised_data[0])
-        + "Here is your next article: "
-        + str(compromised_data[1])
-    )
-
-    return answer
+        if len(data_TTS) < 2:
+            answer = (
+                "These are the headline storys for the day: "
+                + str(data_TTS[0])
+            )
+        else:
+            answer = (
+                "These are the headline storys for the day: "
+                + str(data_TTS[0])
+                + "Here is your next article: "
+                + str(data_TTS[1])
+            )
+        return answer
+    else:
+        return "no data found in Scuttlebut!"
 
 
 def get_stocks(stocks):
@@ -290,9 +291,10 @@ def get_more_scuttlebutt():
         Additional news for the scuttlebutt use case.
     """
 
-    additional_news = more_news
-
-    return jsonify({"additional_news": additional_news})
+    if len(more_news):
+        return jsonify({"text": more_news})
+    else:
+        return "no additional news"
 
 
 if __name__ == "__main__":

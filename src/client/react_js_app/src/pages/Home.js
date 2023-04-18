@@ -95,14 +95,23 @@ export function Home() {
     };
   }, [getUserId()]);
 
-  function buttonConnect(){
-    if (connected){
-      connected = false
-      handleConnect();
-    }
-    else{
-      connected = true
-      handleDisconnect();
+  async function buttonConnect(){
+    // if (connected){
+    //   connected = false
+    //   handleConnect();
+    // }
+    // else{
+    //   connected = true
+    //   handleDisconnect();
+    // }
+
+    try {
+      console.log("Listening...");
+      const tmp_transcript = await listenForSpeech();
+      console.log("Transcript:", tmp_transcript);
+      await handleTranscript(tmp_transcript);
+    } catch (error) {
+      console.error("Speech recognition error:", error);
     }
   }
 
@@ -280,7 +289,7 @@ export function Home() {
       };
     });
   }
-  
+
   // function that returns a Promise that resolves after a specified delay
   function delay(delayInMilliseconds) {
     return new Promise(resolve => setTimeout(resolve, delayInMilliseconds));
@@ -325,9 +334,9 @@ export function Home() {
     await handleAdditional()
 
     console.log("Finished Speaking");
-    console.log("Listening...");
-
+  
     try {
+      console.log("Listening...");
       const tmp_transcript = await listenForSpeech();
       console.log("Transcript:", tmp_transcript);
       await handleTranscript(tmp_transcript);
@@ -343,7 +352,7 @@ export function Home() {
     speechSynthesis.cancel()
     const voices = speechSynthesis.getVoices();
     var utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = voices.find((voice) => voice.name === 'Google UK English Female');
+    // utterance.voice = voices.find((voice) => voice.name === 'Google UK English Female');
     utterance.rate = 1;
     utterance.pitch = 1;
     utterance.lang = 'en-US';
@@ -375,13 +384,19 @@ export function Home() {
   async function handleTranscript(transcript) {
     if (transcript.toLowerCase() === "no") {
       console.log("Alright, have a nice day!");
-    } else if (transcript.toLowerCase() === "yes.") {
+      // check if user said something -> intend recognition here
+    } else if (transcript.toLowerCase().length > 2) {
       console.log("provide more information");
       try {
         const response = await fetch('http://127.0.0.1:5008/scuttlebutt/additional');
         const data = await response.json();
-        const text = data[0].toString() + data[1].toString();
-        console.log("Message:", text);
+        console.log(data)
+
+        const addtional_text = ""
+        for (const part of data["text"]) {
+          addtional_text += part.toString()
+        }
+        console.log("Additional Message:", addtional_text);
         await say_text(text)
       } catch (error) {
         console.error(error);
