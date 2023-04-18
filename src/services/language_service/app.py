@@ -5,14 +5,14 @@ from flask import Flask, request, jsonify
 from google.cloud import dialogflow_v2 as dialogflow
 from google.api_core.exceptions import InvalidArgument
 from google.protobuf.json_format import MessageToDict
-# Set environment variable for Google Cloud Platform credentials
+
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "capitan-382017-1431f46e0617.json"
 
-# Create a unique session ID for each request
+app = Flask(__name__)
+
 def create_session_id():
     return str(uuid.uuid4())
 
-# Create a Dialogflow session and detect intent from text input
 def detect_intent_from_text(project_id, session_id, text):
 
     session_client = dialogflow.SessionsClient()
@@ -25,34 +25,19 @@ def detect_intent_from_text(project_id, session_id, text):
     except InvalidArgument:
         raise
 
-    fulfillment_text = response.query_result.fulfillment_text
     intent = response.query_result.intent.display_name
-    confidence = response.query_result.intent_detection_confidence
-    date_time = response.query_result.parameters.get("date-time")
-    location = response.query_result.parameters.get("location")
 
-    response_json = MessageToDict(response._pb)
-    print(location)
-    with open('response.json', 'w') as f:
-        json.dump(response_json, f)
-    print(response_json)
-    return fulfillment_text, intent, confidence, date_time
+    return intent
 
-# Initialize the Flask application
-app = Flask(__name__)
-
-# Route for handling transcript submission requests
-@app.route('/submit_transcript', methods=['GET', 'POST'])
+@app.route('/get_intent')
 def submit_transcript():
-    data = "Give me a weather forecast for tomorrow in Berlin"
-    transcript = data 
+    transcript = request.args.get("transcript")
     try:
         intent = detect_intent_from_text("capitan-382017", create_session_id(), transcript)
     except ValueError as e:
         return jsonify({'error': str(e)}), 500
-    fulfillment_text, intent, confidence, date_time = detect_intent_from_text("capitan-382017", create_session_id(), transcript)
 
-    return jsonify({'intent': intent, 'confidence': confidence, 'fulfillment_text': fulfillment_text, 'date_time': date_time})
+    return jsonify({'intent': intent})
 
 if __name__ == '__main__':
     app.run(debug=True, port=8003)
