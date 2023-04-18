@@ -119,7 +119,7 @@ def get_books(book_genre):
     answer = "Here are some books that might be interesting for you: "
     for book in data:
         answer += book["title"] + " by the author " + book["author"] + ". "
-        answer += "This is the description: " + book["description"] + ". "
+        answer += "This is the description: " + book["description"] + " "
 
     return answer
 
