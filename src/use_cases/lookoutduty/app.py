@@ -60,7 +60,7 @@ def get_events(location, keyword_list, enddate):
 
     data = response.json()
     if not data:
-        return "No events found for the provided search criteria."
+        return "No events found in your area basedo on your favorite artists."
     answer = "Here are some event suggestions based on your favorite artists: "
     for event in data:
         answer += (
@@ -153,7 +153,7 @@ def get_user_preferences(user):
     url = "http://db:5000/users/" + user
     response = requests.get(url)
     if response.status_code != 200:
-        jsonify({"error": "Error getting stock news information"}), 500
+        jsonify({"error": "Error getting user preferences"}), 500
 
     data = response.json()
 

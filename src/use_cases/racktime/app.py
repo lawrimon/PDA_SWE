@@ -75,7 +75,7 @@ def play_music(artist):
         return "No music found for the provided artist. "
         # return jsonify({"error": "Error playing music"}), 500
 
-    answer = "Music of your favorite artist" + artist + " is playing. Groove on! "
+    answer = "Music of your favorite artist " + artist + " is playing. Groove on! "
 
     return answer
 
@@ -141,7 +141,7 @@ def get_user_preferences(user):
     url = "http://db:5000/users/" + user
     response = requests.get(url)
     if response.status_code != 200:
-        jsonify({"error": "Error getting stock news information"}), 500
+        jsonify({"error": "Error getting user preferences"}), 500
 
     data = response.json()
 

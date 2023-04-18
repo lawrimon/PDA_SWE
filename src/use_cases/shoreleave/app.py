@@ -89,11 +89,18 @@ def get_books(book_genre):
         Information about the resepctive best sellers list or an explanatory string if no books could be retrieved.
     """
 
+    genres = {
+        "Non-Fiction": "combined-print-and-e-book-nonfiction",
+        "Fiction": "combined-print-and-e-book-fiction",
+        "Picture Books": "picture-books",
+        "Miscellaneous": "advice-how-to-and-miscellaneous",
+    }
+
     url = "http://wisdom:5000/wisdom/books"
-    params = {"genre": book_genre}
+    params = {"genre": genres[book_genre]}
     response = requests.get(url, params=params)
     if response.status_code != 200:
-        return "No books found. "
+        return "No best sellers list found for the provided genre. "
         # jsonify({"error": "Error getting stock service information"}), 500
 
     data = response.json()
@@ -122,7 +129,7 @@ def get_user_preferences(user):
     url = "http://db:5000/users/" + user
     response = requests.get(url)
     if response.status_code != 200:
-        jsonify({"error": "Error getting stock news information"}), 500
+        jsonify({"error": "Error getting user preferences"}), 500
 
     data = response.json()
 
@@ -148,7 +155,7 @@ def get_shoreleave():
     user = request.args.get("user")
 
     user_preferences = get_user_preferences(user)
-    book_genre = user_preferences["book_genre"].split(",")[0]
+    book_genre = user_preferences["books"].split(",")[0]
 
     quotes = get_quotes()
     nasa_fact = get_nasa_apod()

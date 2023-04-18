@@ -208,6 +208,7 @@ services:
     ports:
       - 5013:5000
     depends_on:
+      - books
       - wisdom
       - rabbitmq
 

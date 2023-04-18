@@ -28,7 +28,7 @@ def get_weather(user_coordinates):
     params = {"lat": user_location["lat"], "lon": user_location["lon"]}
     response = requests.get(url, params)
     if response.status_code != 200:
-        return "No weather information found for your location."
+        return "No weather information found for the provided coordinates."
         # jsonify({"error": "Error getting weather information"}), 500
 
     data = response.json()
@@ -65,7 +65,7 @@ def get_news(news_cateogories):
     url = f"http://news:5000/tagesschau/homepage"
     response = requests.get(url)
     if response.status_code != 200:
-        return "No news found for the categories you are interested in."
+        return "No news found for the provided categories."
         # jsonify({"error": "Error getting weather information"}), 500
 
     data = response.json()
@@ -79,12 +79,19 @@ def get_news(news_cateogories):
 
     german_text = compromised_data[0]
     compromised_data[0] = translator.translate(german_text, src="de", dest="en").text
+    compromised_data[0] = compromised_data[0].replace(".", ". ")
+
     german_text = compromised_data[1]
     compromised_data[1] = translator.translate(german_text, src="de", dest="en").text
+    compromised_data[1] = compromised_data[1].replace(".", ". ")
+
     german_text = compromised_data[2]
     compromised_data[2] = translator.translate(german_text, src="de", dest="en").text
+    compromised_data[2] = compromised_data[2].replace(".", ". ")
+
     german_text = compromised_data[3]
     compromised_data[3] = translator.translate(german_text, src="de", dest="en").text
+    compromised_data[3] = compromised_data[3].replace(".", ". ")
 
     more_news.append(compromised_data[2])
     more_news.append(compromised_data[3])
@@ -92,7 +99,7 @@ def get_news(news_cateogories):
     answer = (
         "These are the headline storys for the day: "
         + str(compromised_data[0])
-        + " Here is your next article: "
+        + "Here is your next article: "
         + str(compromised_data[1])
     )
 
@@ -117,7 +124,7 @@ def get_stocks(stocks):
     params = {"symbols": symbols}
     response = requests.get(url, params)
     if response.status_code != 200:
-        return "No quotes found for the stocks you are interested in."
+        return "No quotes found for the provided stocks."
         # jsonify({"error": "Error getting stock service information"}), 500
 
     data = response.json()
@@ -175,8 +182,8 @@ def get_stock_news(stocks):
     params = {"symbols": symbols}
     response = requests.get(url, params)
     if response.status_code != 200:
+        return "No news found for the provided stocks."
         # jsonify({"error": "Error getting stock news information"}), 500
-        return "No news found for the stocks you are interested in."
 
     data = response.json()
 
@@ -219,7 +226,7 @@ def get_user_preferences(user):
     url = "http://db:5000/users/" + user
     response = requests.get(url)
     if response.status_code != 200:
-        jsonify({"error": "Error getting stock news information"}), 500
+        jsonify({"error": "Error getting user preferences"}), 500
 
     data = response.json()
 
