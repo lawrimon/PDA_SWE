@@ -269,8 +269,10 @@ def get_racktime():
 
     introduction = "Good evening, it's rack time. According to your sleep schedule, you should go to bed in one hour. "
 
+    name = "racktime"
     return jsonify(
-        {
+        {   
+            "_name" : name,
             "1introduction": introduction,
             "tomorrows_events": tomorrows_events_summarized,
             "route": route,

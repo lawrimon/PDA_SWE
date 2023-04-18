@@ -270,9 +270,11 @@ def get_scuttlebutt():
     news = get_news(news_cateogories)
     weather = get_weather(user_coordinates)
     stock_news = get_stock_news(stocks)
+    name = "scuttlebutt"
 
     return jsonify(
-        {
+        {   
+            "_name":name,
             "news": news,
             "weather": weather,
             "stock_news": stock_news,
