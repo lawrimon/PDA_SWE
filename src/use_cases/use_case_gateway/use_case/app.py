@@ -17,14 +17,14 @@ if lokal:
     SCUTTLEBUTT = "http://localhost:5008"
     LOOKOUT = "http://localhost:5016"
     SHORELEAVE = "http://localhost:5013"
-    RACKTIME ="http://localhost:5018"
+    RACKTIME = "http://localhost:5018"
     DATABASE = "http://localhost:5009"
 else:
     RABBITMQ_HOST = "rabbitmq"
     SCUTTLEBUTT = "http://scuttlebutt:5000"
     LOOKOUT = "http://lookoutduty:5000"
     SHORELEAVE = "http://shoreleave:5000"
-    RACKTIME ="http://racktime:5000"
+    RACKTIME = "http://racktime:5000"
     DATABASE = "http://db:5000"
 
 
@@ -33,7 +33,7 @@ def get_scuttlebutt(user):
     This function retrieves the scuttlebutt usecase.
     """
     with app.app_context():
-        url = SCUTTLEBUTT + "/scuttlebutt?user="+ user
+        url = SCUTTLEBUTT + "/scuttlebutt?user=" + user
         print("inside get_scuttlebutt")
         response = requests.get(url)
         if response.status_code != 200:
