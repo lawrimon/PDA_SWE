@@ -28,7 +28,7 @@ export function Home() {
 
   const ENDPOINT = 'http://localhost:5010/';
   var globalTranscript = ""
-  var next_message = true;
+  var next_message = false;
   var connected = false;
   const NotificationColors = {
     scuttlebutt: "gray",
@@ -157,6 +157,7 @@ export function Home() {
         // Remove acknowledged message from messages array
         console.log("Message Acknowledged")
         setMessage("");
+        deliveryTagRef.current = null
       } else {
         console.error('Invalid delivery tag:', deliveryTag);
       }
@@ -173,7 +174,7 @@ export function Home() {
     console.log("Delivery Tag", deliveryTagRef.current)
     say_use_case("rabbit", message.message)
       .then(() => {
-        if (next_message) {
+        if (deliveryTagRef.current && next_message) {
           handleAcknowledge(deliveryTagRef.current)
         }
       })
@@ -336,9 +337,14 @@ export function Home() {
       const tmp_transcript = await listenForSpeech();
       console.log("Transcript:", tmp_transcript);
       await handleTranscript(tmp_transcript);
+      
+      // reset transcript
+      globalTranscript = ""
     } catch (error) {
       console.error("Speech recognition error:", error);
     }
+
+    // acknowledge message so that next message can be consumed
     if (deliveryTagRef.current){
       handleAcknowledge(deliveryTagRef.current)
     }
