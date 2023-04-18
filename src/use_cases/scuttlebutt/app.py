@@ -81,15 +81,15 @@ def get_news(news_cateogories):
     compromised_data = []
 
     if(data):
-        len = len(data)
-        for index, message in data:
+        for message in data:
             compromised_data.append(message["Summary"])
+
 
         translator = Translator()
 
         data_TTS = []
 
-        for ind, text in compromised_data:
+        for ind, text in enumerate(compromised_data):
             if ind < 2:
                 germnan_text = translator.translate(text, src="de", dest="en").text
                 text = germnan_text.replace(".", ". ")
@@ -194,7 +194,6 @@ def get_stock_news(stocks):
     response = requests.get(url, params)
     if response.status_code != 200:
         return "No news found for the provided stocks."
-        # jsonify({"error": "Error getting stock news information"}), 500
 
     data = response.json()
 
@@ -294,7 +293,7 @@ def get_more_scuttlebutt():
     if len(more_news):
         return jsonify({"text": more_news})
     else:
-        return "no additional news"
+        return jsonify({"error": "Error getting additional information"}), 500
 
 
 if __name__ == "__main__":

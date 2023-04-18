@@ -30,7 +30,8 @@ export function Home() {
   const [text, setText] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [transcript, setTranscript] = useState('');
+
+  var globalTranscript = ""
 
   // function to update delivery tag
   function updateDeliveryTag(tag) {
@@ -254,6 +255,8 @@ export function Home() {
       let interimTranscript = '';
       let finalTranscript = '';
 
+      console.log("event",event)
+
       for (let i = event.resultIndex; i < event.results.length; i++) {
         let transcript = event.results[i][0].transcript;
         if (event.results[i].isFinal) {
@@ -263,7 +266,7 @@ export function Home() {
         }
       }
 
-      setTranscript(finalTranscript.trim());
+      globalTranscript = finalTranscript.trim();
     };
 
     recognition.onerror = event => {
@@ -275,12 +278,12 @@ export function Home() {
 
       let timeoutId = setTimeout(() => {
         recognition.stop();
-        resolve(transcript.trim());
+        resolve(globalTranscript.trim());
       }, 5000);
 
       recognition.onend = () => {
         clearTimeout(timeoutId);
-        resolve(transcript.trim());
+        resolve(globalTranscript.trim());
       };
 
       recognition.onerror = () => {
@@ -319,6 +322,17 @@ export function Home() {
     let i = 0;
     const keysInOrder = Object.keys(text);
     console.log(keysInOrder)
+
+    // set to true to avoid long TTS
+    var debug = true
+    
+    if (debug){
+      let textToSay = "this is a little example text"
+      let use_case  = "scuttlebutt"
+      addNotification(textToSay, NotificationColors[use_case])
+      await say_text(textToSay)
+    }
+    else {
     for (const key of keysInOrder) {
       const value = text[key];
       console.log("Part", i)
@@ -326,6 +340,7 @@ export function Home() {
       addNotification(value, NotificationColors[use_case])
       await say_text(value)
       i += 1;
+      }
     }
 
     // pause for 5 seconds using Promises
@@ -343,14 +358,14 @@ export function Home() {
     } catch (error) {
       console.error("Speech recognition error:", error);
     }
-
-    handleAcknowledge(deliveryTagRef.current)
+    if (deliveryTagRef.current){
+      handleAcknowledge(deliveryTagRef.current)
+    }
   }
 
   async function say_text(text) {
 
     speechSynthesis.cancel()
-    const voices = speechSynthesis.getVoices();
     var utterance = new SpeechSynthesisUtterance(text);
     // utterance.voice = voices.find((voice) => voice.name === 'Google UK English Female');
     utterance.rate = 1;
@@ -390,14 +405,19 @@ export function Home() {
       try {
         const response = await fetch('http://127.0.0.1:5008/scuttlebutt/additional');
         const data = await response.json();
-        console.log(data)
-
-        const addtional_text = ""
+        if (response.status != 200){
+          console.log("Error in response from Scuttlebut")
+        }
+        else{
+        let addtional_text = ""
         for (const part of data["text"]) {
           addtional_text += part.toString()
         }
+
+        addtional_text.slice(0, 100).toString()
         console.log("Additional Message:", addtional_text);
-        await say_text(text)
+        await say_text(addtional_text)
+        }
       } catch (error) {
         console.error(error);
         console.log("Sorry, there was an error getting more information.");
