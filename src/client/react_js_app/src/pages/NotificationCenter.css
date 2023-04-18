@@ -1,17 +1,22 @@
+.nots {
+  text-align: center;
+  margin-top: 20px;
+  font-family: system-ui;
+  text-align: justify;
+}
 .notification-centerNew {
-    position: relative;
-    top: 20px;
-    right: 25%;
-    transform: translateX(50%);
-    z-index: 9999;
-   
+  display: block;
+  max-width: 900px;
+  margin: auto;
+  width: 80%;
+
   }
   
   .notification-containerNew {
     display: flex;
     flex-direction: column-reverse;
     align-items: center;
-    width: 50%;
+    margin: auto;
   }
   
   .notificationNew {
@@ -25,6 +30,10 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     margin-bottom: 15px;
     opacity: 0.6;
+  }
+
+  .notificationNew.expanded {
+    background-color: aqua;
   }
   
   .notification-iconNew {

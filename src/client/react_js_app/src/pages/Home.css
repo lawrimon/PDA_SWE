@@ -16,13 +16,6 @@
   }
 }
 
-nots {
-  height:200px;
-  display: block;
-  padding-bottom: 20px;
-  margin: 30px;
-}
-
 input {
   font-size: 24px;
   padding: 10px;
@@ -38,7 +31,8 @@ input {
 .search-container {
   display: block;
   align-items: center;
-  max-width: 800px;
+  max-width: 900px;
+  width: 80%;
   margin: 0 auto;
   border-radius: 4px;
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);

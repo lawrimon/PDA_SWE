@@ -1,4 +1,5 @@
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 from flask import Flask, jsonify
 import requests
 import json
@@ -112,7 +113,7 @@ def get_all_user():
             return users
 
 
-def notify_users():
+def notify_scuttlebutt():
     """
     This function retrieves the events near the user's location and checks if they
     interfere with any appointments of the user. If the requirements are met, it
@@ -239,12 +240,29 @@ def notify_racktime():
 
 
 # publish every 7 seconds
-scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(func=notify_users, trigger="interval", seconds=60)
-# scheduler.add_job(func=notify_lookout, trigger="interval", seconds=40)
-# scheduler.add_job(func=notify_shoreleave, trigger="interval", seconds=60)
+scheduler = BackgroundScheduler( daemon=True)
+
+
+# schedule every x minutes
+
+# scheduler.add_job(func=notify_scuttlebutt, trigger="interval", seconds=60)
+scheduler.add_job(func=notify_lookout, trigger="interval", seconds=60)
+scheduler.add_job(func=notify_shoreleave, trigger="interval", seconds=60)
+
+
+# schedule on day time (T-2h inside Docker)
+trigger = CronTrigger(
+    hour="18", minute="15"
+    )
+
+scheduler.add_job(
+    func=notify_scuttlebutt,
+    trigger=trigger,
+)
 
 scheduler.start()
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")

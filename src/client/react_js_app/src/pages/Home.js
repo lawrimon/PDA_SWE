@@ -25,6 +25,7 @@ export function Home() {
   const [text, setText] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const ENDPOINT = 'http://localhost:5010/';
   var globalTranscript = ""
@@ -38,7 +39,8 @@ export function Home() {
   };
 
   // set to true to avoid long TTS
-  var debug = true
+  var debug = false
+
 
   // function to update delivery tag
   function updateDeliveryTag(tag) {
@@ -316,10 +318,7 @@ export function Home() {
     let i = 0;
     handleLogo(logo2)
     for (const key of keysInOrder) {
-      console.log(key)
       const value = text[key];
-      console.log("Part", i)
-      console.log("Text:", value)
       addNotification(value, NotificationColors[name])
       await say_text(value)
       i += 1;
@@ -328,20 +327,22 @@ export function Home() {
 
     // pause for 1 seconds using Promises
     delay(1000).then(() => {});
-    await handleAdditional()
-    console.log("Finished Speaking");
-    handleLogo(logo)
-    setColor(name)
-    try {
-      console.log("Listening...");
-      const tmp_transcript = await listenForSpeech();
-      console.log("Transcript:", tmp_transcript);
-      await handleTranscript(tmp_transcript);
-      
-      // reset transcript
-      globalTranscript = ""
-    } catch (error) {
-      console.error("Speech recognition error:", error);
+    if (name === "scuttlebutt"){
+      await handleAdditional()
+      console.log("Finished Speaking");
+      handleLogo(logo)
+      setColor(name)
+      try {
+        console.log("Listening...");
+        const tmp_transcript = await listenForSpeech();
+        console.log("Transcript:", tmp_transcript);
+        await handleTranscript(tmp_transcript);
+        
+        // reset transcript
+        globalTranscript = ""
+      } catch (error) {
+        console.error("Speech recognition error:", error);
+      }
     }
 
     // acknowledge message so that next message can be consumed
@@ -407,7 +408,8 @@ export function Home() {
           await say_text(slice1)
         }
         else{
-          console.log("Additional Message:", addtional_text);
+          const slice1 = addtional_text.slice(0,10)
+          console.log("Additional Message:", slice1);
           await say_text(addtional_text)
         }
         
@@ -500,9 +502,9 @@ export function Home() {
 
       <div className="nots">
         <div className="notification-centerNew">
-          <div className="notification-containerNew">
+        <div className={"notification-containerNew"}>
             {notifications.map((notification, index) => (
-              <div key={index} className={`notificationNew ${notification.color}`}>
+              <div key={index} className={`notificationNew ${notification.color} ${!expanded ? 'expanded' : ''}`} onClick={() => setExpanded(!expanded)}>
                 <div className={`notification-iconNew`} style={{ backgroundColor: notification.color }}></div>
                 <div className="notification-textNew">{notification.message}</div>
                 <button onClick={() => removeNotification(index)} className="notification-closeNew">×</button>
