@@ -40,16 +40,20 @@ export function Home() {
   var next_message = true;
 
   const NotificationColors = {
-    Scuttlebutt: "gray",
-    Shoreleave: "lightpink",
-    Lookout: "lightgreen",
-    Racktime: "brown"
+    scuttlebutt: "gray",
+    shoreleave: "lightpink",
+    lookout: "lightgreen",
+    racktime: "brown"
   };
 
+  //const addNotification = (message, color) => {
+  //  const newNotifications = [...notifications, { message, color }];
+  //  setNotifications(newNotifications);
+  //};
+
   const addNotification = (message, color) => {
-    const newNotifications = [...notifications, { message, color }];
-    setNotifications(newNotifications);
-  };
+    setNotifications(notifications => [...notifications, { message, color }]);
+};
 
   const removeNotification = (index) => {
     const newNotifications = [...notifications];
@@ -270,6 +274,10 @@ export function Home() {
     });
   }
 
+  function mapUsecases(use_case){
+
+  }
+
   async function say_use_case(use_case, speaking_text = "") {
     var text = null;
     // get the right data to spreak
@@ -289,6 +297,8 @@ export function Home() {
     }
 
     console.log("Starts speaking...");
+    console.log(use_case, "usecase")
+    console.log(NotificationColors[use_case], "color")
     let i = 0;
     const keysInOrder = Object.keys(text);
     console.log(keysInOrder)
@@ -296,6 +306,7 @@ export function Home() {
       const value = text[key];
       console.log("Part", i)
       console.log("Text:", value)
+      addNotification(value, NotificationColors[use_case])
       await say_text(value)
       i += 1;
     }
@@ -374,7 +385,7 @@ export function Home() {
     const data = await response.json();
     console.log("this data", data)
     if (data) {
-      setMessage(data)
+      setMessage(data)    
       return data
     }
   };
