@@ -215,8 +215,6 @@ def get_stock_news(stocks):
         answer = "Here are the news for the stocks you are interested in: " + " ".join(
             stock_news
         )
-        if answer[-1] not in [".", "?", "!"]:
-            answer += ". "
 
     return answer
 
