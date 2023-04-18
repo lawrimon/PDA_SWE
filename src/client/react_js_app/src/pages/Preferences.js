@@ -15,7 +15,7 @@ function PreferencesPage() {
   const [password, setPassword] = useState("");
   const [user_football_club, setFootballClub] = useState(["Bayern München"]);
   const [user_stocks, setStocks] = useState(["Apple"]);
-  const [user_calendar_link, setCalendar] = useState(getUserId());
+  const [user_calendar_link, setCalendar] = useState("");
   const [user_artists, setArtist] = useState(["Justin Bieber"]);
   const [user_news, setNews] = useState(["National"]);
   const [user_books, setBooks] = useState(["Non-Fiction"]);
@@ -104,6 +104,7 @@ function PreferencesPage() {
       useridRef.current = storedUserId;
       console.log("Userid", useridRef.current);
       setUserId(useridRef.current)
+      setCalendar(useridRef.current)
     }
     componentDidMount()
     let position = UserDidMount()

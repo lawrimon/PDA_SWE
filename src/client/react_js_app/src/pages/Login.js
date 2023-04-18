@@ -102,6 +102,12 @@ function LoginPage() {
       window.location.href = '/'
     }
 
+  function Register(){
+    localStorage.setItem('user_id', userIdRef.current);
+    console.log(userIdRef.current)
+    window.location.href = '/register'
+  }
+
   function pushUserLocation(city){
      let lat = user_location.latitude
      let lon =  user_location.longitude
@@ -186,7 +192,7 @@ function LoginPage() {
           <br />
           <div className="container">
             <label>
-              Not a Sailor yet? Get on board <Link to="/register">here</Link>.
+              Not a Sailor yet? Get on board <Link onClick={Register}>here</Link>.
             </label>
             <div id="error-message"></div> {/* Add this div for displaying error message */}
 

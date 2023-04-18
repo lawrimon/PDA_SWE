@@ -1,16 +1,32 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./Register.css";
-import { setUserId } from '../components/User.js';
+import { getUserId, setUserId } from '../components/User.js';
 
 
 function RegisterPage() {
+  const userIdRef = useRef(null);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
 
   let [username, setUsername] = useState("");
   const [userid, setUserid] = useState("");
-  const userIdRef = useRef("");
+
+  useEffect(() => {
+    // Call your function here
+    // Retrieve the user ID from local storage
+    const storedUserId = localStorage.getItem('user_id');
+    console.log(userIdRef.current)
+    // Set the value of useridRef.current to the retrieved user ID, if it exists
+    if (storedUserId) {
+      userIdRef.current = storedUserId;
+      console.log("Userid", userIdRef.current);
+      setUserId(userIdRef.current)
+      setUsername(userIdRef.current)
+    }
+  }, [getUserId()]);
+
 
   function hanldeUsernameChange(event) {
     setUsername(event.target.value);
@@ -46,7 +62,7 @@ function RegisterPage() {
     
     fetch('http://localhost:5009/users',{
       method: 'POST',
-      body: JSON.stringify({"user_id":userid, "password":password, "username":username}),
+      body: JSON.stringify({"user_id":userIdRef.current, "password":password, "username":username}),
       headers: { 'Content-Type': 'application/json' },
     })
     .then(response => response.json())
