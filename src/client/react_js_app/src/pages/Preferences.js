@@ -238,7 +238,7 @@ return coord
       console.log({"football_club": user_football_club.toString(), "calendar_link": user_calendar_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(), "transportation" : user_transportation.value})
       const response = await fetch('http://localhost:5009/users/'+useridRef.current, {
         method: 'PUT',
-        body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(),  "transportation": user_transportation.value}),
+        body: JSON.stringify({"football_club": user_football_club.toString(), "calendar_link": user_calendar_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(),  "transportation": user_transportation.value}),
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await response.json();
