@@ -95,8 +95,8 @@ def get_random_facts():
             answer += fact["fact"]
             answer += ". "
         else:
-            more_facts += fact["fact"]
-            more_facts += ". "
+            more_facts.append(fact["fact"])
+            #more_facts += ". "
 
 
 
@@ -203,6 +203,28 @@ def get_shoreleave():
         }
     )
 
+
+@app.route("/shoreleave/additional")
+def get_more_shoreleave():
+    """Additional scuttlebutt endpoint.
+
+    This endpoint provides additional news for the scuttlebutt use case.
+
+    Returns:
+        Additional news for the scuttlebutt use case.
+    """
+    quotes = more_quotes[0]
+    random_facts = more_facts[0]
+    books = more_books[0]
+    name = "shoreleave"
+    return jsonify(
+        {
+            "_name": name,
+            "quotes": quotes,
+            "random_facts": random_facts,
+            "books": books,
+        }
+    )
 
 if __name__ == "__main__":
     app.run()
