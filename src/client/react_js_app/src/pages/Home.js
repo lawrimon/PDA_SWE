@@ -9,8 +9,6 @@ import { getUserId, setUserId, user_id } from '../components/User.js';
 import io from 'socket.io-client';
 
 
-
-
 export function Home() {
   var originalColor;
 
@@ -22,30 +20,30 @@ export function Home() {
   // Rabbit
   const [queueName, setQueueName] = useState(null);
   const socketRef = useRef(null);
-  const [message, setMessage] = useState("");
-  const ENDPOINT = 'http://localhost:5010/';
+  const [message, setMessage] = useState(""); //  do we need this ?
   const deliveryTagRef = useRef("");
-  var connected = false;
-
   const [text, setText] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
+  const ENDPOINT = 'http://localhost:5010/';
   var globalTranscript = ""
-
-  // function to update delivery tag
-  function updateDeliveryTag(tag) {
-    deliveryTagRef.current = tag;
-  }
-
   var next_message = true;
-
+  var connected = false;
   const NotificationColors = {
     scuttlebutt: "gray",
     shoreleave: "lightpink",
     lookout: "lightgreen",
     racktime: "brown"
   };
+
+  // set to true to avoid long TTS
+  var debug = true
+
+  // function to update delivery tag
+  function updateDeliveryTag(tag) {
+    deliveryTagRef.current = tag;
+  }
 
   const addNotification = (message, color) => {
     setNotifications(notifications => [...notifications, { message, color }]);
@@ -92,22 +90,13 @@ export function Home() {
   }, [getUserId()]);
 
   async function buttonConnect(){
-    // if (connected){
-    //   connected = false
-    //   handleConnect();
-    // }
-    // else{
-    //   connected = true
-    //   handleDisconnect();
-    // }
-
-    try {
-      console.log("Listening...");
-      const tmp_transcript = await listenForSpeech();
-      console.log("Transcript:", tmp_transcript);
-      await handleTranscript(tmp_transcript);
-    } catch (error) {
-      console.error("Speech recognition error:", error);
+    if (connected){
+      connected = false
+      handleConnect();
+    }
+    else{
+      connected = true
+      handleDisconnect();
     }
   }
 
@@ -143,6 +132,11 @@ export function Home() {
 
     // disconnect from websocket server
     if (socketRef.current) {
+
+      // acknowledge message before disconnecting
+      if(deliveryTagRef.current){
+        handleAcknowledge(deliveryTagRef.current)
+      }
       console.log(`Disconnected from ${queueName} room Print1`);
       socketRef.current.disconnect();
       socketRef.current = null;
@@ -230,7 +224,6 @@ export function Home() {
   }
 
 
-
   async function listenForSpeech() {
 
     const recognition = new window.webkitSpeechRecognition();
@@ -311,10 +304,6 @@ export function Home() {
     let name = text._name
     delete text._name
     const keysInOrder = Object.keys(text);
-
-
-    // set to true to avoid long TTS
-    var debug = true
     
     if (debug){
       let textToSay = "this is a little example text"
@@ -338,16 +327,10 @@ export function Home() {
 
     // pause for 1 seconds using Promises
     delay(1000).then(() => {});
-
     await handleAdditional()
-
     console.log("Finished Speaking");
-  
     handleLogo(logo)
     setColor(name)
-    console.log("Listening...");
-
-
     try {
       console.log("Listening...");
       const tmp_transcript = await listenForSpeech();
@@ -412,9 +395,16 @@ export function Home() {
           addtional_text += part.toString()
         }
 
-        addtional_text.slice(0, 100).toString()
-        console.log("Additional Message:", addtional_text);
-        await say_text(addtional_text)
+        if (debug){
+          const slice1 = addtional_text.slice(0,10)
+          console.log("Additional Message:", slice1);
+          await say_text(slice1)
+        }
+        else{
+          console.log("Additional Message:", addtional_text);
+          await say_text(addtional_text)
+        }
+        
         }
       } catch (error) {
         console.error(error);
