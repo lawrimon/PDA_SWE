@@ -7,6 +7,7 @@ import NotificationPopup from './Notification';
 import { getUserId, setUserId, user_id } from '../components/User.js';
 import { useSpeech } from '../components/SpeechFunctions';
 
+
 export function Home() {
   const useridRef = useRef(null);
 
