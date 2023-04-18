@@ -15,6 +15,9 @@ import requests, flask_cors
 app = Flask(__name__)
 flask_cors.CORS(app)
 
+more_books = ""
+more_quotes = ""
+more_facts = ""
 
 def get_quotes():
     """Get quotes.
@@ -32,11 +35,17 @@ def get_quotes():
         # jsonify({"error": "Error getting stock service information"}), 500
 
     data = response.json()
-    answer = "Here are some famous quotes: "
-    for quote in data:
-        answer += (
-            "The quote " + quote["quote"] + " by the author " + quote["author"] + ". "
-        )
+    answer = "Here is a famous quote: "
+    more_quotes=""
+    for ind, quote in enumerate(data):
+        if ind < 1:
+            answer += (
+                " " + quote["quote"] + ". This is from the author " + quote["author"] + ". "
+            )
+        else:
+            more_quotes +=  (
+                " " + quote["quote"] + ". This is from the author " + quote["author"] + ". "
+            )
 
     return answer
 
@@ -79,10 +88,17 @@ def get_random_facts():
         # jsonify({"error": "Error getting stock service information"}), 500
 
     data = response.json()
-    answer = "Here are some random facts that might be interesting for you: "
-    for fact in data:
-        answer += fact["fact"]
-        answer += " "
+    answer = "Here is a random fact that might be interesting for you: \n"
+    more_facts = ""
+    for ind, fact in enumerate(data):
+        if ind <1:
+            answer += fact["fact"]
+            answer += ". "
+        else:
+            more_facts += fact["fact"]
+            more_facts += ". "
+
+
 
     return answer
 
@@ -116,10 +132,15 @@ def get_books(book_genre):
     data = response.json()
     if not data:
         return "The best sellers list for your favorite genre is currently empty. "
-    answer = "Here are some books that might be interesting for you: "
-    for book in data:
-        answer += book["title"] + " by the author " + book["author"] + ". "
-        answer += "This is the description: " + book["description"] + " "
+    answer = "Here is a book recommondations that might be interesting for you: "
+    more_books = ""
+    for ind, book in enumerate(data):
+        if ind < 1:
+            answer += book["title"] + " by the author " + book["author"] + ". "
+            answer += "This is the description: " + book["description"] + " "
+        else:
+            more_books += book["title"] + " by the author " + book["author"] + ". "
+            more_books += "This is the description: " + book["description"] + " "
 
     return answer
 
