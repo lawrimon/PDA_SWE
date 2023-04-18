@@ -317,6 +317,7 @@ export function Home() {
     else {
     let i = 0;
     handleLogo(logo2)
+    changeColor(name)
     for (const key of keysInOrder) {
       const value = text[key];
       addNotification(value, NotificationColors[name])
