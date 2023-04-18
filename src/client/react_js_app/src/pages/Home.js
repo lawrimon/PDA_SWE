@@ -284,6 +284,65 @@ export function Home() {
       };
     });
   }
+  
+  const [isASelected, setIsASelected] = useState(false);
+  const [buttonColor, setButtonColor] = useState("transparent");
+  const recognitionRef = useRef(null);
+  const transcriptRef = useRef("");
+
+  const startListening = () => {
+    const recognition = new window.webkitSpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognitionRef.current = recognition;
+
+    recognition.onresult = (event) => {
+      let interimTranscript = "";
+      let finalTranscript = "";
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript;
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+      console.log(interimTranscript);
+
+
+      transcriptRef.current = interimTranscript + finalTranscript;
+    };
+
+    recognition.start();
+    console.log("listening started");
+    
+
+  };
+
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      console.log("listening stopped");
+      console.log("final transcript:", transcriptRef.current);
+      setText(transcriptRef.current)
+      transcriptRef.current = "";
+    }
+  };
+
+  const handleClick = () => {
+    if (isASelected) {
+      setButtonColor("transparent");
+      console.log("B");
+      stopListening();
+    } else {
+      setButtonColor("#F62817");
+      console.log("A");
+      startListening();
+    }
+    setIsASelected(!isASelected);
+  };
+
 
   // function that returns a Promise that resolves after a specified delay
   function delay(delayInMilliseconds) {
@@ -433,7 +492,6 @@ export function Home() {
     }
   }
 
-
   async function getScuttlebutt() {
     const response = await fetch('http://127.0.0.1:5008/scuttlebutt?user=' + useridRef.current)
     const data = await response.json();
@@ -467,7 +525,6 @@ export function Home() {
     }
   }
 
-
   async function getRackTime() {
     const response = await fetch('http://127.0.0.1:5019/racktime?user=' + user_id)
     const data = await response.json();
@@ -489,7 +546,10 @@ export function Home() {
         <input type="text" value={text} onChange={handleChange} onClick={() => setShowPopup(false)}
           placeholder="Search..." />
         {intent && <p>Intent: {intent}</p>}
-        <button type="button" onClick={() => handleSubmit()}>Search</button>
+        <button type="button" class="ios-button" onClick={() => handleSubmit()}>&#127929;</button>
+
+        <button class="ios-button"  style={{ backgroundColor: buttonColor,  }} onClick={() => handleClick()}  onMouseEnter={() => setButtonColor("#007aff")}  onMouseLeave={() =>setButtonColor(isASelected ? "#ff3b30" : "transparent")}> &#128483; </button>
+        
         <div className="settings-button-container">
 
           <Link to="/settings">
