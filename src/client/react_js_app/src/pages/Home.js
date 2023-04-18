@@ -41,6 +41,8 @@ export function Home() {
   // set to true to avoid long TTS
   var debug = false
 
+  //intent returned by dialogflow
+  const [intent, setIntent] = useState(null);
 
   // function to update delivery tag
   function updateDeliveryTag(tag) {
@@ -206,10 +208,17 @@ export function Home() {
     setText(event.target.value);
   };
 
-  const handleSubmit = () => {    
-    addNotification("Error Notification", NotificationColors.Lookout)
-    };
-
+  const handleSubmit = () => {
+    const url = `http://localhost:50020/dialogflow/get_intent?transcript=${text}`;
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data.intent);
+        setIntent(data.intent);
+      })
+      .catch(error => console.error(error));
+  }
+  
   function changeColor(div) {
     var button = document.getElementById(div);
     if (!button.classList.contains('red')) {
@@ -479,7 +488,7 @@ export function Home() {
       <div className="search-container">
         <input type="text" value={text} onChange={handleChange} onClick={() => setShowPopup(false)}
           placeholder="Search..." />
-
+        {intent && <p>Intent: {intent}</p>}
         <button type="button" onClick={() => handleSubmit()}>Search</button>
         <div className="settings-button-container">
 

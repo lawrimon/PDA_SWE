@@ -1,50 +1,36 @@
+from flask import Flask, request
+import requests
+from flask_cors import CORS, cross_origin
+import dotenv
 import os
-import uuid
-import json
-from flask import Flask, request, jsonify
-from google.cloud import dialogflow_v2 as dialogflow
-from google.api_core.exceptions import InvalidArgument
-from google.protobuf.json_format import MessageToDict
-
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "capitan-382017-1431f46e0617.json"
 
 app = Flask(__name__)
+CORS(app)
 
+dotenv.load_dotenv()
 
-def create_session_id():
-    return str(uuid.uuid4())
+@app.route('/dialogflow/get_intent')
+def get_intent():
+    """
+    Get intent from transcript endpoint
 
+    Retrieve the intent from a given transcript using Dialogflow API.
 
-def detect_intent_from_text(project_id, session_id, text):
-    session_client = dialogflow.SessionsClient()
-    session = session_client.session_path(project_id, session_id)
-    text_input = dialogflow.TextInput(text=text, language_code="en")
-    query_input = dialogflow.QueryInput(text=text_input)
+    Args:
+        transcript: A string representing the user's speech transcript to be processed.
 
-    try:
-        response = session_client.detect_intent(
-            session=session, query_input=query_input
-        )
-    except InvalidArgument:
-        raise
-
-    intent = response.query_result.intent.display_name
-
-    return intent
-
-
-@app.route("/get_intent")
-def submit_transcript():
+    Returns:
+        A JSON object containing the intent identified by Dialogflow API.
+        If an error occurs while retrieving the intent, returns a 500 error with a JSON object containing the error message.
+    """
+    
     transcript = request.args.get("transcript")
-    try:
-        intent = detect_intent_from_text(
-            "capitan-382017", create_session_id(), transcript
-        )
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 500
+    url = "https://capitan.azurewebsites.net/get_intent" 
+    params = {"transcript": transcript, "key": os.getenv("DIALOGFLOW_KEY")}
 
-    return jsonify({"intent": intent})
-
-
-if __name__ == "__main__":
-    app.run(debug=True, port=8003)
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+        return {"intent": response.json().get("intent")}
+    else:
+        print(response.status_code)
+        raise ValueError("Failed to get intent from transcript")
