@@ -109,17 +109,17 @@ def notify_users():
                     # convert the event object to a string before publishing
                     event_str = json.dumps(event)
                     # publish the event to the queue
-                    #channel.basic_publish(
+                    # channel.basic_publish(
                     #    exchange="notifications", routing_key=user_id, body=event_str
-                    #)
+                    # )
     channel.close()
     connection.close()
 
 
 # publish every 7 seconds
-#scheduler = BackgroundScheduler(daemon=True)
-#scheduler.add_job(func=notify_users, trigger="interval", seconds=7)
-#scheduler.start()
+# scheduler = BackgroundScheduler(daemon=True)
+# scheduler.add_job(func=notify_users, trigger="interval", seconds=7)
+# scheduler.start()
 
 if __name__ == "__main__":
     app.run(debug=True)

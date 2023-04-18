@@ -43,11 +43,12 @@ def get_scuttlebutt(user):
         message = response.json()
         return message
 
+
 def get_lookout(user):
     """
     This function retrieves the lookout usecase.
     """
-    url = LOOKOUT + "/lookout?user="+ user
+    url = LOOKOUT + "/lookout?user=" + user
     print("inside get_lookout")
     response = requests.get(url)
     if response.status_code != 200:
@@ -57,15 +58,15 @@ def get_lookout(user):
 
     return message
 
+
 def get_shoreleave(user):
     """
     This function retrieves the shoreleave usecase.
     """
-    url = SHORELEAVE + "/shoreleave?user="+ user
+    url = SHORELEAVE + "/shoreleave?user=" + user
     print("inside get_shoreleave")
     response = requests.get(url)
     if response.status_code != 200:
-        
         # no error handling ?
         return ""
 
@@ -73,11 +74,12 @@ def get_shoreleave(user):
 
     return message
 
+
 def get_racktime(user):
     """
     This function retrieves the scuttlebutt usecase.
     """
-    url = RACKTIME + "/racktime?user="+ user
+    url = RACKTIME + "/racktime?user=" + user
     print("inside get_racktime")
     response = requests.get(url)
     if response.status_code != 200:
@@ -106,13 +108,14 @@ def get_all_user():
             users = response.json()
             return users
 
+
 def notify_users():
     """
     This function retrieves the events near the user's location and checks if they
     interfere with any appointments of the user. If the requirements are met, it
     publishes the event to a RabbitMQ queue.
     """
-    
+
     users = get_all_user()
 
     connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST))
@@ -126,17 +129,19 @@ def notify_users():
             user_id = user
 
             channel.queue_declare(queue=user_id)
-            channel.queue_bind(exchange="notifications", queue=user_id, routing_key=user_id)
-            
-            '''
+            channel.queue_bind(
+                exchange="notifications", queue=user_id, routing_key=user_id
+            )
+
+            """
             Todo: call the scuttlebutt function and check for problems 
             -> Checking for problems should happen using the calendar service!
-            '''
-            
-             # no error handling ?
+            """
+
+            # no error handling ?
             message = get_scuttlebutt(user)
 
-            if(len(message) > 1):
+            if len(message) > 1:
                 print("Message from Scuttlebut received: " + str(message))
                 # convert the event object to a string before publishing
                 event_str = json.dumps(message)
@@ -146,7 +151,7 @@ def notify_users():
                 )
     else:
         print("No users found!")
-        
+
     channel.close()
     connection.close()
 
@@ -157,7 +162,7 @@ def notify_lookout():
     interfere with any appointments of the user. If the requirements are met, it
     publishes the event to a RabbitMQ queue.
     """
-    
+
     users = get_all_user()
 
     connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST))
@@ -170,11 +175,13 @@ def notify_lookout():
             print(user)
             user_id = user
             channel.queue_declare(queue=user_id)
-            channel.queue_bind(exchange="notifications", queue=user_id, routing_key=user_id)
+            channel.queue_bind(
+                exchange="notifications", queue=user_id, routing_key=user_id
+            )
 
             message = get_lookout(user_id)
 
-            if(message):
+            if message:
                 print("Message from lookout received")
                 # convert the event object to a string before publishing
                 event_str = json.dumps(message)
@@ -185,13 +192,14 @@ def notify_lookout():
             else:
                 print("No users found!")
 
+
 def notify_shoreleave():
     """
     This function retrieves the events near the user's location and checks if they
     interfere with any appointments of the user. If the requirements are met, it
     publishes the event to a RabbitMQ queue.
     """
-    
+
     users = get_all_user()
 
     connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST))
@@ -205,11 +213,13 @@ def notify_shoreleave():
             user_id = user
 
             channel.queue_declare(queue=user_id)
-            channel.queue_bind(exchange="notifications", queue=user_id, routing_key=user_id)
+            channel.queue_bind(
+                exchange="notifications", queue=user_id, routing_key=user_id
+            )
 
             message = get_shoreleave(user_id)
 
-            if(message):
+            if message:
                 print("Message from shoreleave received")
                 # convert the event object to a string before publishing
                 event_str = json.dumps(message)
@@ -219,6 +229,7 @@ def notify_shoreleave():
                 )
             else:
                 print("No users found!")
+
 
 def notify_racktime():
     pass
