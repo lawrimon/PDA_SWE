@@ -99,10 +99,11 @@ export function Home() {
   }
 
   function setColor(div) {
+    console.log("in Setcolor")
+    console.log(div)
     var button = document.getElementById(div);
-    if (button.classList.contains('red')) {
       button.style.backgroundColor = originalColor;
-    }
+    
   }
 
 
@@ -192,6 +193,8 @@ export function Home() {
       }, 5000);
 
     } catch (error) {
+      await setColor('scuttlebutt')
+
       console.error(error);
     }
   }
@@ -323,6 +326,8 @@ export function Home() {
 
     } catch (error) {
       console.error(error);
+      await setColor('scuttlebutt')
+
     }
   }
 
@@ -378,6 +383,8 @@ export function Home() {
 
     } catch (error) {
       console.error(error);
+      await setColor('scuttlebutt')
+
     }
   }
 
@@ -385,7 +392,7 @@ export function Home() {
   return (
     <div className="App">
       <div style={{ marginTop: "3%" }}>
-        <img src={logoSrc} style={{ width: "20%" }} alt="Logo" className="logo" />
+        <img src={logoSrc} style={{ width: "12%" }} alt="Logo" className="logo" />
       </div>
       <h1 style={{ color: "white", paddingTop: "1%" }}>cAPItan</h1>
       <div className="search-container">
