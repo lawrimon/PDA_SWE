@@ -1,3 +1,12 @@
+"""This application is the lookout duty use case.
+
+The lookout duty use case provides the user with information about upcoming events and spport fixtures.
+
+Example Usage:
+
+    GET /lookoutduty?user=cr7thegoat
+"""
+
 from flask import Flask, jsonify, request
 import requests, flask_cors
 import json
