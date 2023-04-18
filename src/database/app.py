@@ -24,7 +24,6 @@ allowed_keys = [
     "password",
     "stocks",
     "artists",
-    "spotify_link",
     "calendar_link",
     "news",
     "location",
