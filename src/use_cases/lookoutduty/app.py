@@ -31,7 +31,7 @@ def get_club_ids(clubs):
     ids = {
         "Bayern München": "157",
         "Borussia Dortmund": "165",
-        "VFB Stuttgart": "172",
+        "VfB Stuttgart": "172",
         "Real Madrid": "541",
         "FC Barcelona": "529",
         "Manchester United": "33",
