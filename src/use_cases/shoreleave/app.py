@@ -1,3 +1,13 @@
+"""This application is the shore leave use case.
+
+The shore leave use case provides the user with some wisdom and entertainment.
+
+Example Usage:
+
+    GET /shoreleave?user=cr7thegoat
+"""
+
+
 from flask import Flask, jsonify, request
 import requests, flask_cors
 

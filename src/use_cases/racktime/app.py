@@ -1,6 +1,6 @@
 """This application is the rack time use case.
 
-Every evening one hour before the calcuated bedtime, the rack time use case proactively informs the user about his open issues and events for the next day.
+Every evening one hour before the calcuated bedtime, the rack time use case proactively informs the user about his open issues, calendar appointments for the next day and the route to the first appointment. It also plays music of the user's choice to help him fall asleep.
 
 Typical endpoints usage:
 

@@ -1,3 +1,13 @@
+"""This application is the scuttlebutt use case.
+
+Every day at 8.15 PM the scuttlebutt use case provides the user with some news, weather and stock market information.
+
+Example Usage:
+
+    GET /scuttlebutt?user=cr7thegoat
+"""
+
+
 from flask import Flask, jsonify, request
 import requests, flask_cors
 from googletrans import Translator
