@@ -11,7 +11,6 @@ app = Flask(__name__)
 
 lokal = False
 
-
 if lokal:
     RABBITMQ_HOST = "localhost"
     SCUTTLEBUTT = "http://localhost:5008"
@@ -33,7 +32,7 @@ def get_scuttlebutt(user):
     This function retrieves the scuttlebutt usecase.
     """
     with app.app_context():
-        url = SCUTTLEBUTT + "/scuttlebutt?user=" + user
+        url = SCUTTLEBUTT + "/scuttlebutt?user="+ user
         print("inside get_scuttlebutt")
         response = requests.get(url)
         if response.status_code != 200:
@@ -49,46 +48,49 @@ def get_lookout(user):
     """
     This function retrieves the lookout usecase.
     """
-    url = LOOKOUT + "/lookout?user=" + user
-    print("inside get_lookout")
-    response = requests.get(url)
-    if response.status_code != 200:
-        return jsonify({"error": "Error getting books information"}), 500
+    with app.app_context():
+        url = LOOKOUT + "/lookout?user=" + user
+        print("inside get_lookout")
+        response = requests.get(url)
+        if response.status_code != 200:
+            return jsonify({"error": "Error getting books information"}), 500
 
-    message = response.json()
+        message = response.json()
 
-    return message
+        return message
 
 
 def get_shoreleave(user):
     """
     This function retrieves the shoreleave usecase.
     """
-    url = SHORELEAVE + "/shoreleave?user=" + user
-    print("inside get_shoreleave")
-    response = requests.get(url)
-    if response.status_code != 200:
-        # no error handling ?
-        return ""
+    with app.app_context():
+        url = SHORELEAVE + "/shoreleave?user=" + user
+        print("inside get_shoreleave")
+        response = requests.get(url)
+        if response.status_code != 200:
+            # no error handling ?
+            return ""
 
-    message = response.json()
+        message = response.json()
 
-    return message
+        return message
 
 
 def get_racktime(user):
     """
     This function retrieves the scuttlebutt usecase.
     """
-    url = RACKTIME + "/racktime?user=" + user
-    print("inside get_racktime")
-    response = requests.get(url)
-    if response.status_code != 200:
-        return jsonify({"error": "Error getting books information"}), 500
+    with app.app_context():
+        url = RACKTIME + "/racktime?user=" + user
+        print("inside get_racktime")
+        response = requests.get(url)
+        if response.status_code != 200:
+            return jsonify({"error": "Error getting books information"}), 500
 
-    message = response.json()
+        message = response.json()
 
-    return message
+        return message
 
 
 def get_all_user():
