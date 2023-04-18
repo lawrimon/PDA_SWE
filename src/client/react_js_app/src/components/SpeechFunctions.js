@@ -1,40 +1,51 @@
-import { useState, useEffect } from 'react';
-import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+import { useState } from 'react';
 
-export function useSpeech() {
-  const [textToSpeak, setTextToSpeak] = useState('');
-  const { SpeechSynthesisUtterance, speechSynthesis } = window;
+function useListenForSpeech() {
+  const [transcript, setTranscript] = useState('');
 
-  async function speak(text) {
-    if (speechSynthesis.speaking) {
-      return;
+  const recognition = new window.webkitSpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+
+  recognition.onresult = event => {
+    let interimTranscript = '';
+    let finalTranscript = '';
+
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      let transcript = event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        finalTranscript += transcript + ' ';
+      } else {
+        interimTranscript += transcript;
+      }
     }
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    var voices = window.speechSynthesis.getVoices();
-    utterance.voice = voices[15];
-    utterance.lang = 'en-US';
+    setTranscript(finalTranscript.trim());
+  };
 
-    await new Promise((resolve, reject) => {
-      utterance.onend = resolve;
-      utterance.onerror = reject;
-      speechSynthesis.speak(utterance);
-    });
-  }
+  recognition.onerror = event => {
+    console.error('Speech recognition error:', event);
+  };
 
-  const { transcript, resetTranscript } = useSpeechRecognition({
-    continuous: true,
-    lang: 'en-US'
+  return new Promise((resolve, reject) => {
+    recognition.start();
+
+    let timeoutId = setTimeout(() => {
+      recognition.stop();
+      resolve(transcript.trim());
+    }, 5000);
+
+    recognition.onend = () => {
+      clearTimeout(timeoutId);
+      resolve(transcript.trim());
+    };
+
+    recognition.onerror = () => {
+      clearTimeout(timeoutId);
+      reject('Speech recognition error');
+    };
   });
-
-  useEffect(() => {
-    if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
-      alert("This Browser doesn't support Speech-to-Text");
-      return null;
-    }
-  }, []);
-
-  return { textToSpeak, setTextToSpeak, speak, transcript, resetTranscript };
 }
+
+export default useListenForSpeech;

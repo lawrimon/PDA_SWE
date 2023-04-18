@@ -134,3 +134,4 @@ dmypy.json
 # Google credentials
 credentials.json
 token.json
+capitan*.json

@@ -56,7 +56,7 @@ def get_route():
     Args:
         origin: The origin of the route as coordinates.
         destination: The destination of the route as coordinates.
-        mode: The mode of transportation. Can be "driving", "walking", "bicycling" or "transit".
+        mode: The mode of transportation. Can be "driving", "walking", "bicycling" or "transit". Only one mode is allowed.
         arrival_time (optional): The arrival time as Unix timestamp. Only used for "transit" mode otherwise ignored.
 
     Returns:

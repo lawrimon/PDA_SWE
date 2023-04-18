@@ -1,88 +1,113 @@
 from apscheduler.schedulers.background import BackgroundScheduler
-from flask import Flask
-import json
+from flask import Flask, jsonify
 import requests
+import json
 import pika
 from datetime import datetime, timedelta
 
+
 app = Flask(__name__)
 
-RABBITMQ_HOST = "rabbitmq"
 
-# Mock users
-users = ["user1", "user2", "user3"]
-
-# to get all users in production have a look at the "/allusers" Endpoint in database app.py
-# something like: allUsers = requests.get("http://db/allUsers")
-
-# Rabbitmq: have a look at localhost:1572
-# use notification exchange like shown below, just change body and routing_key
-
-ENDPOINT = "http://data_source:5000"
+lokal = False
 
 
-def get_user_location(user_id):
+if lokal:
+    RABBITMQ_HOST = "localhost"
+    SCUTTLEBUTT = "http://localhost:5008"
+    LOOKOUT = "http://localhost:5016"
+    SHORELEAVE = "http://localhost:5013"
+    RACKTIME = "http://localhost:5018"
+    DATABASE = "http://localhost:5009"
+else:
+    RABBITMQ_HOST = "rabbitmq"
+    SCUTTLEBUTT = "http://scuttlebutt:5000"
+    LOOKOUT = "http://lookoutduty:5000"
+    SHORELEAVE = "http://shoreleave:5000"
+    RACKTIME = "http://racktime:5000"
+    DATABASE = "http://db:5000"
+
+
+def get_scuttlebutt(user):
     """
-    This function retrieves the location of a user by calling the App1 API.
+    This function retrieves the scuttlebutt usecase.
     """
-    response = requests.get(f"{ENDPOINT}/location/{user_id}")
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return None
+    with app.app_context():
+        url = SCUTTLEBUTT + "/scuttlebutt?user=" + user
+        print("inside get_scuttlebutt")
+        response = requests.get(url)
+        if response.status_code != 200:
+            # no error handling ?
+            print("Error requesting Scuttlebut: " + str(response.text))
+            return ""
+
+        message = response.json()
+        return message
 
 
-def get_user_appointments(user_id):
+def get_lookout(user):
     """
-    This function retrieves the appointments of a user by calling the App1 API.
+    This function retrieves the lookout usecase.
     """
-    response = requests.get(f"{ENDPOINT}/appointments/{user_id}")
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return None
+    url = LOOKOUT + "/lookout?user=" + user
+    print("inside get_lookout")
+    response = requests.get(url)
+    if response.status_code != 200:
+        return jsonify({"error": "Error getting books information"}), 500
+
+    message = response.json()
+
+    return message
 
 
-def get_nearby_events(location):
+def get_shoreleave(user):
     """
-    This function retrieves the events near a location by calling the App1 API.
+    This function retrieves the shoreleave usecase.
     """
-    response = requests.get(f"{ENDPOINT}/events/{location}")
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return None
+    url = SHORELEAVE + "/shoreleave?user=" + user
+    print("inside get_shoreleave")
+    response = requests.get(url)
+    if response.status_code != 200:
+        # no error handling ?
+        return ""
+
+    message = response.json()
+
+    return message
 
 
-def check_appointment_interference(appointments, event):
+def get_racktime(user):
     """
-    This function checks if an event interferes with any appointments of the user.
+    This function retrieves the scuttlebutt usecase.
     """
-    # Define the duration of an appointment
-    appointment_duration = timedelta(minutes=30)
+    url = RACKTIME + "/racktime?user=" + user
+    print("inside get_racktime")
+    response = requests.get(url)
+    if response.status_code != 200:
+        return jsonify({"error": "Error getting books information"}), 500
 
-    # Convert the event time string to a datetime object
-    event_time = datetime.strptime(event["time"], "%Y-%m-%dT%H:%M:%S.%fZ")
+    message = response.json()
 
-    # Loop over the appointments and check for interference
-    for appointment in appointments:
-        # Convert the appointment time string to a datetime object
-        appointment_time = datetime.strptime(
-            appointment["time"], "%Y-%m-%dT%H:%M:%S.%fZ"
-        )
+    return message
 
-        # Check if the event and appointment overlap in time
-        if (
-            appointment_time <= event_time <= appointment_time + appointment_duration
-        ) or (
-            appointment_time
-            <= event_time + appointment_duration
-            <= appointment_time + appointment_duration
-        ):
-            return True
 
-    # If no interference is found, return False
-    return False
+def get_all_user():
+    """
+    This function retrieves all user IDs from the user service and returns them as a list.
+
+    Returns:
+        A list containing all the user IDs.
+    """
+    with app.app_context():
+        url = DATABASE + "/allusers"
+        print("inside get_all_user")
+        response = requests.get(url)
+        if response.status_code != 200:
+            print(f"Error getting user information: {response.text}")
+            return []
+        else:
+            users = response.json()
+            return users
 
 
 def notify_users():
@@ -91,35 +116,133 @@ def notify_users():
     interfere with any appointments of the user. If the requirements are met, it
     publishes the event to a RabbitMQ queue.
     """
+
+    users = get_all_user()
+
     connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST))
     channel = connection.channel()
     channel.exchange_declare(exchange="notifications", exchange_type="direct")
 
-    for user_id in users:
-        channel.queue_declare(queue=user_id)
-        channel.queue_bind(exchange="notifications", queue=user_id, routing_key=user_id)
+    # check that there is at least one user
+    if users:
+        for user in users:
+            print(user)
+            user_id = user
 
-        location = get_user_location(user_id)
-        appointments = get_user_appointments(user_id)
-        events = get_nearby_events(location)
+            channel.queue_declare(queue=user_id)
+            channel.queue_bind(
+                exchange="notifications", queue=user_id, routing_key=user_id
+            )
 
-        if events:
-            for event in events["data"]:
-                if not check_appointment_interference(appointments["data"], event):
-                    # convert the event object to a string before publishing
-                    event_str = json.dumps(event)
-                    # publish the event to the queue
-                    channel.basic_publish(
-                        exchange="notifications", routing_key=user_id, body=event_str
-                    )
+            """
+            Todo: call the scuttlebutt function and check for problems 
+            -> Checking for problems should happen using the calendar service!
+            """
+
+            # no error handling ?
+            message = get_scuttlebutt(user)
+
+            if len(message) > 1:
+                print("Message from Scuttlebut received: " + str(message))
+                # convert the event object to a string before publishing
+                event_str = json.dumps(message)
+                # publish the event to the queue
+                channel.basic_publish(
+                    exchange="notifications", routing_key=user_id, body=event_str
+                )
+    else:
+        print("No users found!")
+
     channel.close()
     connection.close()
 
 
+def notify_lookout():
+    """
+    This function retrieves the events near the user's location and checks if they
+    interfere with any appointments of the user. If the requirements are met, it
+    publishes the event to a RabbitMQ queue.
+    """
+
+    users = get_all_user()
+
+    connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST))
+    channel = connection.channel()
+    channel.exchange_declare(exchange="notifications", exchange_type="direct")
+
+    # check that there is at least one user
+    if users:
+        for user in users:
+            print(user)
+            user_id = user
+            channel.queue_declare(queue=user_id)
+            channel.queue_bind(
+                exchange="notifications", queue=user_id, routing_key=user_id
+            )
+
+            message = get_lookout(user_id)
+
+            if message:
+                print("Message from lookout received")
+                # convert the event object to a string before publishing
+                event_str = json.dumps(message)
+                # publish the event to the queue
+                channel.basic_publish(
+                    exchange="notifications", routing_key=user_id, body=event_str
+                )
+            else:
+                print("No users found!")
+
+
+def notify_shoreleave():
+    """
+    This function retrieves the events near the user's location and checks if they
+    interfere with any appointments of the user. If the requirements are met, it
+    publishes the event to a RabbitMQ queue.
+    """
+
+    users = get_all_user()
+
+    connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST))
+    channel = connection.channel()
+    channel.exchange_declare(exchange="notifications", exchange_type="direct")
+
+    # check that there is at least one user
+    if users:
+        for user in users:
+            print(user)
+            user_id = user
+
+            channel.queue_declare(queue=user_id)
+            channel.queue_bind(
+                exchange="notifications", queue=user_id, routing_key=user_id
+            )
+
+            message = get_shoreleave(user_id)
+
+            if message:
+                print("Message from shoreleave received")
+                # convert the event object to a string before publishing
+                event_str = json.dumps(message)
+                # publish the event to the queue
+                channel.basic_publish(
+                    exchange="notifications", routing_key=user_id, body=event_str
+                )
+            else:
+                print("No users found!")
+
+
+def notify_racktime():
+    pass
+
+
 # publish every 7 seconds
 scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(func=notify_users, trigger="interval", seconds=7)
+scheduler.add_job(func=notify_users, trigger="interval", seconds=60)
+# scheduler.add_job(func=notify_lookout, trigger="interval", seconds=40)
+# scheduler.add_job(func=notify_shoreleave, trigger="interval", seconds=60)
+
 scheduler.start()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0")

@@ -28,9 +28,9 @@ SCOPES = ["https://www.googleapis.com/auth/calendar"]
 app = Flask(__name__)
 
 
-@app.route("/calendar/getappointments")
+@app.route("/calendar/appointments/all")
 def get_calendar_appointments():
-    """Get appointment endpoint
+    """Get all appointments endpoint
 
     Retrieve a list of upcoming events from the user's primary calendar filtered by user and/or date.
 
@@ -40,7 +40,6 @@ def get_calendar_appointments():
 
     Returns:
         A JSON object containing the start time and summary of each upcoming event that matches the specified filter(s).
-        If no events are found, returns a 404 error.
         If an error occurs while retrieving the events, returns a 500 error with a JSON object containing the error message.
     """
 
@@ -64,21 +63,92 @@ def get_calendar_appointments():
         )
         events = events_result.get("items", [])
 
-        if not events:
-            return jsonify({"error": "No upcoming events found."}), 404
+        events_list = []
+
+        if events:
+            for event in events:
+                if parse_username(event["summary"], user):
+                    events_list.append(
+                        {
+                            "user": user,
+                            "summary": event["summary"].split("@")[0],
+                            "location": event["location"],
+                            "start": event["start"],
+                            "end": event["end"],
+                        }
+                    )
+
+        return jsonify(events_list)
+
+    except HttpError as error:
+        return jsonify({"error": "An error occurred: %s" % error}), 500
+
+
+@app.route("/calendar/appointments/tomorrow")
+def get_calendar_appointments_tomorrow():
+    """Get appointment endpoint
+
+    Retrieve a list of upcoming events from the user's primary calendar filtered by user and/or date.
+
+    Args:
+        user: A string representing the username of the events to be filtered (optional).
+        requested_date: A string representing the date to filter the events by in "yyyy-mm-dd" format (optional).
+
+    Returns:
+        A JSON object containing the start time and summary of each upcoming event that matches the specified filter(s).
+        If an error occurs while retrieving the events, returns a 500 error with a JSON object containing the error message.
+    """
+
+    creds = get_creds()
+
+    user = request.args.get("user")
+
+    try:
+        service = build("calendar", "v3", credentials=creds)
+
+        now = datetime.datetime.utcnow()
+        tomorrow = now + datetime.timedelta(days=1)
+        start_of_tomorrow = (
+            datetime.datetime(
+                tomorrow.year, tomorrow.month, tomorrow.day, 0, 0, 0
+            ).isoformat()
+            + "Z"
+        )
+        end_of_tomorrow = (
+            datetime.datetime(
+                tomorrow.year, tomorrow.month, tomorrow.day, 23, 59, 59
+            ).isoformat()
+            + "Z"
+        )
+
+        events_result = (
+            service.events()
+            .list(
+                calendarId="primary",
+                timeMin=start_of_tomorrow,
+                timeMax=end_of_tomorrow,
+                singleEvents=True,
+                orderBy="startTime",
+            )
+            .execute()
+        )
+        events = events_result.get("items", [])
 
         events_list = []
-        for event in events:
-            if parse_username(event["summary"], user):
-                events_list.append(
-                    {
-                        "user": user,
-                        "summary": event["summary"].split("@")[0],
-                        "location": event["location"],
-                        "start": event["start"],
-                        "end": event["end"],
-                    }
-                )
+
+        if events:
+            for event in events:
+                if parse_username(event["summary"], user):
+                    events_list.append(
+                        {
+                            "user": user,
+                            "summary": event["summary"].split("@")[0],
+                            "location": event["location"],
+                            "start": event["start"],
+                            "end": event["end"],
+                        }
+                    )
+
         return jsonify(events_list)
 
     except HttpError as error:
@@ -89,7 +159,7 @@ def parse_username(summary, user):
     return "@" in summary and summary.split("@", 1)[1] == user
 
 
-@app.route("/calendar/addappointment")
+@app.route("/calendar/appointments/add")
 def add_calendar_appointments():
     """Calendar add appointment endpoint
 
@@ -146,7 +216,7 @@ def add_calendar_appointments():
         return jsonify({"error": "An error occurred: %s" % error}), 500
 
 
-@app.route("/calendar/deleteappointment")
+@app.route("/calendar/appointments/delete")
 def delete_calendar_appointments():
     """Calendar delete appointment endpoint
     Deletes events from the primary calendar with the matching summary.
@@ -229,7 +299,3 @@ def get_creds():
             token.write(creds.to_json())
 
     return creds
-
-
-if __name__ == "__main__":
-    app.run()

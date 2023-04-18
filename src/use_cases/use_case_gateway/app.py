@@ -3,6 +3,7 @@ from flask import Flask, request
 from flask_cors import CORS
 import eventlet.debug
 import eventlet
+import json
 
 # Monkey-patch the standard library to work with eventlet
 eventlet.monkey_patch()
@@ -46,7 +47,11 @@ def on_message(user_id, message, delivery_tag):
     print("Message emitted: " + message + " " + user_id)
     emit(
         "message",
-        {"user_id": user_id, "message": message, "delivery_tag": delivery_tag},
+        {
+            "user_id": user_id,
+            "message": json.loads(message),
+            "delivery_tag": delivery_tag,
+        },
         room=user_id,
     )
 
