@@ -30,7 +30,8 @@ export function Home() {
   const [text, setText] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [transcript, setTranscript] = useState('');
+
+  var globalTranscript = ""
 
   // function to update delivery tag
   function updateDeliveryTag(tag) {
@@ -90,14 +91,23 @@ export function Home() {
     };
   }, [getUserId()]);
 
-  function buttonConnect(){
-    if (connected){
-      connected = false
-      handleConnect();
-    }
-    else{
-      connected = true
-      handleDisconnect();
+  async function buttonConnect(){
+    // if (connected){
+    //   connected = false
+    //   handleConnect();
+    // }
+    // else{
+    //   connected = true
+    //   handleDisconnect();
+    // }
+
+    try {
+      console.log("Listening...");
+      const tmp_transcript = await listenForSpeech();
+      console.log("Transcript:", tmp_transcript);
+      await handleTranscript(tmp_transcript);
+    } catch (error) {
+      console.error("Speech recognition error:", error);
     }
   }
 
@@ -232,6 +242,8 @@ export function Home() {
       let interimTranscript = '';
       let finalTranscript = '';
 
+      console.log("event",event)
+
       for (let i = event.resultIndex; i < event.results.length; i++) {
         let transcript = event.results[i][0].transcript;
         if (event.results[i].isFinal) {
@@ -241,7 +253,7 @@ export function Home() {
         }
       }
 
-      setTranscript(finalTranscript.trim());
+      globalTranscript = finalTranscript.trim();
     };
 
     recognition.onerror = event => {
@@ -253,12 +265,12 @@ export function Home() {
 
       let timeoutId = setTimeout(() => {
         recognition.stop();
-        resolve(transcript.trim());
+        resolve(globalTranscript.trim());
       }, 5000);
 
       recognition.onend = () => {
         clearTimeout(timeoutId);
-        resolve(transcript.trim());
+        resolve(globalTranscript.trim());
       };
 
       recognition.onerror = () => {
@@ -300,12 +312,19 @@ export function Home() {
     delete text._name
     const keysInOrder = Object.keys(text);
 
+
+    // set to true to avoid long TTS
+    var debug = true
+    
+    if (debug){
+      let textToSay = "this is a little example text"
+      let use_case  = "scuttlebutt"
+      addNotification(textToSay, NotificationColors[use_case])
+      await say_text(textToSay)
+    }
+    else {
     let i = 0;
     handleLogo(logo2)
-    console.log(name,"name")
-
-    changeColor(name)
-
     for (const key of keysInOrder) {
       console.log(key)
       const value = text[key];
@@ -314,35 +333,39 @@ export function Home() {
       addNotification(value, NotificationColors[name])
       await say_text(value)
       i += 1;
+      }
     }
 
-    // pause for 5 seconds using Promises
+    // pause for 1 seconds using Promises
     delay(1000).then(() => {});
 
     await handleAdditional()
 
     console.log("Finished Speaking");
+  
     handleLogo(logo)
     setColor(name)
     console.log("Listening...");
 
+
     try {
+      console.log("Listening...");
       const tmp_transcript = await listenForSpeech();
       console.log("Transcript:", tmp_transcript);
       await handleTranscript(tmp_transcript);
     } catch (error) {
       console.error("Speech recognition error:", error);
     }
-
-    handleAcknowledge(deliveryTagRef.current)
+    if (deliveryTagRef.current){
+      handleAcknowledge(deliveryTagRef.current)
+    }
   }
 
   async function say_text(text) {
 
     speechSynthesis.cancel()
-    const voices = speechSynthesis.getVoices();
     var utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = voices.find((voice) => voice.name === 'Google UK English Female');
+    // utterance.voice = voices.find((voice) => voice.name === 'Google UK English Female');
     utterance.rate = 1;
     utterance.pitch = 1;
     utterance.lang = 'en-US';
@@ -374,14 +397,25 @@ export function Home() {
   async function handleTranscript(transcript) {
     if (transcript.toLowerCase() === "no") {
       console.log("Alright, have a nice day!");
-    } else if (transcript.toLowerCase() === "yes.") {
+      // check if user said something -> intend recognition here
+    } else if (transcript.toLowerCase().length > 2) {
       console.log("provide more information");
       try {
         const response = await fetch('http://127.0.0.1:5008/scuttlebutt/additional');
         const data = await response.json();
-        const text = data[0].toString() + data[1].toString();
-        console.log("Message:", text);
-        await say_text(text)
+        if (response.status != 200){
+          console.log("Error in response from Scuttlebut")
+        }
+        else{
+        let addtional_text = ""
+        for (const part of data["text"]) {
+          addtional_text += part.toString()
+        }
+
+        addtional_text.slice(0, 100).toString()
+        console.log("Additional Message:", addtional_text);
+        await say_text(addtional_text)
+        }
       } catch (error) {
         console.error(error);
         console.log("Sorry, there was an error getting more information.");
