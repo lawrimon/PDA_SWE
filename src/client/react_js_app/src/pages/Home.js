@@ -25,6 +25,7 @@ export function Home() {
   const [message, setMessage] = useState("");
   const ENDPOINT = 'http://localhost:5010/';
   const deliveryTagRef = useRef("");
+  var connected = false;
 
   const [text, setText] = useState('');
   const [showPopup, setShowPopup] = useState(false);
@@ -36,11 +37,7 @@ export function Home() {
     deliveryTagRef.current = tag;
   }
 
-  let userid = "";
   var next_message = true;
-
-
-
 
   const NotificationColors = {
     Scuttlebutt: "gray",
@@ -73,17 +70,13 @@ export function Home() {
       setQueueName(storedUserId)
 
       // connect to websocket server on mount
-      handleConnect()
+      // handleConnect()
     }
 
     // invalid login user
     else {
       // disconnect current socket
-      if (socketRef.current) {
-        console.log(`Disconnected from ${queueName} room Print4`);
-        socketRef.current.disconnect();
-        socketRef.current = null;
-      }
+      handleDisconnect()
       Logout()
 
     }
@@ -98,14 +91,21 @@ export function Home() {
     };
   }, [getUserId()]);
 
+  function buttonConnect(){
+    if (connected){
+      connected = false
+      handleConnect();
+    }
+    else{
+      connected = true
+      handleDisconnect();
+    }
+  }
+
   // Function to connect to the socket server
   const handleConnect = () => {
     // Disconnect from previous socket room
-    if (socketRef.current) {
-      console.log(`Disconnected from ${queueName} room Print1`);
-      socketRef.current.disconnect();
-      socketRef.current = null;
-    }
+    handleDisconnect()
 
     // Connect to the socket server and emit 'start' event with user_id
     const socket = io(ENDPOINT, {});
@@ -129,6 +129,18 @@ export function Home() {
       socket.disconnect();
     };
   };
+
+  function handleDisconnect(){
+
+    // disconnect from websocket server
+    if (socketRef.current) {
+      console.log(`Disconnected from ${queueName} room Print1`);
+      socketRef.current.disconnect();
+      socketRef.current = null;
+    }
+
+
+  }
 
   // Function to acknowledge a message
   const handleAcknowledge = (deliveryTag) => {
@@ -418,6 +430,7 @@ export function Home() {
           <Link to="/settings">
             <button type="button" className="settings-button">&#x2699;</button>
           </Link>
+          <button type="button" id="lookout" onClick={() => buttonConnect()}  className="lookout">&#128062;</button>
 
           <button type="button" id="scuttlebutt" onClick={() => say_use_case("scuttlebutt")} className="scuttlebutt">&#x2603;</button>
 
