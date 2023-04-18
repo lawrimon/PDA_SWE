@@ -32,7 +32,7 @@ def get_scuttlebutt(user):
     This function retrieves the scuttlebutt usecase.
     """
     with app.app_context():
-        url = SCUTTLEBUTT + "/scuttlebutt?user="+ user
+        url = SCUTTLEBUTT + "/scuttlebutt?user=" + user
         print("inside get_scuttlebutt")
         response = requests.get(url)
         if response.status_code != 200:
