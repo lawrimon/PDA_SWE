@@ -210,7 +210,7 @@ def get_stock_news(stocks):
             stock_news.append(news_string)
 
     if len(stock_news) == 0:
-        answer = "There is no news for the stocks you are interested in."
+        answer = "There is no news for the stocks you are interested in. "
     else:
         answer = "Here are the news for the stocks you are interested in: " + " ".join(
             stock_news
