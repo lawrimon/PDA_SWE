@@ -27,16 +27,24 @@ export function Home() {
   const { textToSpeak, setTextToSpeak, speak, transcript, resetTranscript } = useSpeech();
 
 
-  const addNotification = (message) => {
-    const newNotifications = [message, ...notifications];
+
+  const NotificationColors = {
+    Scuttlebutt: "gray",
+    Shoreleave: "lightpink",
+    Lookout: "lightgreen",
+    Racktime: "brown"
+  };
+
+  const addNotification = (message, color) => {
+    const newNotifications = [...notifications, { message, color }];
     setNotifications(newNotifications);
-  }
+  };
 
   const removeNotification = (index) => {
     const newNotifications = [...notifications];
     newNotifications.splice(index, 1);
     setNotifications(newNotifications);
-  }
+  };
 
   useEffect(() => {
     // Call your function here
@@ -77,9 +85,9 @@ export function Home() {
   };
 
   const handleSubmit = () => {
-    addNotification("New Notification", notifications, setNotifications);
-    handleLogo()
-  };
+    
+    addNotification("Error Notification", NotificationColors.Lookout)
+    };
 
 
   function changeColor(div) {
@@ -90,13 +98,13 @@ export function Home() {
     }
   }
 
-  function setColor(div){
+  function setColor(div) {
     var button = document.getElementById(div);
     if (button.classList.contains('red')) {
       button.style.backgroundColor = originalColor;
     }
   }
-  
+
 
 
   async function handleSpeakNew(usecase) {
@@ -138,7 +146,7 @@ export function Home() {
     try {
       const text = await handleSpeakNew("scuttlebutt");
       console.log(text, "is the message then");
-      addNotification(text, notifications, setNotifications);
+      addNotification(text, NotificationColors.Scuttlebutt)
       handleLogo(logo2)
 
       const utterance = new SpeechSynthesisUtterance(text);
@@ -153,16 +161,14 @@ export function Home() {
         utterance.onerror = reject;
         speechSynthesis.speak(utterance);
       });
-
+      await setColor('scuttlebutt')
       console.log("After speak");
-
       const recognition = new window.webkitSpeechRecognition();
       recognition.lang = 'en-US';
       recognition.start();
 
       console.log("Listening...");
       handleLogo(logo)
-      await setColor('scuttlebutt')
       // Wait for 3 seconds before stopping the recognition
       setTimeout(() => {
         recognition.stop();
@@ -269,7 +275,7 @@ export function Home() {
       const text = await handleSpeakNew("lookout");
       console.log(text, "is the message then");
       console.log(text, "is the message then");
-      addNotification(text, notifications, setNotifications);
+      addNotification(text, NotificationColors.Lookout)
       handleLogo(logo2)
 
       const utterance = new SpeechSynthesisUtterance(text);
@@ -287,10 +293,11 @@ export function Home() {
       });
       handleLogo(logo)
       console.log("After speak");
+      await setColor('lookout')
+
       const recognition = new window.webkitSpeechRecognition();
       recognition.lang = 'en-US';
       recognition.start();
-      await setColor('lookout')
 
       // Wait for 3 seconds before stopping the recognition
       setTimeout(() => {
@@ -325,10 +332,10 @@ export function Home() {
     try {
       const text = await handleSpeakNew("shoreleave");
       console.log(text, "is the message then");
-      
+
       //setColor("shoreleave")
       handleLogo(logo2)
-      addNotification(text, notifications, setNotifications);
+      addNotification(text, NotificationColors.Shoreleave)
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1;
       utterance.pitch = 1;
@@ -349,7 +356,7 @@ export function Home() {
       recognition.start();
 
       console.log("Listening...");
-      
+
       // Wait for 3 seconds before stopping the recognition
       setTimeout(() => {
         recognition.stop();
@@ -384,7 +391,7 @@ export function Home() {
       <div className="search-container">
         <input type="text" value={text} onChange={handleChange} onClick={() => setShowPopup(false)}
           placeholder="Search..." />
-          <button type="button" onClick={handleSubmit}>Search</button>
+        <button type="button" onClick={handleSubmit}>Search</button>
         <div className="settings-button-container">
 
           <Link to="/settings">
@@ -392,13 +399,13 @@ export function Home() {
           </Link>
 
 
-          <button type="button" id ="scuttlebutt"  onClick={say_scuttlebutt} className="scuttlebutt">&#x2603;</button>
+          <button type="button" id="scuttlebutt" onClick={say_scuttlebutt} className="scuttlebutt">&#x2603;</button>
 
           <button type="button" id="shoreleave" onClick={say_shoreleave} className="shoreleave">&#128062;</button>
 
           <button type="button" id="lookout" onClick={say_lookout} className="lookout">&#x2656;</button>
 
-          <button type="button" id ="Logout" onClick={Logout} className="settings-button">&#10149;</button>
+          <button type="button" id="Logout" onClick={Logout} className="settings-button">&#10149;</button>
 
         </div>
       </div>
@@ -407,16 +414,13 @@ export function Home() {
         <div className="notification-centerNew">
           <div className="notification-containerNew">
             {notifications.map((notification, index) => (
-              <div key={index} className="notificationNew">
-                <div className="notification-iconNew"></div>
-                <div className="notification-textNew">{notification}</div>
+              <div key={index} className={`notificationNew ${notification.color}`}>
+                <div className={`notification-iconNew`} style={{ backgroundColor: notification.color }}></div>
+                <div className="notification-textNew">{notification.message}</div>
                 <button onClick={() => removeNotification(index)} className="notification-closeNew">×</button>
               </div>
             ))}
           </div>
-          <button onClick={() => addNotification("New Notification")} className="add-notification-btnNew">
-            Add Notification
-          </button>
         </div>
       </div>
 
