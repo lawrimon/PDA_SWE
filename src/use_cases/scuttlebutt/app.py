@@ -8,6 +8,7 @@ flask_cors.CORS(app)
 
 more_news = []
 
+
 def get_weather(user_coordinates):
     """Get weather.
 

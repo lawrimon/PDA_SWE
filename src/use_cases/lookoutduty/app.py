@@ -16,9 +16,9 @@ def get_club_ids(clubs):
         clubs: The list of club names.
 
     Returns:
-        The club IDs of the given club names.    
+        The club IDs of the given club names.
     """
-    
+
     ids = {
         "Bayern München": "157",
         "Borussia Dortmund": "165",
@@ -56,8 +56,8 @@ def get_events(location, keyword_list, enddate):
     response = requests.get(url, params)
     if response.status_code != 200:
         return "No events found for the provided search criteria."
-        #jsonify({"error": "Error getting weather information"}), 500
-    
+        # jsonify({"error": "Error getting weather information"}), 500
+
     data = response.json()
     if not data:
         return "No events found for the provided search criteria."
@@ -83,15 +83,16 @@ def get_events(location, keyword_list, enddate):
 
 def get_sports(club_ids, clubs):
     """Get sports fixtures.
-    
+
     This functions calls the fixture endpoint of the sports service and returns the sports fixtures.
-    
+
     Args:
         club_ids: The list of club IDs.
         clubs: The list of club names.
-        
+
     Returns:
-        Information about the sports fixtures or an explanatory string if no sports fixtures information could be retrieved."""
+        Information about the sports fixtures or an explanatory string if no sports fixtures information could be retrieved.
+    """
 
     answer = "Here are some upcoming sports fixtures based on your favorite teams: "
     count = 0
@@ -102,7 +103,7 @@ def get_sports(club_ids, clubs):
         response = requests.get(url, params)
         if response.status_code != 200:
             return "No sports fixtures found for the provided team."
-            #jsonify({"error": "Error getting weather information"}), 500
+            # jsonify({"error": "Error getting weather information"}), 500
 
         data = response.json()
         if clubs[count] == data["away_team"]:
@@ -162,12 +163,12 @@ def get_user_preferences(user):
 @app.route("/lookout")
 def get_lookout():
     """Lookout duty endpoint.
-    
+
     This endpoint provides the lookout duty use case information.
-    
+
     Args:
         user: The username of the user. Only one username can be selected.
-        
+
     Returns:
         The lookout duty information containing the events and sports fixtures.
     """
@@ -188,12 +189,7 @@ def get_lookout():
     sports = get_sports(football_ids, fotball_clubs)
     additional = "Thank you for listening. Do you want any additional information? "
 
-    return jsonify(
-        {"events": events, 
-         "sports": sports, 
-         "additional": additional
-        }
-    )
+    return jsonify({"events": events, "sports": sports, "additional": additional})
 
 
 if __name__ == "__main__":
