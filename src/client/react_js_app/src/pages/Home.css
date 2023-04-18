@@ -31,7 +31,7 @@ input {
 .search-container {
   display: block;
   align-items: center;
-  max-width: 900px;
+  max-width: 950px;
   width: 80%;
   margin: 0 auto;
   border-radius: 4px;
@@ -168,4 +168,23 @@ button:hover {
   min-height: 100px;
   font-size: 24px;
   margin: 0 auto;
+}
+
+.ios-button {
+  background-color: transparent;
+  border-radius: 10px;
+  border: 2px solid #007aff;
+  color: #007aff;
+  font-size: 25px;
+  margin: 15px;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.ios-button:hover {
+  background-color: #007aff;
+  color: #fff;
 }
