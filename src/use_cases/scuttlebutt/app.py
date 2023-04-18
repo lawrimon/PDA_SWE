@@ -18,6 +18,7 @@ flask_cors.CORS(app)
 
 more_news = []
 
+
 def get_weather(user_coordinates):
     """Get weather.
 
@@ -80,10 +81,9 @@ def get_news(news_cateogories):
     data = response.json()
     compromised_data = []
 
-    if(data):
+    if data:
         for message in data:
             compromised_data.append(message["Summary"])
-
 
         translator = Translator()
 
@@ -99,12 +99,8 @@ def get_news(news_cateogories):
                 text = germnan_text.replace(".", ". ")
                 more_news.append(text)
 
-
         if len(data_TTS) < 2:
-            answer = (
-                "These are the headline storys for the day: "
-                + str(data_TTS[0])
-            )
+            answer = "These are the headline storys for the day: " + str(data_TTS[0])
         else:
             answer = (
                 "These are the headline storys for the day: "
