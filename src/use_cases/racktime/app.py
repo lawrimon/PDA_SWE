@@ -270,15 +270,13 @@ def get_racktime():
     music = play_music(artist)
 
     introduction = "Good evening, it's rack time. According to your sleep schedule, you should go to bed in one hour. "
-    additional = "Thank you for listening. Do you want any additional information?"
 
     return jsonify(
         {
-            "introduction": introduction,
+            "1introduction": introduction,
             "tomorrows_events": tomorrows_events_summarized,
             "route": route,
             "issues": issues,
             "music": music,
-            "additional": additional,
         }
     )

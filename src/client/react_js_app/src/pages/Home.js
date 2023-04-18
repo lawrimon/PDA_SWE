@@ -178,6 +178,13 @@ export function Home() {
   };
 
 
+  // asking user for additional information
+  async function handleAdditional(){
+    const question_text = "Thank you for listening. Do you want any additional information? "
+    await say_text(question_text)
+  }
+
+
   const handleLogo = (insertlogo) => {
     setLogoSrc(insertlogo);
   };
@@ -270,6 +277,11 @@ export function Home() {
     });
   }
 
+  // function that returns a Promise that resolves after a specified delay
+  function delay(delayInMilliseconds) {
+    return new Promise(resolve => setTimeout(resolve, delayInMilliseconds));
+  }
+
   async function say_use_case(use_case, speaking_text = "") {
     var text = null;
     // get the right data to spreak
@@ -299,6 +311,11 @@ export function Home() {
       await say_text(value)
       i += 1;
     }
+
+    // pause for 5 seconds using Promises
+    delay(1000).then(() => {});
+
+    await handleAdditional()
 
     console.log("Finished Speaking");
     console.log("Listening...");
