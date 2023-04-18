@@ -6,50 +6,66 @@ from googletrans import Translator
 app = Flask(__name__)
 flask_cors.CORS(app)
 
-more_stocks = []
 more_news = []
 
+def get_weather(user_coordinates):
+    """Get weather.
 
-def get_weather(coords):
+    This functions calls the weather endpoint of the weather service and returns the weather for the given coordinates.
+
+    Args:
+        user_coordinates: The coordinates of the user. Only one set of coordinates can be selected.
+
+    Returns:
+        Information about the weather for the given coordinates or an explanatory string if no weather information could be retrieved.
     """
-    TODO:
-    Implement UserID Logic to get User Location
-    """
-    print(coords, "COOORDS")
-    user_location = {"lat": coords[0], "lon": coords[1]}
-    print("we HERE", user_location)
-    params = {"lat": user_location["lat"], "lon": user_location["lon"]}
+
+    # TODO: Why this instead of just passing the coordinates?
+    user_location = {"lat": user_coordinates[0], "lon": user_coordinates[1]}
+
     url = f"http://weather:5000/weather"
+    params = {"lat": user_location["lat"], "lon": user_location["lon"]}
     response = requests.get(url, params)
     if response.status_code != 200:
-        jsonify({"error": "Error getting weather information"}), 500
+        return "No weather information found for your location."
+        # jsonify({"error": "Error getting weather information"}), 500
 
     data = response.json()
-
     max_temp = data["list"][0]["temp"]["max"]
     min_temp = data["list"][0]["temp"]["min"]
     description = data["list"][0]["weather"][0]["description"]
 
-    Answer = (
-        "The maximum temperature today is "
+    answer = (
+        "Tomorrow the maximum temperature will be "
         + str(max_temp)
-        + " and the minimum temperature is "
+        + " and the minimum temperature will be "
         + str(min_temp)
-        + ". The weather today is looking like "
+        + ". The weather will be looking like "
         + description
         + ". "
     )
 
-    print(Answer)
-    return Answer
+    return answer
 
 
-def get_news(pref):
+def get_news(news_cateogories):
+    """Get news.
+
+    This functions calls the news endpoint of the news service and returns the news for the given categories.
+    For every category a separate endpoint call is made since the news service endpoints do not support multiple categories.
+
+    Args:
+        news_categories: The news categories for which the news should be returned.
+
+    Returns:
+        News for the given categories or an explanatory string if no news could be found.
+    """
+
     url = f"http://news:5000/tagesschau/homepage"
-
     response = requests.get(url)
     if response.status_code != 200:
-        jsonify({"error": "Error getting weather information"}), 500
+        return "No news found for the categories you are interested in."
+        # jsonify({"error": "Error getting weather information"}), 500
 
     data = response.json()
     compromised_data = []
@@ -64,7 +80,6 @@ def get_news(pref):
     compromised_data[0] = translator.translate(german_text, src="de", dest="en").text
     german_text = compromised_data[1]
     compromised_data[1] = translator.translate(german_text, src="de", dest="en").text
-
     german_text = compromised_data[2]
     compromised_data[2] = translator.translate(german_text, src="de", dest="en").text
     german_text = compromised_data[3]
@@ -73,34 +88,56 @@ def get_news(pref):
     more_news.append(compromised_data[2])
     more_news.append(compromised_data[3])
 
-    Answer = (
+    answer = (
         "These are the headline storys for the day: "
         + str(compromised_data[0])
-        + " Here is your next Article: "
+        + " Here is your next article: "
         + str(compromised_data[1])
     )
 
-    return Answer
+    return answer
 
 
-def get_stocks(pref):
-    symbols = ["IBM,MSFT,GOOG"]
+def get_stocks(stocks):
+    """Get stock quotes.
+
+    This functions calls the quotes endpoint of the stock service and returns the stock quotes for the given stocks.
+
+    Args:
+        stocks: The stock names for which the quotes should be returned.
+
+    Returns:
+        Quotes for the given stocks or an explanatory string if no quotes could be found.
+    """
+
+    symbols = get_stock_symbols(stocks)
 
     url = "http://stockmarket:5000/quotes"
-
     params = {"symbols": symbols}
-
     response = requests.get(url, params)
     if response.status_code != 200:
-        jsonify({"error": "Error getting stock service information"}), 500
+        return "No quotes found for the stocks you are interested in."
+        # jsonify({"error": "Error getting stock service information"}), 500
 
     data = response.json()
+    # TODO: Implement string building
 
     return data
 
 
-def get_stock_shortcuts(company_names):
-    stocks = {
+def get_stock_symbols(stocks):
+    """Get stock symbols.
+
+    This functions returns the stock symbols for the given stocks.
+
+    Args:
+        stocks: The stock names for which the symbols should be returned.
+
+    Returns:
+        The stock symbols for the given stocks.
+    """
+
+    symbols = {
         "Apple": "AAPL",
         "Microsoft": "MSFT",
         "Alphabet": "GOOG",
@@ -110,35 +147,41 @@ def get_stock_shortcuts(company_names):
         "TSMC": "TSM",
         "Ford": "F",
     }
-    stock_shortcuts = []
-    for company_name in company_names:
-        stock_shortcuts.append(stocks.get(company_name, "Stock shortcut not found"))
 
-    stock_shortcuts = ",".join(stock_shortcuts)
+    symbols_list = []
+    for stock in stocks:
+        symbols_list.append(symbols.get(stock, "None"))
+    symbols_list = ",".join(symbols_list)
 
-    return stock_shortcuts
+    return symbols_list
 
 
-def get_stock_news(pref):
-    symbols = get_stock_shortcuts(pref)
-    print(symbols)
+def get_stock_news(stocks):
+    """ "Get stock news.
+
+    This functions calls the news endpoint of the stock service and returns the news for the given stocks.
+
+    Args:
+        stocks: The stocks for which the news should be returned. Multiple stocks can be selected.
+
+    Returns:
+        The news for the given stocks or an explanatory string if no news could be found.
+    """
+
+    symbols = get_stock_symbols(stocks)
 
     url = "http://stockmarket:5000/news"
-
     params = {"symbols": symbols}
-
     response = requests.get(url, params)
     if response.status_code != 200:
-        jsonify({"error": "Error getting stock news information"}), 500
+        # jsonify({"error": "Error getting stock news information"}), 500
+        return "No news found for the stocks you are interested in."
 
     data = response.json()
 
-    news = []
-    # iterate over every symbol
+    stock_news = []
     for symbol in symbols.split(","):
-        # check if there is a news article for the symbol
         if len(data[symbol]) > 0:
-            # get the first article
             news_string = (
                 symbol
                 + ": "
@@ -146,14 +189,13 @@ def get_stock_news(pref):
                 + " "
                 + data[symbol][0]["summary"]
             )
-            news.append(news_string)
+            stock_news.append(news_string)
 
-    # if there is no news, return an empty string
-    if len(news) == 0:
+    if len(stock_news) == 0:
         answer = "There is no news for the stocks you are interested in."
     else:
         answer = "Here are the news for the stocks you are interested in: " + " ".join(
-            news
+            stock_news
         )
         if answer[-1] not in [".", "?", "!"]:
             answer += ". "
@@ -162,76 +204,79 @@ def get_stock_news(pref):
 
 
 def get_user_preferences(user):
-    url = "http://db:5000/users/" + user
+    """Get user preferences.
 
+    This functions calls the user endpoint of the database service and returns the user preferences.
+
+    Args:
+        user: The username of the user. Only one username can be selected.
+
+    Returns:
+        The user preferences.
+    """
+
+    url = "http://db:5000/users/" + user
     response = requests.get(url)
     if response.status_code != 200:
         jsonify({"error": "Error getting stock news information"}), 500
 
     data = response.json()
-    print(data)
+
     return data
 
 
 @app.route("/scuttlebutt")
 def get_scuttlebutt():
-    try:
-        user = request.args["user"]
-    except:
-        return jsonify("ERROR! : No User given!")
+    """Scuttlebutt endpoint.
 
-    print("-----")
-    user_pref = get_user_preferences(user)
+    This endpoint provides the scuttlebutt use case logic.
 
-    news_pref = user_pref["news"].split(",")
-    stock_pref = user_pref["stocks"].split(",")
-    user_coords = user_pref["coordinates"].split(",")
-    print(user_coords, "COOORDS")
-    user_location = {"lat": user_coords[0], "lon": user_coords[1]}
-    print("we HERE", user_location)
+    Args:
+        user: The username of the user. Only one username can be selected.
 
-    print("lol", user)
-    """
-     user_pref = ""
-    news_pref = ""
-    user_coords = ["30,30"]
-    stock_pref = ["Apple"]
+    Returns:
+        The scuttlebutt use case response containing news, weather, stock quotes and stock news.
     """
 
-    news = get_news(news_pref)
-    print("news----", news)
-    weather = get_weather(user_coords)
-    print("weather----", weather)
-    stock_news = get_stock_news(stock_pref)
-    print("stock_news----", stock_news)
-    # stocks = get_stocks()
-    # print("stocks----",stocks)
+    if not request.args.get("user"):
+        return jsonify({"error": "Missing parameters"}), 400
 
-    # artist = "RIN"
-    # track = "Sternenstaub"
-    # music_url = "http://music:5000/music"
-    # params = {"artist": artist, "track": track}
-    # music_response = requests.get(music_url, params)
-    # if music_response.status_code != 200:
-    #     return jsonify({"error": "Error playing music"}), 500
+    user = request.args.get("user")
+
+    user_preferences = get_user_preferences(user)
+    news_cateogories = user_preferences["news"].split(",")
+    stocks = user_preferences["stocks"].split(",")
+    user_coordinates = user_preferences["coordinates"].split(",")
+    # user_location = {"lat": user_coordinates[0], "lon": user_coordinates[1]}
+
+    news = get_news(news_cateogories)
+    weather = get_weather(user_coordinates)
+    stock_news = get_stock_news(stocks)
+    additional = "Thank you for listening. Do you want any additional information? "
 
     return jsonify(
         {
             "news": news,
             "weather": weather,
             "stock_news": stock_news,
-            "outro": "Thank you for listening. Do you want any additional information? ",
+            "additional": additional,
         }
     )
 
 
 @app.route("/scuttlebutt/additional")
 def get_more_scuttlebutt():
-    print("lol")
-    news = more_news
-    print("news----", news)
+    """Additional scuttlebutt endpoint.
 
-    return jsonify(news)
+    This endpoint provides additional news for the scuttlebutt use case.
+
+    Returns:
+        Additional news for the scuttlebutt use case.
+    """
+
+    additional_news = more_news
+
+    return jsonify({"additional_news": additional_news})
 
 
 if __name__ == "__main__":
