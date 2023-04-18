@@ -49,9 +49,9 @@ def get_weather(user_coordinates):
     answer = (
         "Tomorrow the maximum temperature will be "
         + str(max_temp)
-        + " and the minimum temperature will be "
+        + " degree Celcius and the minimum temperature will be "
         + str(min_temp)
-        + ". The weather will be looking like "
+        + " degree Celcius. The weather will be looking like "
         + description
         + ". "
     )
