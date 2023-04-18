@@ -81,10 +81,6 @@ export function Home() {
     handleLogo()
   };
 
-  //STT and TTS
-  const handleTextChange = (event) => {
-    setTextToSpeak(event.target.value);
-  };
 
   function changeColor(div) {
     var button = document.getElementById(div);

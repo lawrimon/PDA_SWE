@@ -23,7 +23,7 @@ function PreferencesPage() {
   const [user_location, setUserLocation] = useState("");
   const [user_github, setGithub] = useState("");
   const [user_event_location, setEventLocation] = useState(["Stuttgart"]);
-  const [user_transportation, setTransportation] = useState("Walking");
+  const [user_transportation, setTransportation] = useState({ value: 'Public Transport', label: 'Public Transport' });
 
 
   let user_pref = [];
@@ -193,7 +193,7 @@ return coord
 
   function handleTransportation(selectedOption) {
     console.log("option",selectedOption)
-    setTransportation(selectedOption.value);
+    setTransportation(selectedOption);
   }
 
   function handleGithub(event) {
@@ -223,7 +223,7 @@ return coord
   async function handleSubmit(event) {
     event.preventDefault();
     await uploadSubmit();
-    setUserPreferences([user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link, user_news, user_books, user_event_location, user_github, user_transportation])
+    setUserPreferences([user_football_club, user_stocks, user_artists, user_spotify_link, user_calendar_link, user_news, user_books, user_event_location, user_github, user_transportation.value])
     window.location.href = '/registersuccess';
   }
   
@@ -239,10 +239,10 @@ return coord
     console.log(city); // Output: London
     await pushUserLocation(city)
     try {
-      console.log({"football_club": user_football_club.toString(), "calendar_link": user_calendar_link, "spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(), "transportation" : user_transportation})
+      console.log({"football_club": user_football_club.toString(), "calendar_link": user_calendar_link, "spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(), "transportation" : user_transportation.value})
       const response = await fetch('http://localhost:5009/users/'+useridRef.current, {
         method: 'PUT',
-        body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(),  "transportation": user_transportation}),
+        body: JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "user_spotify_link": user_spotify_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(),  "transportation": user_transportation.value}),
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await response.json();
@@ -331,13 +331,13 @@ return coord
 
         <h4>Prefered Transportation</h4>
         <Select
-        value={user_transportation.value}
+        value={user_transportation}
         onChange={handleTransportation}
         isMulti={false}
         options={transportation_options}
         isClearable
         isSearchable
-        defaultValue={transportation_options[0].value}
+        defaultValue={user_transportation}
 
         />
         <br /> 
