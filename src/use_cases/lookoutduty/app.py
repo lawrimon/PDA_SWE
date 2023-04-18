@@ -188,8 +188,12 @@ def get_lookout():
     events = get_events(user_location, artists, enddate)
     sports = get_sports(football_ids, fotball_clubs)
     additional = "Thank you for listening. Do you want any additional information? "
-
-    return jsonify({"events": events, "sports": sports, "additional": additional})
+    name = "lookout"
+    return jsonify({
+        "_name" : name,
+        "events": events, 
+        "sports": sports, 
+        "additional": additional})
 
 
 if __name__ == "__main__":

@@ -62,7 +62,7 @@ function RegisterPage() {
     
     fetch('http://localhost:5009/users',{
       method: 'POST',
-      body: JSON.stringify({"user_id":userIdRef.current, "password":password, "username":username}),
+      body: JSON.stringify({"user_id":username, "password":password, "username":username}),
       headers: { 'Content-Type': 'application/json' },
     })
     .then(response => response.json())

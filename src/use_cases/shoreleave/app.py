@@ -162,9 +162,10 @@ def get_shoreleave():
     random_facts = get_random_facts()
     books = get_books(book_genre)
     additional = "Thank you for listening. Do you want any additional information? "
-
+    name = "shoreleave"
     return jsonify(
-        {
+        {           
+            "_name" : name,
             "quotes": quotes,
             "nasa_fact": nasa_fact,
             "random_facts": random_facts,

@@ -49,11 +49,6 @@ export function Home() {
     racktime: "brown"
   };
 
-  //const addNotification = (message, color) => {
-  //  const newNotifications = [...notifications, { message, color }];
-  //  setNotifications(newNotifications);
-  //};
-
   const addNotification = (message, color) => {
     setNotifications(notifications => [...notifications, { message, color }]);
 };
@@ -181,14 +176,6 @@ export function Home() {
     window.location.href = '/login';
   };
 
-  const handleButtonClick = () => {
-    setShowPopup(true);
-  };
-
-  const handleClosePopup = () => {
-    setShowPopup(false);
-  };
-
   const handleChange = (event) => {
     setText(event.target.value);
   };
@@ -262,9 +249,6 @@ export function Home() {
     });
   }
 
-  function mapUsecases(use_case){
-
-  }
 
   async function say_use_case(use_case, speaking_text = "") {
     var text = null;
@@ -284,22 +268,34 @@ export function Home() {
       return;
     }
 
+
     console.log("Starts speaking...");
     console.log(use_case, "usecase")
-    console.log(NotificationColors[use_case], "color")
-    let i = 0;
+    console.log(text)
+
+    let name = text._name
+    delete text._name
     const keysInOrder = Object.keys(text);
-    console.log(keysInOrder)
+
+    let i = 0;
+    handleLogo(logo2)
+    console.log(name,"name")
+
+    changeColor(name)
+
     for (const key of keysInOrder) {
+      console.log(key)
       const value = text[key];
       console.log("Part", i)
       console.log("Text:", value)
-      addNotification(value, NotificationColors[use_case])
+      addNotification(value, NotificationColors[name])
       await say_text(value)
       i += 1;
     }
 
     console.log("Finished Speaking");
+    handleLogo(logo)
+    setColor(name)
     console.log("Listening...");
 
     try {
