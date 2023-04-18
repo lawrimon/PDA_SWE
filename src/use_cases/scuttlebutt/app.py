@@ -1,3 +1,13 @@
+"""This application is the scuttlebutt use case.
+
+Every day at 8.15 PM the scuttlebutt use case provides the user with some news, weather and stock market information.
+
+Example Usage:
+
+    GET /scuttlebutt?user=cr7thegoat
+"""
+
+
 from flask import Flask, jsonify, request
 import requests, flask_cors
 from googletrans import Translator
@@ -39,9 +49,9 @@ def get_weather(user_coordinates):
     answer = (
         "Tomorrow the maximum temperature will be "
         + str(max_temp)
-        + " and the minimum temperature will be "
+        + " degree Celcius and the minimum temperature will be "
         + str(min_temp)
-        + ". The weather will be looking like "
+        + " degree Celcius. The weather will be looking like "
         + description
         + ". "
     )
@@ -261,7 +271,6 @@ def get_scuttlebutt():
     weather = get_weather(user_coordinates)
     stock_news = get_stock_news(stocks)
     name = "scuttlebutt"
-    additional = "Thank you for listening. Do you want any additional information? "
 
     return jsonify(
         {   
@@ -269,7 +278,6 @@ def get_scuttlebutt():
             "news": news,
             "weather": weather,
             "stock_news": stock_news,
-            "additional": additional,
         }
     )
 

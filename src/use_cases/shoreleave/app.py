@@ -1,3 +1,13 @@
+"""This application is the shore leave use case.
+
+The shore leave use case provides the user with some wisdom and entertainment.
+
+Example Usage:
+
+    GET /shoreleave?user=cr7thegoat
+"""
+
+
 from flask import Flask, jsonify, request
 import requests, flask_cors
 
@@ -109,7 +119,7 @@ def get_books(book_genre):
     answer = "Here are some books that might be interesting for you: "
     for book in data:
         answer += book["title"] + " by the author " + book["author"] + ". "
-        answer += "This is the description: " + book["description"] + ". "
+        answer += "This is the description: " + book["description"] + " "
 
     return answer
 
@@ -161,7 +171,6 @@ def get_shoreleave():
     nasa_fact = get_nasa_apod()
     random_facts = get_random_facts()
     books = get_books(book_genre)
-    additional = "Thank you for listening. Do you want any additional information? "
     name = "shoreleave"
     return jsonify(
         {           
@@ -170,7 +179,6 @@ def get_shoreleave():
             "nasa_fact": nasa_fact,
             "random_facts": random_facts,
             "books": books,
-            "additional": additional,
         }
     )
 

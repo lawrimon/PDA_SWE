@@ -1,6 +1,6 @@
 """This application is the rack time use case.
 
-Every evening one hour before the calcuated bedtime, the rack time use case proactively informs the user about his open issues and events for the next day.
+Every evening one hour before the calcuated bedtime, the rack time use case proactively informs the user about his open issues, calendar appointments for the next day and the route to the first appointment. It also plays music of the user's choice to help him fall asleep.
 
 Typical endpoints usage:
 
@@ -243,16 +243,14 @@ def get_racktime():
 
     user = request.args.get("user")
 
-    # TODO: Remove mock data
-    mock_calendar_user = "maxkie1"
-
     user_preferences = get_user_preferences(user)
+    calendar_user = user_preferences["calendar_link"]
     github_user = user_preferences["github"]
     artist = user_preferences["artists"].split(",")[0]
     origin = user_preferences["coordinates"]
     mode = user_preferences["transportation"]
 
-    events_tomorrow = get_calendar_events_tomorrow(mock_calendar_user)
+    events_tomorrow = get_calendar_events_tomorrow(calendar_user)
     event_locations = parse_event_locations(events_tomorrow)
 
     if events_tomorrow:
@@ -270,16 +268,15 @@ def get_racktime():
     music = play_music(artist)
 
     introduction = "Good evening, it's rack time. According to your sleep schedule, you should go to bed in one hour. "
-    additional = "Thank you for listening. Do you want any additional information?"
+
     name = "racktime"
     return jsonify(
         {   
             "_name" : name,
-            "introduction": introduction,
+            "1introduction": introduction,
             "tomorrows_events": tomorrows_events_summarized,
             "route": route,
             "issues": issues,
             "music": music,
-            "additional": additional,
         }
     )

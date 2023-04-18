@@ -1,3 +1,12 @@
+"""This application is the lookout duty use case.
+
+The lookout duty use case provides the user with information about upcoming events and spport fixtures.
+
+Example Usage:
+
+    GET /lookoutduty?user=cr7thegoat
+"""
+
 from flask import Flask, jsonify, request
 import requests, flask_cors
 import json
@@ -187,13 +196,13 @@ def get_lookout():
 
     events = get_events(user_location, artists, enddate)
     sports = get_sports(football_ids, fotball_clubs)
-    additional = "Thank you for listening. Do you want any additional information? "
+
     name = "lookout"
     return jsonify({
         "_name" : name,
         "events": events, 
-        "sports": sports, 
-        "additional": additional})
+        "sports": sports})
+
 
 
 if __name__ == "__main__":
