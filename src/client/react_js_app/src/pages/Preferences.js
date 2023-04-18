@@ -30,7 +30,7 @@ function PreferencesPage() {
   const soccer_options = [
     { value: 'FC Bayern München', label: 'FC Bayern München' },
     { value: 'Borussia Dortmund', label: 'Borussia Dortmund' },
-    { value: 'VFB Stuttgart', label: 'VFB Stuttgart' },
+    { value: 'VfB Stuttgart', label: 'VfB Stuttgart' },
     { value: 'Real Madrid', label: 'Real Madrid' },
     { value: 'FC Barcelona', label: 'FC Barcelona' },
     { value: 'Manchester United', label: 'Manchester United' },
