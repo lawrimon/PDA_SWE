@@ -3,6 +3,11 @@
 The maps service provides an endpoint to get the latest quote of a list of symbols.
 It also provides an endpoint to get the latest news of a list of symbols.
 The functionality is based on the Alpaca API.
+
+Typical endpoints usage:
+
+    GET /quotes?symbols=IBM,MSFT,GOOG
+    GET /news?symbols=IBM,MSFT,GOOG
 """
 
 from flask import Flask, jsonify, request
@@ -51,10 +56,9 @@ def get_quotes():
         "APCA-API-KEY-ID": STOCK_MARKET_API_KEY,
         "APCA-API-SECRET-KEY": STOCK_MARKET_SECRET_KEY,
     }
-
     response = requests.get(url, params=params, headers=headers)
     if response.status_code != 200:
-        jsonify({"error": "Error getting quote information"}), 500
+        return jsonify({"error": "Error getting quote information"}), 500
 
     data = response.json()
 
@@ -107,7 +111,7 @@ def get_news():
 
     response = requests.get(url, params=params, headers=headers)
     if response.status_code != 200:
-        jsonify({"error": "Error getting news information"}), 500
+        return jsonify({"error": "Error getting news information"}), 500
 
     data = response.json()
 
@@ -128,3 +132,8 @@ def get_news():
                     news[symbol].append(article)
 
     return jsonify(news)
+
+
+if __name__ == "__main__":
+    # app.run()
+    app.run(host="0.0.0.0", port=5001, debug=True)

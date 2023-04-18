@@ -1,4 +1,4 @@
-name: Python CI
+name: Continuous Integration
 
 on:
   push:
@@ -6,13 +6,13 @@ on:
       - main
     paths:
       - '**.py'
-      - '.github/workflows/python_ci.yaml'
+      - '.github/workflows/ci.yaml'
   pull_request:
     branches:
       - main
     paths:
       - '**.py'
-      - '.github/workflows/python_ci.yaml'
+      - '.github/workflows/ci.yaml'
   workflow_dispatch:    
 
 permissions:
@@ -22,12 +22,23 @@ env:
   MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
   STOCK_MARKET_API_KEY: ${{ secrets.STOCK_MARKET_API_KEY }}
   STOCK_MARKET_SECRET_KEY: ${{ secrets.STOCK_MARKET_SECRET_KEY }}
+  NYTIMES_API_KEY: ${{ secrets.NYTIMES_API_KEY }}
+  NINJAS_API_KEY: ${{ secrets.NINJAS_API_KEY }}
+  NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
+  WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
+  SPORTS_API_KEY: ${{ secrets.SPORTS_API_KEY }}
+  CODING_API_KEY: ${{ secrets.CODING_API_KEY }}
+  EVENTS_API_KEY: ${{ secrets.EVENTS_API_KEY }}
+  SPOTIPY_CLIENT_ID: ${{ secrets.SPOTIPY_CLIENT_ID }}
+  SPOTIPY_CLIENT_SECRET: ${{ secrets.SPOTIPY_CLIENT_SECRET }}
+  SPOTIPY_REDIRECT_URI: ${{ secrets.SPOTIPY_REDIRECT_URI }}
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
         with: 
           ref: ${{ github.head_ref }}
       - name: Set up Python 3.10
@@ -43,7 +54,10 @@ jobs:
           black .
       - name: Run Pytest
         run: |
-          pytest
+          pytest --cov 
+      - name: Check coverage 
+        run: |
+          coverage report --fail-under=80
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
