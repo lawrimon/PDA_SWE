@@ -31,6 +31,7 @@ export function Home() {
   var globalTranscript = ""
   var next_message = false;
   var connected = false;
+
   const NotificationColors = {
     scuttlebutt: "gray",
     shoreleave: "lightpink",
@@ -38,11 +39,19 @@ export function Home() {
     racktime: "brown"
   };
 
+  const UsecasePorts = {
+    shoreleave: "13",
+    lookout: "19",
+    scuttlebutt: "08",
+    racktime: "16"
+  }
+
   // set to true to avoid long TTS
   var debug = false
 
   //intent returned by dialogflow
   const [intent, setIntent] = useState(null);
+  const [service, setService] = useState(null);
 
   // function to update delivery tag
   function updateDeliveryTag(tag) {
@@ -214,7 +223,10 @@ export function Home() {
       .then(response => response.json())
       .then(data => {
         console.log(data.intent);
+        console.log(data.service);
+        console.log(data.artist);
         setIntent(data.intent);
+        setService(data.service);
       })
       .then(daten =>{
         console.log(intent)
@@ -232,15 +244,23 @@ export function Home() {
   }
 
   function setColor(div) {
-    console.log("in Setcolor")
-    console.log(div)
     var button = document.getElementById(div);
       button.style.backgroundColor = originalColor;
     
   }
 
+  async function listenForSpeech2() {
 
-  async function listenForSpeech() {
+
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) 
+        {
+          console.log("speech recognition API supported");
+        } 
+        else 
+        {
+          console.log("speech recognition API not supported")
+        }
+
 
     const recognition = new window.webkitSpeechRecognition();
     recognition.continuous = true;
@@ -288,6 +308,20 @@ export function Home() {
       };
     });
   }
+
+  function listenForSpeech() {
+    return new Promise((resolve, reject) => {
+      console.log("in listen For Speech")
+      startListening()
+        let finalTranscript = "";
+        const timeoutId = setTimeout(() => {
+          finalTranscript = stopListening();
+          console.log("finaltrans", finalTranscript);
+          resolve(finalTranscript);
+        }, 5000);
+      })
+  }
+  
   
   const [isASelected, setIsASelected] = useState(false);
   const [buttonColor, setButtonColor] = useState("transparent");
@@ -295,6 +329,16 @@ export function Home() {
   const transcriptRef = useRef("");
 
   const startListening = () => {
+
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) 
+        {
+          console.log("speech recognition API supported");
+        } 
+        else 
+        {
+          console.log("speech recognition API not supported")
+        }
+
     const recognition = new window.webkitSpeechRecognition();
     recognition.continuous = true;
     recognition.lang = 'en-US';
@@ -330,19 +374,19 @@ export function Home() {
       recognitionRef.current.stop();
       console.log("listening stopped");
       console.log("final transcript:", transcriptRef.current);
+      let transcript = transcriptRef.current
       setText(transcriptRef.current)
       transcriptRef.current = "";
+      return transcript
     }
   };
 
   const handleClick = () => {
     if (isASelected) {
       setButtonColor("transparent");
-      console.log("B");
       stopListening();
     } else {
       setButtonColor("#F62817");
-      console.log("A");
       startListening();
     }
     setIsASelected(!isASelected);
@@ -356,6 +400,11 @@ export function Home() {
 
   async function say_use_case(use_case, speaking_text = "") {
     var text = null;
+    var tmp_use_case = use_case
+    if (use_case === "rabbit"){
+      tmp_use_case = speaking_text._name
+    }
+    
     // get the right data to spreak
     if (use_case === "scuttlebutt") {
       text = await getScuttlebutt();
@@ -374,7 +423,7 @@ export function Home() {
 
 
     console.log("Starts speaking...");
-    console.log(use_case, "usecase")
+    console.log(tmp_use_case, "usecase")
     console.log(text)
 
     let name = text._name
@@ -400,17 +449,18 @@ export function Home() {
     }
 
     // pause for 1 seconds using Promises
-    delay(1000).then(() => {});
-    if (name === "scuttlebutt"){
-      await handleAdditional()
-      console.log("Finished Speaking");
-      handleLogo(logo)
-      setColor(name)
+    delay(2000).then(() => {});
+    
+    handleLogo(logo)
+    setColor(name)
+    if(tmp_use_case === "scuttlebutt" || tmp_use_case === "shoreleave" ){
       try {
+        await handleAdditional()
         console.log("Listening...");
         const tmp_transcript = await listenForSpeech();
+        console.log("Recording ended")
         console.log("Transcript:", tmp_transcript);
-        await handleTranscript(tmp_transcript);
+        await handleTranscript(tmp_transcript, name);
         
         // reset transcript
         globalTranscript = ""
@@ -418,7 +468,6 @@ export function Home() {
         console.error("Speech recognition error:", error);
       }
     }
-
     // acknowledge message so that next message can be consumed
     if (deliveryTagRef.current){
       handleAcknowledge(deliveryTagRef.current)
@@ -458,14 +507,52 @@ export function Home() {
     });
   }
 
-  async function handleTranscript(transcript) {
-    if (transcript.toLowerCase() === "no") {
+  async function say_text(text) {
+
+    speechSynthesis.cancel()
+    var utterance = new SpeechSynthesisUtterance(text);
+    // utterance.voice = voices.find((voice) => voice.name === 'Google UK English Female');
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.lang = 'en-US';
+
+    await new Promise((resolve, reject) => {
+      utterance.addEventListener('start', function () {
+        setMessage(text)
+        console.log("speaking")
+      })
+      utterance.addEventListener("error", (event) => {
+        console.log("Error: rejected");
+        reject();
+      });
+
+      utterance.addEventListener('end', function () {
+        resolve();
+      })
+
+      utterance.onend = function (event) {
+        console.log('Speech finished after ' + event.elapsedTime + ' seconds.');
+        // Do something here after the speech has finished
+        resolve();
+      };
+      speechSynthesis.cancel()
+      speechSynthesis.speak(utterance);
+    });
+  }
+
+
+  async function handleTranscript(transcript, usecase) {
+    console.log("in handle Transcript")
+    console.log(usecase)
+    if (transcript.toLowerCase().includes("no")) {
       console.log("Alright, have a nice day!");
+      await say_text("Alright, have a nice day!")
       // check if user said something -> intend recognition here
     } else if (transcript.toLowerCase().length > 2) {
       console.log("provide more information");
       try {
-        const response = await fetch('http://127.0.0.1:5008/scuttlebutt/additional');
+        console.log('http://127.0.0.1:50'+ UsecasePorts[usecase] + '/'+ usecase + '/additional')
+        const response = await fetch('http://127.0.0.1:50'+ UsecasePorts[usecase] + '/'+ usecase + '/additional');
         const data = await response.json();
         if (response.status != 200){
           console.log("Error in response from Scuttlebut")
@@ -479,11 +566,15 @@ export function Home() {
         if (debug){
           const slice1 = addtional_text.slice(0,10)
           console.log("Additional Message:", slice1);
+          addNotification(slice1, NotificationColors[usecase])
+
           await say_text(slice1)
         }
         else{
           const slice1 = addtional_text.slice(0,10)
           console.log("Additional Message:", slice1);
+          addNotification(addtional_text, NotificationColors[usecase])
+
           await say_text(addtional_text)
         }
         
@@ -550,16 +641,18 @@ export function Home() {
       <div className="search-container">
         <input type="text" value={text} onChange={handleChange} onClick={() => setShowPopup(false)}
           placeholder="Search..." />
-        {intent && <p>Intent: {intent}</p>}
-        <button type="button" class="ios-button" onClick={() => handleSubmit()}>&#127929;</button>
 
-        <button class="ios-button"  style={{ backgroundColor: buttonColor,  }} onClick={() => handleClick()}  onMouseEnter={() => setButtonColor("#007aff")}  onMouseLeave={() =>setButtonColor(isASelected ? "#ff3b30" : "transparent")}> &#128483; </button>
+        
+        <button type="button" className="ios-button" onClick={() => handleSubmit()}>&#127929;</button>
+
+        <button className="ios-button"  style={{ backgroundColor: buttonColor,  }} onClick={() => handleClick()}  onMouseEnter={() => setButtonColor("#007aff")}  onMouseLeave={() =>setButtonColor(isASelected ? "#ff3b30" : "transparent")}> &#128483; </button>
         
         <div className="settings-button-container">
 
           <Link to="/settings">
             <button type="button" className="settings-button">&#9881;</button>
           </Link>
+
           <button type="button" id="rabbit" onClick={() => buttonConnect()}  className="rabbit">&#128048;</button>
 
           <button type="button" id="scuttlebutt" onClick={() => say_use_case("scuttlebutt")} className="scuttlebutt">&#128240;</button>
@@ -582,7 +675,7 @@ export function Home() {
               <div key={index} className={`notificationNew ${notification.color}`} onClick={() => setExpanded(!expanded)}>
                 <div className={`notification-iconNew`} style={{ backgroundColor: notification.color }}></div>
                 <div className="notification-textNew">{notification.message}</div>
-                <button onClick={() => removeNotification(index)} className="notification-closeNew">×</button>
+                <button className="notification-closeNew" onClick={() => removeNotification(index)} >×</button>
               </div>
             ))}
           </div>

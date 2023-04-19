@@ -16,7 +16,7 @@ app = Flask(__name__)
 flask_cors.CORS(app)
 
 
-def get_issues(username):
+def get_issues(username, i):
     """Get assigned issues.
 
     This functions call the issues endpoint of the coding service and returns the open issues assigned to a user.
@@ -41,12 +41,12 @@ def get_issues(username):
         return answer
     answer = (
         "The following issue is a perfect start for your day tomorrow: "
-        + issues[0]["title"]
+        + issues[i]["title"]
         + " in the "
-        + issues[0]["repository"]
+        + issues[i]["repository"]
         + " repository."
         + " It is about "
-        + issues[0]["description"]
+        + issues[i]["description"]
         + ". These are the labels: "
     )
     for label in issues[0]["labels"]:
@@ -276,6 +276,34 @@ def get_racktime():
             "1introduction": introduction,
             "tomorrows_events": tomorrows_events_summarized,
             "route": route,
+            "issues": issues,
+            "music": music,
+        }
+    )
+
+
+@app.route("/racktime/additional")
+def get_more_scuttlebutt():
+    """Additional scuttlebutt endpoint.
+
+    This endpoint provides additional news for the scuttlebutt use case.
+
+    Returns:
+        Additional news for the scuttlebutt use case.
+    """
+    user = request.args.get("user")
+    user_preferences = get_user_preferences(user)
+    artist = user_preferences["artists"].split(",")[1]
+
+    issues = get_issues(user, 1)
+    music = play_music(artist)
+    introduction = "Ready for more Racktime? Here are your additional information "
+
+    name = "racktime"
+    return jsonify(
+        {
+            "_name": name,
+            "1introduction": introduction,
             "issues": issues,
             "music": music,
         }

@@ -246,8 +246,8 @@ scheduler = BackgroundScheduler(daemon=True)
 # schedule every x minutes
 
 # scheduler.add_job(func=notify_scuttlebutt, trigger="interval", seconds=60)
-scheduler.add_job(func=notify_lookout, trigger="interval", seconds=60)
-scheduler.add_job(func=notify_shoreleave, trigger="interval", seconds=60)
+scheduler.add_job(func=notify_lookout, trigger="interval", minutes=30)
+scheduler.add_job(func=notify_shoreleave, trigger="interval", minutes=30)
 
 
 # schedule on day time (T-2h inside Docker)

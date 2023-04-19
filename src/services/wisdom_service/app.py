@@ -15,6 +15,7 @@ import requests
 import dotenv
 import os
 
+
 dotenv.load_dotenv()
 NINJAS_API_KEY = os.getenv("NINJAS_API_KEY")
 NASA_API_KEY = os.getenv("NASA_API_KEY")
@@ -101,5 +102,4 @@ def get_apod():
         )
 
     data = response.json()
-
     return jsonify(data)
