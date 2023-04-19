@@ -16,7 +16,7 @@ app = Flask(__name__)
 flask_cors.CORS(app)
 
 
-def get_issues(username, i):
+def get_issues(username):
     """Get assigned issues.
 
     This functions call the issues endpoint of the coding service and returns the open issues assigned to a user.
@@ -41,12 +41,12 @@ def get_issues(username, i):
         return answer
     answer = (
         "The following issue is a perfect start for your day tomorrow: "
-        + issues[i]["title"]
+        + issues[0]["title"]
         + " in the "
-        + issues[i]["repository"]
+        + issues[0]["repository"]
         + " repository."
         + " It is about "
-        + issues[i]["description"]
+        + issues[0]["description"]
         + ". These are the labels: "
     )
     for label in issues[0]["labels"]:
@@ -295,7 +295,6 @@ def get_more_scuttlebutt():
     user_preferences = get_user_preferences(user)
     artist = user_preferences["artists"].split(",")[1]
 
-    issues = get_issues(user, 1)
     music = play_music(artist)
     introduction = "Ready for more Racktime? Here are your additional information "
 
@@ -304,7 +303,6 @@ def get_more_scuttlebutt():
         {
             "_name": name,
             "1introduction": introduction,
-            "issues": issues,
             "music": music,
         }
     )
