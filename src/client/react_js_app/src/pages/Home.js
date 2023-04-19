@@ -227,8 +227,6 @@ export function Home() {
   }
 
   function setColor(div) {
-    console.log("in Setcolor")
-    console.log(div)
     var button = document.getElementById(div);
       button.style.backgroundColor = originalColor;
     
@@ -294,7 +292,7 @@ export function Home() {
     });
   }
 
-  async function listenForSpeech() {
+  function listenForSpeech() {
     return new Promise((resolve, reject) => {
       console.log("in listen For Speech")
       startListening()
@@ -368,11 +366,9 @@ export function Home() {
   const handleClick = () => {
     if (isASelected) {
       setButtonColor("transparent");
-      console.log("B");
       stopListening();
     } else {
       setButtonColor("#F62817");
-      console.log("A");
       startListening();
     }
     setIsASelected(!isASelected);
@@ -386,6 +382,11 @@ export function Home() {
 
   async function say_use_case(use_case, speaking_text = "") {
     var text = null;
+    var tmp_use_case = use_case
+    if (use_case === "rabbit"){
+      tmp_use_case = speaking_text._name
+    }
+    
     // get the right data to spreak
     if (use_case === "scuttlebutt") {
       text = await getScuttlebutt();
@@ -404,7 +405,7 @@ export function Home() {
 
 
     console.log("Starts speaking...");
-    console.log(use_case, "usecase")
+    console.log(tmp_use_case, "usecase")
     console.log(text)
 
     let name = text._name
@@ -430,16 +431,16 @@ export function Home() {
     }
 
     // pause for 1 seconds using Promises
-    delay(1000).then(() => {});
-    await handleAdditional()
-    console.log("Finishxed Speaking");
+    delay(2000).then(() => {});
+    
     handleLogo(logo)
     setColor(name)
-    if(use_case ==="scuttlebutt" || use_case ==="shoreleave" ){
+    if(tmp_use_case === "scuttlebutt" || tmp_use_case === "shoreleave" ){
       try {
+        await handleAdditional()
         console.log("Listening...");
         const tmp_transcript = await listenForSpeech();
-        console.log("after Speech")
+        console.log("Recording ended")
         console.log("Transcript:", tmp_transcript);
         await handleTranscript(tmp_transcript, name);
         
