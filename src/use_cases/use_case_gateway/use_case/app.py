@@ -76,7 +76,7 @@ def notify_event(event_name):
         print("No users found!")
         return
     
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host=hostnames['RABBITMQ_HOST']))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=hostnames["RABBITMQ_HOST"]))
     channel = connection.channel()
     channel.exchange_declare(exchange='notifications', exchange_type='direct')
 
