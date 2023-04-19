@@ -195,7 +195,7 @@ def get_lookout():
     fotball_clubs = user_preferences["football_club"].split(",")
     football_ids = get_club_ids(fotball_clubs)
     artists = str(user_preferences["artists"].split(",")).replace("'", '"')
-    enddate = "2023-06-01T14:00:00Z"
+    enddate = "2023-06-06T14:00:00Z"
 
     events = get_events(user_location, artists, enddate)
     sports = get_sports(football_ids, fotball_clubs)
