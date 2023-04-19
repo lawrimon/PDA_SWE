@@ -32,7 +32,7 @@ def get_quotes():
     url = "http://wisdom:5000/wisdom/quotes"
     response = requests.get(url)
     if response.status_code != 200:
-        return "No quotes found. "
+        return ""
         # jsonify({"error": "Error getting stock service information"}), 500
 
     data = response.json()
@@ -63,7 +63,7 @@ def get_nasa_apod():
     response = requests.get(url)
     if response.status_code != 200:
         print(response)
-        return "No NASA fact of the day found. "
+        return ""
         # jsonify({"error": "Error getting stock service information"}), 500
 
     data = response.json()
@@ -91,7 +91,7 @@ def get_random_facts():
     url = "http://wisdom:5000//wisdom/random_facts"
     response = requests.get(url)
     if response.status_code != 200:
-        return "No random facts found. "
+        return ""
         # jsonify({"error": "Error getting stock service information"}), 500
 
     data = response.json()
@@ -197,15 +197,25 @@ def get_shoreleave():
     random_facts = get_random_facts()
     books = get_books(book_genre)
     name = "shoreleave"
-    return jsonify(
-        {
-            "_name": name,
-            "quotes": quotes,
-            "nasa_fact": nasa_fact,
-            "random_facts": random_facts,
-            "books": books,
-        }
-    )
+    
+
+    data = {}
+    if name.strip():
+        data["_name"] = name.strip()
+
+    if quotes.strip():
+        data["quotes"] = quotes.strip()
+
+    if nasa_fact.strip():
+        data["nasa_fact"] = nasa_fact.strip()
+
+    if random_facts.strip():
+        data["random_facts"] = random_facts.strip()
+
+    if books.strip():
+        data["books"] = books.strip()
+
+    return jsonify(data)
 
 
 @app.route("/shoreleave/additional")
