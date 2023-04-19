@@ -43,6 +43,7 @@ export function Home() {
 
   //intent returned by dialogflow
   const [intent, setIntent] = useState(null);
+  const [service, setService] = useState(null);
 
   // function to update delivery tag
   function updateDeliveryTag(tag) {
@@ -214,7 +215,10 @@ export function Home() {
       .then(response => response.json())
       .then(data => {
         console.log(data.intent);
+        console.log(data.service);
+        console.log(data.artist);
         setIntent(data.intent);
+        setService(data.service);
       })
       .then(daten =>{
         console.log(intent)
@@ -550,7 +554,7 @@ export function Home() {
       <div className="search-container">
         <input type="text" value={text} onChange={handleChange} onClick={() => setShowPopup(false)}
           placeholder="Search..." />
-        {intent && <p>Intent: {intent}</p>}
+        
         <button type="button" class="ios-button" onClick={() => handleSubmit()}>&#127929;</button>
 
         <button class="ios-button"  style={{ backgroundColor: buttonColor,  }} onClick={() => handleClick()}  onMouseEnter={() => setButtonColor("#007aff")}  onMouseLeave={() =>setButtonColor(isASelected ? "#ff3b30" : "transparent")}> &#128483; </button>
