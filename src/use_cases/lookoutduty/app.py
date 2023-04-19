@@ -65,11 +65,10 @@ def get_events(location, keyword_list, enddate):
     response = requests.get(url, params)
     if response.status_code != 200:
         return "No events found for the provided search criteria."
-        # jsonify({"error": "Error getting weather information"}), 500
 
     data = response.json()
     if not data:
-        return "No events found in your area basedo on your favorite artists."
+        return "No events found in your area based on your favorite artists."
 
     else:
         answer = "Here are some event suggestions based on your favorite artists: "
@@ -110,12 +109,10 @@ def get_sports(club_ids, clubs):
 
     for club_id in club_ids:
         params = {"team": club_id}
-        team_name = clubs[count]
         url = f"http://sports:5000/football/fixture"
         response = requests.get(url, params)
         if response.status_code != 200:
             return "No sports fixtures found for " + clubs[count]
-            # jsonify({"error": "Error getting weather information"}), 500
 
         data = response.json()
         if clubs[count] == data["away_team"]:
@@ -202,7 +199,3 @@ def get_lookout():
 
     name = "lookout"
     return jsonify({"_name": name, "events": events, "sports": sports})
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5016, debug=True)

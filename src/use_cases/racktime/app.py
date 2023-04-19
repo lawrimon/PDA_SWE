@@ -32,12 +32,11 @@ def get_issues(username):
     params = {"username": username}
     response = requests.get(url, params=params)
     if response.status_code != 200:
-        return "No open issues found for the provided user."
-        # return jsonify({"error": "Error getting issues"}), 500
+        return "No open issues found for the provided user. "
 
     issues = response.json()
     if not issues:
-        answer = "Congrats! There are no open issues assigned to you."
+        answer = "Congrats! There are no open issues assigned to you. "
         return answer
     answer = (
         "The following issue is a perfect start for your day tomorrow: "
@@ -73,7 +72,6 @@ def play_music(artist):
     response = requests.get(url, params=params)
     if response.status_code != 200:
         return "No music found for the provided artist. "
-        # return jsonify({"error": "Error playing music"}), 500
 
     answer = "Music of your favorite artist " + artist + " is playing. Groove on! "
 
@@ -110,7 +108,6 @@ def get_route(origin, destination, mode):
     response = requests.get(url, params=params)
     if response.status_code != 200:
         return "No route found for the provided origin and destination. "
-        # return jsonify({"error": "Error getting route"}), 500
 
     route = response.json()
     answer = (
@@ -164,7 +161,6 @@ def get_calendar_events_tomorrow(user):
     response = requests.get(url, params={"user": user})
     if response.status_code != 200:
         return None
-        # return jsonify({"error": "Error getting tomorrows calendar events"}), 500
 
     data = response.json()
 
@@ -283,14 +279,15 @@ def get_racktime():
 
 
 @app.route("/racktime/additional")
-def get_more_scuttlebutt():
-    """Additional scuttlebutt endpoint.
+def get_more_racktime():
+    """Additional racktime endpoint.
 
-    This endpoint provides additional news for the scuttlebutt use case.
+    This endpoint provides additional information for the racktime use case.
 
     Returns:
-        Additional news for the scuttlebutt use case.
+        Additional information for the racktime use case.
     """
+
     user = request.args.get("user")
     user_preferences = get_user_preferences(user)
     artist = user_preferences["artists"].split(",")[1]
