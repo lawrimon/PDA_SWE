@@ -49,7 +49,11 @@ def get_quotes():
             )
         else:
             more_quotes.append(
-                " " + quote["quote"] + ". This is from the author " + quote["author"] + ". "
+                " "
+                + quote["quote"]
+                + ". This is from the author "
+                + quote["author"]
+                + ". "
             )
 
     return answer
@@ -77,12 +81,13 @@ def get_nasa_apod():
 
     text = "On some nights the sky is the best show in town. On this night, auroras ruled the sky, and the geomagnetic storm that created this colorful sky show originated from an increasingly active Sun. Surprisingly, since the approaching solar CME the day before had missed the Earth, it was not expected that this storm would create auroras. In the foreground, two happily surprised aurora hunters contemplate the amazing and rapidly changing sky. Regardless of forecasts, though, auroras were reported in the night skies of Earth not only in the far north, but as far south as New Mexico, USA. As captured in a wide-angle image above Saariselkä in northern Finnish Lapland, a bright aurora was visible with an unusually high degree of detail, range of colors, and breadth across the sky. The vivid yellow, green, red and purple auroral colors are caused by oxygen and nitrogen atoms high in Earth's atmosphere reacting to incoming electrons. Open Science: Browse 3,000+ codes in the Astrophysics Source Code Library"
     try:
-        sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', answer)
-        sentences = sentences[:4] # limit to 4 sentences
+        sentences = re.split(r"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s", answer)
+        sentences = sentences[:4]  # limit to 4 sentences
         return sentences
     except:
         pass
     return answer
+
 
 def get_random_facts():
     """Get random facts.
@@ -107,7 +112,7 @@ def get_random_facts():
             answer += ". "
         else:
             more_facts.append(fact["fact"])
-            #more_facts += ". "
+            # more_facts += ". "
 
     return answer
 
@@ -147,7 +152,15 @@ def get_books(book_genre):
             answer += book["title"] + " by the author " + book["author"] + ". "
             answer += "This is the description: " + book["description"] + " "
         else:
-            more_books.append (book["title"] + " by the author " + book["author"] + ". "+ "This is the description: " + book["description"] + " ")
+            more_books.append(
+                book["title"]
+                + " by the author "
+                + book["author"]
+                + ". "
+                + "This is the description: "
+                + book["description"]
+                + " "
+            )
 
     return answer
 
@@ -200,7 +213,6 @@ def get_shoreleave():
     random_facts = get_random_facts()
     books = get_books(book_genre)
     name = "shoreleave"
-    
 
     data = {}
     if name.strip():
@@ -233,14 +245,17 @@ def get_more_shoreleave():
     quotes = more_quotes[0]
     random_facts = more_facts[0]
     books = more_books[0]
-    text = "Some more quotes: "+ more_quotes[0] + ". Another random fact " +more_facts[0] + " Another book recommendation "+ more_books[0]
-    name = "shoreleave"
-    return jsonify(
-        {
-            "_name": name,
-            "text": text
-        }
+    text = (
+        "Some more quotes: "
+        + more_quotes[0]
+        + ". Another random fact "
+        + more_facts[0]
+        + " Another book recommendation "
+        + more_books[0]
     )
+    name = "shoreleave"
+    return jsonify({"_name": name, "text": text})
+
 
 if __name__ == "__main__":
     app.run()
