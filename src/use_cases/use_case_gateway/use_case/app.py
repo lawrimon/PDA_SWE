@@ -30,9 +30,6 @@ else:
         'DATABASE': 'http://db:5000'
     }
 
-scheduler = BackgroundScheduler()
-scheduler.start()
-
 def get_response(url):
     with app.app_context():
         response = requests.get(url)
@@ -112,15 +109,15 @@ def notify_event(event_name):
 scheduler = BackgroundScheduler(daemon=True)
 
 # schedule on time
-scheduler.add_job(func=notify_event("lookout"), trigger="interval", minutes=1)
-scheduler.add_job(func=notify_event("shoreleave"), trigger="interval", minutes=1)
-scheduler.add_job(func=notify_event("racktime"), trigger="interval", minutes=1)
+scheduler.add_job(func=notify_event, args=["lookout"], trigger="interval", minutes=1)
+scheduler.add_job(func=notify_event, args=["racktime"], trigger="interval", minutes=1)
+scheduler.add_job(func=notify_event, args=["shoreleave"], trigger="interval", minutes=1)
 
 
 # schedule on day time (T-2h inside Docker)
 trigger = CronTrigger(hour="18", minute="15")
 scheduler.add_job(
-    func=notify_event("scuttlebutt"),
+    func=notify_event, args=["scuttlebutt"],
     trigger=trigger,
 )
 

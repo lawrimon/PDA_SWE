@@ -51,11 +51,6 @@ export function Home() {
     deliveryTagRef.current = tag;
   };
 
-  // function to update delivery tag
-  function updateDeliveryTag(tag) {
-    deliveryTagRef.current = tag;
-  }
-
   const addNotification = (message, color) => {
     setNotifications(notifications => [...notifications, { message, color }]);
   };
@@ -209,9 +204,8 @@ export function Home() {
     await fetch(url)
       .then((response) => response.json())
       .then((data) => {
-        setIntent(data.intent);
-        setService(data.service);
         intent1 = data.intent;
+        console.log("intent", intent1)
         say_use_case(intent1);
       })
       .catch((error) => console.error(error));
@@ -302,7 +296,10 @@ export function Home() {
 
       if (tmp_use_case === "scuttlebutt" || tmp_use_case === "shoreleave") {
         const tmp_transcript = await listenForSpeech();
-        await handleTranscript(tmp_transcript, name);
+        if(tmp_transcript){
+          await handleTranscript(tmp_transcript, name);
+        }
+        
       }
 
       // acknowledge message so that next message can be consumed
@@ -316,12 +313,12 @@ export function Home() {
 
   async function handleTranscript(transcript, usecase) {
     if (transcript.toLowerCase().includes("no")) {
-      logger.info("Alright, have a nice day!");
+      console.log("Alright, have a nice day!");
       return;
     }
 
     if (transcript.toLowerCase().length <= 2) {
-      logger.info("User did not request more information.");
+      console.log("User did not request more information.");
       return;
     }
 
@@ -330,7 +327,7 @@ export function Home() {
       const data = await response.json();
 
       if (response.status !== 200) {
-        logger.error("Error in response from Scuttlebut");
+        console.log("Error in response from Scuttlebut");
         return;
       }
 
@@ -338,8 +335,8 @@ export function Home() {
       addNotification(additionalText, NotificationColors[usecase]);
       await speak(additionalText);
     } catch (error) {
-      logger.error(error);
-      logger.error("Sorry, there was an error getting more information.");
+      console.log(error);
+      console.log("Sorry, there was an error getting more information.");
     }
   }
 

@@ -1,5 +1,6 @@
-const recognitionRef = useRef(null);
-const transcriptRef = useRef("");
+let recognitionRef;
+let transcriptRef;
+let globalTranscript
 
 export const startListening = () => {
   const recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -15,7 +16,8 @@ export const startListening = () => {
   recognitionInstance.interimResults = true;
   recognitionInstance.onresult = handleResult;
 
-  recognitionRef.current = recognitionInstance;
+  recognitionRef = recognitionInstance;
+  console.log("Listening...")
   recognitionInstance.start();
 };
 
@@ -30,14 +32,15 @@ const handleResult = (event) => {
       interimTranscript += transcript;
     }
   }
-  transcriptRef.current = interimTranscript + finalTranscript;
+  transcriptRef = interimTranscript + finalTranscript;
 };
 
 export const stopListening = () => {
-  if (recognitionRef.current) {
-    recognitionRef.current.stop();
-    const transcript = transcriptRef.current;
-    transcriptRef.current = '';
+  if (recognitionRef) {
+    console.log(" Stopped Listening")
+    recognitionRef.stop();
+    const transcript = transcriptRef;
+    transcriptRef = '';
     return transcript;
   }
 };
@@ -56,7 +59,7 @@ export function listenForSpeech(timeout = 5000) {
 
 export async function listenForSpeech2() {
   const isSpeechRecognitionSupported = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
-  
+
   if (isSpeechRecognitionSupported) {
     console.log("speech recognition API supported");
   } else {
@@ -116,14 +119,14 @@ export async function speak(text) {
 
   return new Promise((resolve, reject) => {
     utterance.addEventListener('start', () => {
-      console.log('Started speaking:', text);
+      console.log('Started speaking');
     });
     utterance.addEventListener('error', (event) => {
-      console.error('Error while speaking:', event);
+      console.error('Error while speaking');
       reject(event);
     });
     utterance.addEventListener('end', () => {
-      console.log('Finished speaking:', text);
+      console.log('Finished speaking');
       resolve();
     });
     speechSynthesis.cancel();

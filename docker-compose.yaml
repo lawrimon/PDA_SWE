@@ -21,8 +21,6 @@ services:
       - redis
     environment:
       REDIS_URL: redis://redis:6379/0
-    volumes:
-      - ./src/database/:/app
 
   redisinsight:
     image: redislabs/redisinsight:latest
@@ -61,8 +59,6 @@ services:
     environment:
       NYTIMES_API_KEY: ${NYTIMES_API_KEY}
     build: ./src/services/news_service
-    volumes:
-      - ./src/services/news_service:/app
     ports:
       - 5005:5000
     depends_on:
@@ -73,8 +69,6 @@ services:
     environment:
       WEATHER_API_KEY: ${WEATHER_API_KEY}
     build: ./src/services/weather_service
-    volumes:
-      - ./src/services/weather_service:/app
     ports:
       - 5002:5000
     depends_on:
@@ -85,8 +79,6 @@ services:
     environment:
       MAPS_API_KEY: ${MAPS_API_KEY}
     build: ./src/services/maps_service
-    volumes:
-      - ./src/services/maps_service:/app
     ports:
       - 5003:5000
     depends_on:
@@ -98,8 +90,6 @@ services:
       NINJAS_API_KEY: ${NINJAS_API_KEY}
       NASA_API_KEY: ${NASA_API_KEY}
     build: ./src/services/wisdom_service
-    volumes:
-      - ./src/services/wisdom_service:/app
     ports:
       - 5004:5000
     depends_on:
@@ -111,8 +101,6 @@ services:
       STOCK_MARKET_API_KEY: ${STOCK_MARKET_API_KEY}
       STOCK_MARKET_SECRET_KEY: ${STOCK_MARKET_SECRET_KEY}
     build: ./src/services/stock_market_service
-    volumes:
-      - ./src/services/stock_market_service:/app
     ports:
       - 5001:5000
     depends_on:
@@ -123,8 +111,6 @@ services:
     environment:
       NYTIMES_API_KEY: ${NYTIMES_API_KEY}
     build: ./src/services/books_service
-    volumes:
-      - ./src/services/books_service:/app
     ports:
       - 5011:5000
     depends_on:
@@ -135,8 +121,6 @@ services:
     environment:
       SPORTS_API_KEY: ${SPORTS_API_KEY}
     build: ./src/services/sports_service
-    volumes:
-      - ./src/services/sports_service:/app
     ports:
       - 5012:5000
     depends_on:
@@ -147,8 +131,6 @@ services:
     environment:
       CODING_API_KEY: ${CODING_API_KEY}
     build: ./src/services/coding_service
-    volumes:
-      - ./src/services/coding_service:/app
     ports:
       - 5015:5000
     depends_on:
@@ -159,8 +141,6 @@ services:
     environment:
       EVENTS_API_KEY: ${EVENTS_API_KEY}
     build: ./src/services/events_service
-    volumes:
-      - ./src/services/events_service:/app
     ports:
       - 5014:5000
     depends_on:
@@ -168,8 +148,6 @@ services:
 
   calendar:
     build: ./src/services/calendar_service
-    volumes:
-      - ./src/services/calendar_service:/app
     ports:
       - 5017:5000
     depends_on:
@@ -182,8 +160,6 @@ services:
       SPOTIPY_CLIENT_SECRET: ${SPOTIPY_CLIENT_SECRET}
       SPOTIPY_REDIRECT_URI: ${SPOTIPY_REDIRECT_URI}
     build: ./src/services/music_service
-    volumes:
-      - ./src/services/music_service:/app
     ports:
       - 5018:5000
     depends_on:
@@ -191,8 +167,6 @@ services:
 
   scuttlebutt:
     build: ./src/use_cases/scuttlebutt
-    volumes:
-      - ./src/use_cases/scuttlebutt:/app
     ports:
       - 5008:5000
     depends_on:
@@ -203,8 +177,6 @@ services:
 
   shoreleave:
     build: ./src/use_cases/shoreleave
-    volumes:
-      - ./src/use_cases/shoreleave:/app
     ports:
       - 5013:5000
     depends_on:
@@ -214,8 +186,6 @@ services:
 
   lookoutduty:
     build: ./src/use_cases/lookoutduty
-    volumes:
-      - ./src/use_cases/lookoutduty:/app
     ports:
       - 5016:5000
     depends_on:
@@ -225,8 +195,6 @@ services:
 
   racktime:
     build: ./src/use_cases/racktime
-    volumes:
-      - ./src/use_cases/racktime:/app
     ports:
       - 5019:5000
     depends_on:
@@ -241,8 +209,6 @@ services:
     environment:
       DIALOGFLOW_KEY: ${DIALOGFLOW_KEY}
     build: ./src/services/language_service
-    volumes:
-      - ./src/services/language_service:/app
     ports:
       - 5021:5000
     depends_on:
