@@ -230,7 +230,7 @@ def get_more_shoreleave():
     quotes = more_quotes[0]
     random_facts = more_facts[0]
     books = more_books[0]
-    text = more_quotes[0] + more_facts[0] + more_books[0]
+    text = "Some more quotes: "+ more_quotes[0] + ". Another random fact " +more_facts[0] + " Another book recommendation "+ more_books[0]
     name = "shoreleave"
     return jsonify(
         {
