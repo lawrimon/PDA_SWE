@@ -114,7 +114,7 @@ def get_sports(club_ids, clubs):
         url = f"http://sports:5000/football/fixture"
         response = requests.get(url, params)
         if response.status_code != 200:
-            return "No sports fixtures found for " +  team_name
+            return "No sports fixtures found for " + team_name
             # jsonify({"error": "Error getting weather information"}), 500
 
         data = response.json()
