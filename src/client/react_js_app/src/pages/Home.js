@@ -208,13 +208,17 @@ export function Home() {
     setText(event.target.value);
   };
 
-  const handleSubmit = () => {
-    const url = `http://localhost:50021/dialogflow/get_intent?transcript=${text}`;
-    fetch(url)
+  async function  handleSubmit () {
+    const url = `http://localhost:5021/dialogflow/get_intent?transcript=${text}`;
+    await fetch(url)
       .then(response => response.json())
       .then(data => {
         console.log(data.intent);
         setIntent(data.intent);
+      })
+      .then(daten =>{
+        console.log(intent)
+        say_use_case(intent);
       })
       .catch(error => console.error(error));
   }
@@ -293,6 +297,7 @@ export function Home() {
   const startListening = () => {
     const recognition = new window.webkitSpeechRecognition();
     recognition.continuous = true;
+    recognition.lang = 'en-US';
     recognition.interimResults = true;
     recognitionRef.current = recognition;
 
