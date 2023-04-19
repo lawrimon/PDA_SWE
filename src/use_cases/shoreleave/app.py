@@ -80,7 +80,7 @@ def get_nasa_apod():
     answer += data["explanation"] + " "
 
     text = "On some nights the sky is the best show in town. On this night, auroras ruled the sky, and the geomagnetic storm that created this colorful sky show originated from an increasingly active Sun. Surprisingly, since the approaching solar CME the day before had missed the Earth, it was not expected that this storm would create auroras. In the foreground, two happily surprised aurora hunters contemplate the amazing and rapidly changing sky. Regardless of forecasts, though, auroras were reported in the night skies of Earth not only in the far north, but as far south as New Mexico, USA. As captured in a wide-angle image above Saariselkä in northern Finnish Lapland, a bright aurora was visible with an unusually high degree of detail, range of colors, and breadth across the sky. The vivid yellow, green, red and purple auroral colors are caused by oxygen and nitrogen atoms high in Earth's atmosphere reacting to incoming electrons. Open Science: Browse 3,000+ codes in the Astrophysics Source Code Library"
-    
+
     try:
         sentences = re.split(r"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s", answer)
         sentences = sentences[:4]  # limit to 4 sentences
@@ -215,14 +215,14 @@ def get_shoreleave():
     books = get_books(book_genre)
     name = "shoreleave"
 
-    return jsonify({
-        "_name": name,
-        "quotes": quotes,
-        "nasa_fact": nasa_fact,
-        "random_facts": random_facts,
-        "books": books 
-    }
-        
+    return jsonify(
+        {
+            "_name": name,
+            "quotes": quotes,
+            "nasa_fact": nasa_fact,
+            "random_facts": random_facts,
+            "books": books,
+        }
     )
 
 
