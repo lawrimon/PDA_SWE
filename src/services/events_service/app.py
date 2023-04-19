@@ -53,24 +53,6 @@ def invalid_route_parameters(route_params: Dict) -> bool:
     return False
 
 
-def missing_query_parameters(query_params: Dict, required_params: List[str]) -> bool:
-    """Returns True if required parameters are missing from the query string"""
-    missing_params = [p for p in required_params if p not in query_params]
-    if missing_params:
-        print(f"Missing query parameters: {missing_params}")
-        return True
-    return False
-
-
-def invalid_query_parameters(query_params: Dict, valid_params: List[str]) -> bool:
-    """Returns True if any of the query params are invalid"""
-    for param, value in query_params.items():
-        if param not in valid_params:
-            print(f"Invalid query parameter '{param}': {value}")
-            return True
-    return False
-
-
 @app.route("/events/location")
 def get_events_location():
     """Event location endpoint.
