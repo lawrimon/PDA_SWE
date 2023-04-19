@@ -53,7 +53,6 @@ def get_issues(username, i):
         answer += label + ", "
     answer = answer[:-2] + ". "
 
-    
     return answer
 
 
@@ -282,6 +281,7 @@ def get_racktime():
         }
     )
 
+
 @app.route("/racktime/additional")
 def get_more_scuttlebutt():
     """Additional scuttlebutt endpoint.
@@ -292,14 +292,13 @@ def get_more_scuttlebutt():
         Additional news for the scuttlebutt use case.
     """
     user = request.args.get("user")
-    user_preferences =get_user_preferences(user)
+    user_preferences = get_user_preferences(user)
     artist = user_preferences["artists"].split(",")[1]
 
     issues = get_issues(user, 1)
     music = play_music(artist)
     introduction = "Ready for more Racktime? Here are your additional information "
 
-    
     name = "racktime"
     return jsonify(
         {
