@@ -88,7 +88,7 @@ def test_get_scuttlebutt(client, user, expected_status_code, expected_error):
     This test checks if the scuttlebutt endpoint returns the correct status code and error message for a given user. If status code is 200, it also checks if the response contains the correct data.
     """
 
-    response = client.get("/scuttle", query_string={"user": user})
+    response = client.get("/scuttlebutt", query_string={"user": user})
     assert response.status_code == expected_status_code
     if expected_status_code == 200:
         data = response.json
