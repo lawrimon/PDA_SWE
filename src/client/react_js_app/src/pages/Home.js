@@ -544,8 +544,9 @@ export function Home() {
   async function handleTranscript(transcript, usecase) {
     console.log("in handle Transcript")
     console.log(usecase)
-    if (transcript.toLowerCase() === "no" || transcript.toLowerCase() === "no no"  ) {
+    if (transcript.toLowerCase().includes("no")) {
       console.log("Alright, have a nice day!");
+      await say_text("Alright, have a nice day!")
       // check if user said something -> intend recognition here
     } else if (transcript.toLowerCase().length > 2) {
       console.log("provide more information");
