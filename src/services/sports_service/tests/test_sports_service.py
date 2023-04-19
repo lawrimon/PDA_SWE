@@ -52,7 +52,6 @@ def test_get_football_fixture(client, team, expected_status_code, expected_error
             assert data["error"] == "No upcoming fixture found for the given team"
 
 
-
 def test_get_formulaone_fixture(client):
     """Test the Formula 1 fixture endpoint.
 
