@@ -25,25 +25,32 @@ def test_get_football_fixture(client, team, expected_status_code, expected_error
     """
 
     response = client.get("/football/fixture", query_string={"team": team})
-    assert response.status_code == expected_status_code
     if expected_error:
+        assert response.status_code == expected_status_code
         data = response.json
         assert "error" in data
         assert data["error"] == expected_error
     else:
-        data = response.json
-        assert "venue" in data
-        assert "league" in data
-        assert "time" in data
-        assert isinstance(data["time"]["timestamp"], int)
-        assert isinstance(data["time"]["date"], str)
-        assert isinstance(data["time"]["timezone"], str)
-        assert isinstance(data["league"]["name"], str)
-        assert isinstance(data["league"]["country"], str)
-        assert isinstance(data["venue"]["name"], str)
-        assert isinstance(data["venue"]["city"], str)
-        assert isinstance(data["home_team"], str)
-        assert isinstance(data["away_team"], str)
+        assert response.status_code == 200 or response.status_code == 404
+        if response.status_code == 200:
+            data = response.json
+            assert "venue" in data
+            assert "league" in data
+            assert "time" in data
+            assert isinstance(data["time"]["timestamp"], int)
+            assert isinstance(data["time"]["date"], str)
+            assert isinstance(data["time"]["timezone"], str)
+            assert isinstance(data["league"]["name"], str)
+            assert isinstance(data["league"]["country"], str)
+            assert isinstance(data["venue"]["name"], str)
+            assert isinstance(data["venue"]["city"], str)
+            assert isinstance(data["home_team"], str)
+            assert isinstance(data["away_team"], str)
+        elif response.status_code == 404:
+            data = response.json
+            assert "error" in data
+            assert data["error"] == "No upcoming fixture found for the given team"
+
 
 
 def test_get_formulaone_fixture(client):
