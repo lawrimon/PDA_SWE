@@ -16,6 +16,7 @@ connection = None
 channel = None
 RABBITMQ_HOST = "rabbitmq"
 
+
 def setup_rabbitmq():
     global connection, channel
     try:
@@ -25,6 +26,7 @@ def setup_rabbitmq():
         channel.basic_qos(prefetch_count=1)
     except Exception as e:
         print("Exception occurred during RabbitMQ setup: ", e)
+
 
 def start_consuming_messages(user_id):
     try:
@@ -41,6 +43,7 @@ def start_consuming_messages(user_id):
     except Exception as e:
         print("Exception occurred during message consumption: ", e)
 
+
 def on_message(user_id, message, delivery_tag):
     print("Message emitted: " + message + " " + user_id)
     emit(
@@ -54,10 +57,12 @@ def on_message(user_id, message, delivery_tag):
     )
     channel.basic_ack(delivery_tag=delivery_tag)
 
+
 @socketio.on("connect")
 def on_connect():
     print("Connected! " + request.sid)
     setup_rabbitmq()
+
 
 @socketio.on("start")
 def on_start(data):
@@ -76,6 +81,7 @@ def on_start(data):
         if connection is not None and connection.is_open:
             connection.close()
 
+
 @socketio.on("disconnect")
 def on_disconnect():
     try:
@@ -88,6 +94,7 @@ def on_disconnect():
     except Exception as e:
         print("Exception occurred: ", e)
 
+
 @socketio.on("shutdown")
 def on_shutdown():
     print("Shutting down...")
@@ -97,12 +104,14 @@ def on_shutdown():
     if connection is not None and connection.is_open:
         connection.close()
 
+
 @socketio.on("ack")
 def acknowledge_message(data):
     delivery_tag = data.get("delivery_tag")
     if delivery_tag and channel is not None:
         channel.basic_ack(delivery_tag=delivery_tag)
         print("Delivery_tag: " + str(delivery_tag))
+
 
 if __name__ == "__main__":
     socketio.run(app, debug=True, host="0.0.0.0", port=5010)

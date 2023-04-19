@@ -41,10 +41,9 @@ def get_events_location():
 
     if missing_event_parameters(request.args):
         return jsonify({"error": "Missing parameters"}), 400
-    
+
     if invalid_event_parameters(request.args):
         return jsonify({"error": "Invalid  parameters"}), 400
-    
 
     location = request.args.get("location")
     enddate = request.args.get("enddate")
@@ -88,19 +87,19 @@ def get_events_artists():
     Args:
         artists: The artists of the event.
         enddate: The end date of the event search.
-        
+
     Returns:
         Information about the found events.
     """
 
     if missing_event_parameters(request.args):
         return jsonify({"error": "Missing parameters"}), 400
-    
+
     if invalid_event_parameters(request.args):
         return jsonify({"error": "Invalid parameters"}), 400
 
     keyword_list = request.args.get("artists")
-    
+
     keyword_list = json.loads(keyword_list)
     enddate = request.args.get("enddate")
 
@@ -143,8 +142,8 @@ def get_events():
     """Event endpoint based on location and artists.
 
     This endpoint provides events based on the location and artists.
-    
-    Args: 
+
+    Args:
         location: The location of the event.
         artists: The artists of the event.
         enddate: The end date of the event search.
@@ -215,14 +214,14 @@ def missing_event_parameters(event_params: Dict) -> bool:
         "/events/artists": ["artists", "enddate"],
         "/events/all": ["location", "artists", "enddate"],
     }
-    
+
     route_path = request.path
     missing_params = [p for p in required_params[route_path] if p not in event_params]
 
     if missing_params:
         print(f"Missing parameters: {missing_params}")
         return True
-    
+
     return False
 
 
@@ -234,12 +233,12 @@ def invalid_event_parameters(event_params: Dict) -> bool:
 
     Returns:
         True if a required parameter is missing, False otherwise.
-    
+
     """
 
     for param, value in event_params.items():
         if not value:
             print(f"Invalid parameters: '{param}': {value}")
             return True
-        
+
     return False
