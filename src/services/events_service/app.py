@@ -1,12 +1,13 @@
 """This application is the events service.
 
 The events service provides an endpoint to get event information.
-The functionality is based on the ticketmaster API.
+The functionality is based on the Ticketmaster API.
 
 Typical endpoints usage:
 
-    GET /artist_event
-    GET https://app.ticketmaster.com/discovery/v2/events.json?apikey=&city=Stuttgart&keyword=Avril Lavigne
+    GET /events/location?location=location&enddate=enddate
+    GET /events/artists?artists=artists&enddate=enddate
+    GET /events/all?location=location&artists=artists&enddate=enddate
 """
 
 from flask import Flask, jsonify, request
@@ -25,7 +26,7 @@ EVENTS_API_KEY = os.getenv("EVENTS_API_KEY")
 
 def missing_route_parameters(route_params: Dict) -> bool:
     """
-    Returns True if required parameters are missing from the route params
+    Returns True if required parameters are missing from the route params.
     """
     required_params = {
         "/events/location": ["location", "enddate"],
@@ -44,7 +45,7 @@ def missing_route_parameters(route_params: Dict) -> bool:
 
 def invalid_route_parameters(route_params: Dict) -> bool:
     """
-    Returns True if any of the route params are invalid
+    Returns True if any of the route params are invalid.
     """
     for param, value in route_params.items():
         if not value:
