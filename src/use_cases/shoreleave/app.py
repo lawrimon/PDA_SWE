@@ -227,17 +227,27 @@ def get_more_shoreleave():
     Returns:
         Additional news for the scuttlebutt use case.
     """
-    quotes = more_quotes[0]
-    random_facts = more_facts[0]
-    books = more_books[0]
-    text = "Some more quotes: "+ more_quotes[0] + ". Another random fact " +more_facts[0] + " Another book recommendation "+ more_books[0]
+
     name = "shoreleave"
-    return jsonify(
-        {
-            "_name": name,
-            "text": text
-        }
+    if(len(more_quotes)>1 and len(more_facts)>1 and len(more_books)>1):
+        quotes = more_quotes[0]
+        random_facts = more_facts[0]
+        books = more_books[0]
+        text = "Some more quotes: "+ quotes + ". Another random fact " +random_facts + " Another book recommendation "+ books
+        
+        return jsonify(
+            {
+                "_name": name,
+                "text": text
+            }
     )
+    else:
+        return jsonify(
+            {
+                "_name": name,
+                "text": "Sorry, there is no additional information"
+            }
+        )
 
 if __name__ == "__main__":
     app.run()
