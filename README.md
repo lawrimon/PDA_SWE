@@ -1,4 +1,4 @@
-<h1 align="center">Welcome to PDA :wave:</h1>
+<h1 align="center">Welcome to cAPItan :boat:</h1>
 
 <p align="center">
   <a href="https://github.com/psf/black">
@@ -12,39 +12,45 @@
   </a>
 </p>
 
-> Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+> The cAPITan application is a personal digital agent (PDA) that provides proactive recommendations to the user based on the user's preferences. It boosts the user's productivity and life quality by delivering insightful and personalized guidance. cAPItan is an interactive web application with fully-fledged speech support.   
   
 # Description
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
-# Documentation
+The interactive browser-based Internet applications and Apps for smartphones will be accompanied by software agents following the new paradigm of Assistance and Delegation focused on agent technologies and conversational (speech) man-machine interfaces (softbots).
 
-- Technical Documentation
-- ...
+The cAPItan may perform monitoring of different entities (e.g. WebServices or MicroServices) e.g. personal preferences, sensors@home (Raspberry phi), calendar, emails, google maps (travel simulation), traffic, weather, stock trading's etc. and proposing proactive individual recommendations via speech synthesis and speech dialog to the user - supporting the users daily plan and tasks e.g. according to scheduled meetings & activities (calendar), preferences, current location, travel plans, weather, tasks (email), sensorStatus@home and scheduling conflicts etc. 
 
-# Usage
-
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+The cAPItan will end every day with a good night dialog incl. detailed recommendation about tomorrow's day e.g. about optional modes of transportation depending on personal preferences, current location, weather, travel plans, and other circumstances (entities).
+The final cAPItan application will perform independent execution of at least four different use cases which will introduce proactive speech dialos to the user incorporating recommendations taking into account current results from different monitoring services, personal preferences and user confirmations.
 
 # Installation
 
-The project requires the following libraries:
+## Requirements
 
-- `pandas`
+The following software must be installed on your computer:
 
-To install these libraries globally, run the following command (**unrecommended**):
+* [Docker](https://docs.docker.com/get-docker/)
+
+* [Docker Compose](https://docs.docker.com/compose/install/) (included in Docker Desktop for Windows and Mac)
+
+
+## Installation
+
+Place a `.env` file in the root directory of the project. Write a message to [Laurin Tarta](github.com/lawrimon) to get the content of the `.env` file.
+
+To start the application, run the following command in the root directory of the project:
 
 ```
-pip install -r requirements.txt
+docker compose up
 ```
 
-To install these libraries in a conda environment, run the following command (**recommended**):
+To access the web application, open the following URL in your browser:
 
 ```
-conda create --name <thisproject>
-conda activate <thisproject>
-pip install -r requirements.txt
+http://localhost:3000
 ```
+
+Enjoy your time with your personal assistent cAPItan :smile:
 
 # Development Guidelines
 
