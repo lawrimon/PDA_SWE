@@ -240,7 +240,7 @@ services:
     env_file: .env
     environment:
       DIALOGFLOW_KEY: ${DIALOGFLOW_KEY}
-    build: ./src/services/
+    build: ./src/services/language_service
     volumes:
       - ./src/services/language_service:/app
     ports:
