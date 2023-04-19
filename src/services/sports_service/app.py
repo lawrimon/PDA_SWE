@@ -59,6 +59,9 @@ def get_football_fixture():
 
     data = response.json()
 
+    if len(data["response"]) == 0:
+        return jsonify({"error": "No upcoming fixture found for the given team"}), 404
+
     fixture = {
         "home_team": data["response"][0]["teams"]["home"]["name"],
         "away_team": data["response"][0]["teams"]["away"]["name"],

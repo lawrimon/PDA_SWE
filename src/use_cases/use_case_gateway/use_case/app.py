@@ -240,7 +240,7 @@ def notify_racktime():
 
 
 # publish every 7 seconds
-scheduler = BackgroundScheduler( daemon=True)
+scheduler = BackgroundScheduler(daemon=True)
 
 
 # schedule every x minutes
@@ -251,9 +251,7 @@ scheduler.add_job(func=notify_shoreleave, trigger="interval", minutes=30)
 
 
 # schedule on day time (T-2h inside Docker)
-trigger = CronTrigger(
-    hour="18", minute="15"
-    )
+trigger = CronTrigger(hour="18", minute="15")
 
 scheduler.add_job(
     func=notify_scuttlebutt,
@@ -261,7 +259,6 @@ scheduler.add_job(
 )
 
 scheduler.start()
-
 
 
 if __name__ == "__main__":
