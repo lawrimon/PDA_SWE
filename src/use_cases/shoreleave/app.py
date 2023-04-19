@@ -10,6 +10,7 @@ Example Usage:
 
 from flask import Flask, jsonify, request
 import requests, flask_cors
+import re
 
 
 app = Flask(__name__)
@@ -61,6 +62,7 @@ def get_nasa_apod():
     url = "http://wisdom:5000/wisdom/apod"
     response = requests.get(url)
     if response.status_code != 200:
+        print(response)
         return "No NASA fact of the day found. "
         # jsonify({"error": "Error getting stock service information"}), 500
 
@@ -68,8 +70,14 @@ def get_nasa_apod():
     answer = "Here is your NASA fact of the day: "
     answer += data["explanation"] + " "
 
+    text = "On some nights the sky is the best show in town. On this night, auroras ruled the sky, and the geomagnetic storm that created this colorful sky show originated from an increasingly active Sun. Surprisingly, since the approaching solar CME the day before had missed the Earth, it was not expected that this storm would create auroras. In the foreground, two happily surprised aurora hunters contemplate the amazing and rapidly changing sky. Regardless of forecasts, though, auroras were reported in the night skies of Earth not only in the far north, but as far south as New Mexico, USA. As captured in a wide-angle image above Saariselkä in northern Finnish Lapland, a bright aurora was visible with an unusually high degree of detail, range of colors, and breadth across the sky. The vivid yellow, green, red and purple auroral colors are caused by oxygen and nitrogen atoms high in Earth's atmosphere reacting to incoming electrons. Open Science: Browse 3,000+ codes in the Astrophysics Source Code Library"
+    try:
+        sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', answer)
+        sentences = sentences[:4] # limit to 4 sentences
+        return sentences
+    except:
+        pass
     return answer
-
 
 def get_random_facts():
     """Get random facts.
