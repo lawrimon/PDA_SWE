@@ -116,7 +116,6 @@ export function Settings() {
   }
 
   function handleTransportation(selectedOption) {
-    console.log("option",selectedOption)
     setTransportation(selectedOption);
   }
 
@@ -170,7 +169,6 @@ export function Settings() {
 
     async function setUserPreferences() {
       const pref = await getUserPreferences();
-      console.log("this the pref", pref)
       setUsername(useridRef.current)
       setFootballClub(pref.football_club.split(","))
       setStocks(pref.stocks.split(","))
@@ -181,23 +179,14 @@ export function Settings() {
       setUserGithub(pref.github)
       setEventLocation(pref.event_location.split(","))
       setTransportation({ value: pref.transportation, label: pref.transportation })
-      console.log(user_transportation)
 
     }
 
     setUserPreferences();
   }, []);
 
-  
-
-  const TestToggle = () => {
-    console.log(JSON.stringify({ "username": useridRef.current, "football_club": user_football_club, "calendar_link": user_calendar_link, "user_stocks": user_stocks, "user_artists": user_artists, "user_books": user_books, "transportation": user_transportation }),
-    )
-  }
-
 
   const handleToggleChange = () => {
-    console.log("handle triggered")
     console.log(JSON.stringify({"football_club": user_football_club.toString(), "user_calendar_link": user_calendar_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(),  "transportation": user_transportation.value}))
 
     fetch('http://localhost:5009/users/' + useridRef.current, {

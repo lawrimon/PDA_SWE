@@ -70,7 +70,6 @@ def get_nasa_apod():
     url = "http://wisdom:5000/wisdom/apod"
     response = requests.get(url)
     if response.status_code != 200:
-        print(response)
         return "No Nasa facts found"
 
     data = response.json()

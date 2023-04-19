@@ -54,32 +54,6 @@ export function setUserPreferences(pref_list){
     }
   }
 
-function pushUserPreferences(pref_list){
-    const user_preferences = {
-        "user_football_club": user_football_club,
-        "user_stocks": user_stocks,
-        "user_artists": user_artists,
-        "user_calendar_link" : user_calendar_link,
-      };
-    
-    const jsonPreferences = JSON.stringify(user_preferences);
-    fetch('https://example.com/api/preferences', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: jsonPreferences
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to send data to server');
-        }
-        console.log('Data sent successfully');
-      })
-      .catch(error => {
-        console.error(error);
-      });
-}
 
    
     

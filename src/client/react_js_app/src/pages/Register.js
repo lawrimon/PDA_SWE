@@ -17,7 +17,6 @@ function RegisterPage() {
     // Call your function here
     // Retrieve the user ID from local storage
     const storedUserId = localStorage.getItem('user_id');
-    console.log(userIdRef.current)
     // Set the value of useridRef.current to the retrieved user ID, if it exists
     if (storedUserId) {
       userIdRef.current = storedUserId;
@@ -53,12 +52,8 @@ function RegisterPage() {
   }
 
   function handleSubmit() {
-    console.log(password)
-    console.log(username)
-    console.log(userid)
     if(password == password2)
     {
-      console.log("password success")
     
     fetch('http://localhost:5009/users',{
       method: 'POST',
@@ -68,13 +63,11 @@ function RegisterPage() {
     .then(response => response.json())
     .then(data => {
       if (data) {
-          console.log(data)
           if (data.status == "success, user added"){
             userIdRef.current = username
             localStorage.setItem('user_id', userIdRef.current);
             console.log(userIdRef.current, "is userid")
             setUserId(userid)
-            console.log(userid)
             window.location.href = '/preferences';
           }
           else{

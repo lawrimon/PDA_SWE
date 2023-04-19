@@ -110,7 +110,6 @@ function PreferencesPage() {
     let position = UserDidMount()
     if (position) {
       console.log(position.coords)
-      console.log(user_location, "userrr")
     }
   }, [getUserId()]);
 
@@ -130,7 +129,6 @@ function PreferencesPage() {
   function pushUserLocation(city){
     let lat = user_location.latitude
     let lon =  user_location.longitude
-     console.log("handle triggered")
      fetch('http://localhost:5009/users/' + useridRef.current, {
        method: 'PUT',
        body: JSON.stringify({"location":city, "coordinates":[lat,lon].toString()}),
@@ -139,7 +137,6 @@ function PreferencesPage() {
        .then(response => response.json())
        .then(data => {
          if (data) {
-           console.log(data)
            console.log("success location saved")
          }
          else {
@@ -192,7 +189,6 @@ return coord
   }
 
   function handleTransportation(selectedOption) {
-    console.log("option",selectedOption)
     setTransportation(selectedOption);
   }
 
@@ -229,10 +225,8 @@ return coord
 
 
   const uploadSubmit = async () => {
-    console.log("handle triggered")
     console.log(useridRef.current)
     const city = await getCityName(user_location.latitude, user_location.longitude);
-    console.log(city); // Output: London
     await pushUserLocation(city)
     try {
       console.log({"football_club": user_football_club.toString(), "calendar_link": user_calendar_link, "stocks": user_stocks.toString(), "artists": user_artists.toString(), "news": user_news.toString(), "books": user_books.toString(), "github": user_github, "event_location": user_event_location.toString(), "transportation" : user_transportation.value})
@@ -242,9 +236,7 @@ return coord
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await response.json();
-      console.log("lol")
       if (data) {
-        console.log(data)
         console.log("success preferences saved")
         return data
       }

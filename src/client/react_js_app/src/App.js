@@ -1,5 +1,4 @@
 import './App.css';
-import logo from './resources/cAPItan_Logo.jpg';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Home } from "./pages/Home"
 import { Settings } from "./pages/Settings"

@@ -255,7 +255,6 @@ def get_scuttlebutt():
     news_cateogories = user_preferences["news"].split(",")
     stocks = user_preferences["stocks"].split(",")
     user_coordinates = user_preferences["coordinates"].split(",")
-    # user_location = {"lat": user_coordinates[0], "lon": user_coordinates[1]}
 
     news = get_news(news_cateogories)
     weather = get_weather(user_coordinates)

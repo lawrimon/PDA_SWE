@@ -52,17 +52,13 @@ function LoginPage() {
   
 
   function getUserPref() {
-    console.log("in get user for", user_id);
     fetch('http://localhost:5009/users/' + user_id, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     })
       .then(response => response.json())
       .then(data => {
-        console.log(data);
         if (data) {
-          console.log("We got user data");
-          console.log(data);
           setUserPref([data.user_football_club, data.user_stocks, data.user_artists, data.user_spotify_link, data.user_calendar_link]);
         }
       })
@@ -94,24 +90,20 @@ function LoginPage() {
 
      async function handleLocationSubmit(event) {
       const city = await getCityName(user_location.latitude, user_location.longitude);
-      console.log(city); // Output: London
       await pushUserLocation(city)
       getUserPref();
       localStorage.setItem('user_id', userIdRef.current);
-      console.log(userIdRef.current)
       window.location.href = '/'
     }
 
   function Register(){
     localStorage.setItem('user_id', userIdRef.current);
-    console.log(userIdRef.current)
     window.location.href = '/register'
   }
 
   function pushUserLocation(city){
      let lat = user_location.latitude
      let lon =  user_location.longitude
-      console.log("handle triggered")
       fetch('http://localhost:5009/users/' + user_id, {
         method: 'PUT',
         body: JSON.stringify({"location":city, "coordinates":[lat,lon].toString()}),
@@ -120,7 +112,6 @@ function LoginPage() {
         .then(response => response.json())
         .then(data => {
           if (data) {
-            console.log(data)
             console.log("success location saved")
           }
           else {
@@ -152,7 +143,6 @@ function LoginPage() {
       .then(data => {
         console.log(data);
         if (data["error"]){
-          console.log("login failed")
           showErrorMessage('Wrong credentials, try again!');
 
 
@@ -160,11 +150,8 @@ function LoginPage() {
         else if (data) {
           console.log(data);
           if (data.password == password) {
-            console.log("Success logged in");
-            console.log(user_id);
             console.log("ref", userIdRef.current);
-            setUserId(userIdRef.current);
-            console.log("User_id", getUserId());}
+            setUserId(userIdRef.current);}
             handleLocationSubmit()}
         else {
           console.log("login failed")
