@@ -415,6 +415,7 @@ export function Home() {
     } else if (use_case === "lookout") {
       text = await getLooktout();
     } else if (use_case === "racktime") {
+      console.log("in racktime")
       text = await getRackTime();
     } else if (use_case === "shoreleave") {
       text = await getShoreleave();

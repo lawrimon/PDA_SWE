@@ -279,7 +279,7 @@ scheduler = BackgroundScheduler(daemon=True)
 
 # schedule every x minutes
 
-scheduler.add_job(func=notify_racktime, trigger="interval", seconds=60)
+scheduler.add_job(func=notify_racktime, trigger="interval", minutes=1)
 scheduler.add_job(func=notify_lookout, trigger="interval", minutes=1)
 scheduler.add_job(func=notify_shoreleave, trigger="interval", minutes=1)
 
