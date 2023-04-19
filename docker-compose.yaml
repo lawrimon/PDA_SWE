@@ -235,3 +235,15 @@ services:
       - calendar
       - maps
       - rabbitmq
+
+  language: 
+    env_file: .env
+    environment:
+      DIALOGFLOW_KEY: ${DIALOGFLOW_KEY}
+    build: ./src/services/language_service
+    volumes:
+      - ./src/services/language_service:/app
+    ports:
+      - 5021:5000
+    depends_on:
+      - rabbitmq    

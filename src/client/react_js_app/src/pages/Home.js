@@ -49,6 +49,9 @@ export function Home() {
   // set to true to avoid long TTS
   var debug = false
 
+  //intent returned by dialogflow
+  const [intent, setIntent] = useState(null);
+  const [service, setService] = useState(null);
 
   // function to update delivery tag
   function updateDeliveryTag(tag) {
@@ -214,10 +217,24 @@ export function Home() {
     setText(event.target.value);
   };
 
-  const handleSubmit = () => {    
-    addNotification("Error Notification", NotificationColors.Lookout)
-    };
-
+  async function  handleSubmit () {
+    const url = `http://localhost:5021/dialogflow/get_intent?transcript=${text}`;
+    await fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data.intent);
+        console.log(data.service);
+        console.log(data.artist);
+        setIntent(data.intent);
+        setService(data.service);
+      })
+      .then(daten =>{
+        console.log(intent)
+        say_use_case(intent);
+      })
+      .catch(error => console.error(error));
+  }
+  
   function changeColor(div) {
     var button = document.getElementById(div);
     if (!button.classList.contains('red')) {
@@ -324,6 +341,7 @@ export function Home() {
 
     const recognition = new window.webkitSpeechRecognition();
     recognition.continuous = true;
+    recognition.lang = 'en-US';
     recognition.interimResults = true;
     recognitionRef.current = recognition;
 
@@ -624,6 +642,7 @@ export function Home() {
         <input type="text" value={text} onChange={handleChange} onClick={() => setShowPopup(false)}
           placeholder="Search..." />
 
+        
         <button type="button" className="ios-button" onClick={() => handleSubmit()}>&#127929;</button>
 
         <button className="ios-button"  style={{ backgroundColor: buttonColor,  }} onClick={() => handleClick()}  onMouseEnter={() => setButtonColor("#007aff")}  onMouseLeave={() =>setButtonColor(isASelected ? "#ff3b30" : "transparent")}> &#128483; </button>
@@ -631,19 +650,20 @@ export function Home() {
         <div className="settings-button-container">
 
           <Link to="/settings">
-            <button type="button" className="settings-button">&#x2699;</button>
+            <button type="button" className="settings-button">&#9881;</button>
           </Link>
-          <button type="button" id="rabbit" onClick={() => buttonConnect()}  className="rabbit">&#128062;</button>
 
-          <button type="button" id="scuttlebutt" onClick={() => say_use_case("scuttlebutt")} className="scuttlebutt">&#x2603;</button>
+          <button type="button" id="rabbit" onClick={() => buttonConnect()}  className="rabbit">&#128048;</button>
 
-          <button type="button" id="shoreleave" onClick={() => say_use_case("shoreleave")} className="shoreleave">&#128062;</button>
+          <button type="button" id="scuttlebutt" onClick={() => say_use_case("scuttlebutt")} className="scuttlebutt">&#128240;</button>
 
-          <button type="button" id="lookout" onClick={() => say_use_case("lookout")}  className="lookout">&#x2656;</button>
+          <button type="button" id="shoreleave" onClick={() => say_use_case("shoreleave")} className="shoreleave">&#127861;</button>
+
+          <button type="button" id="lookout" onClick={() => say_use_case("lookout")}  className="lookout">&#128065;</button>
           
-          <button type="button" style={{ backgroundColor: "lightbrown" }} onClick={() => say_use_case("racktime")} className="settings-button">&#9742;</button>
+          <button type="button" id= "racktime" onClick={() => say_use_case("racktime")} className="racktime">&#128164;</button>
 
-          <button type="button" id="Logout" onClick={() => Logout()} className="settings-button">&#10149;</button>
+          <button type="button" id="Logout" onClick={() => Logout()} className="settings-button">&#x23FB;</button>
 
         </div>
       </div>

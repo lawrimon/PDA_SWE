@@ -70,7 +70,7 @@ def get_events(location, keyword_list, enddate):
     data = response.json()
     if not data:
         return "No events found in your area basedo on your favorite artists."
-    
+
     else:
         answer = "Here are some event suggestions based on your favorite artists: "
         for event in data:
