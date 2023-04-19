@@ -8,7 +8,6 @@ import RegisterPage from './pages/Register';
 import PreferencesPage from './pages/Preferences';
 import RegistrationSuccess from './components/RegisterSuccess';
 import NotFound from './components/NotFound';
-import RabbitMqConsumer from './pages/rabbit';
 
 export function App() {
   return (
@@ -19,7 +18,6 @@ export function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/preferences" element={<PreferencesPage />} />
         <Route path="/registersuccess" element={<RegistrationSuccess />} />
-        <Route path ="/rabbit" element={<RabbitMqConsumer/>}/>
         <Route path="*"  element={<NotFound />}/>
         
       </Routes>
