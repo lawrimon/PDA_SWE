@@ -247,9 +247,10 @@ def get_racktime():
     mode = user_preferences["transportation"]
 
     events_tomorrow = get_calendar_events_tomorrow(calendar_user)
-    event_locations = parse_event_locations(events_tomorrow)
+    
 
     if events_tomorrow:
+        event_locations = parse_event_locations(events_tomorrow)
         destination = f"{event_locations[0].get('lat')},{event_locations[0].get('lon')}"
         route = get_route(origin, destination, mode)
         tomorrows_events_summarized = summarize_tomorrows_events(
