@@ -579,7 +579,7 @@ export function Home() {
         <div className="notification-centerNew">
         <div className={"notification-containerNew"}>
             {notifications.map((notification, index) => (
-              <div key={index} className={`notificationNew ${notification.color} ${!expanded ? 'expanded' : ''}`} onClick={() => setExpanded(!expanded)}>
+              <div key={index} className={`notificationNew ${notification.color}`} onClick={() => setExpanded(!expanded)}>
                 <div className={`notification-iconNew`} style={{ backgroundColor: notification.color }}></div>
                 <div className="notification-textNew">{notification.message}</div>
                 <button onClick={() => removeNotification(index)} className="notification-closeNew">×</button>
