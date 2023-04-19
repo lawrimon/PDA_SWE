@@ -34,7 +34,6 @@ def get_quotes():
     response = requests.get(url)
     if response.status_code != 200:
         return "No quotes found"
-        # jsonify({"error": "Error getting stock service information"}), 500
 
     data = response.json()
     answer = "Here is a famous quote: "
@@ -73,13 +72,10 @@ def get_nasa_apod():
     if response.status_code != 200:
         print(response)
         return "No Nasa facts found"
-        # jsonify({"error": "Error getting stock service information"}), 500
 
     data = response.json()
     answer = "Here is your NASA fact of the day: "
     answer += data["explanation"] + " "
-
-    text = "On some nights the sky is the best show in town. On this night, auroras ruled the sky, and the geomagnetic storm that created this colorful sky show originated from an increasingly active Sun. Surprisingly, since the approaching solar CME the day before had missed the Earth, it was not expected that this storm would create auroras. In the foreground, two happily surprised aurora hunters contemplate the amazing and rapidly changing sky. Regardless of forecasts, though, auroras were reported in the night skies of Earth not only in the far north, but as far south as New Mexico, USA. As captured in a wide-angle image above Saariselkä in northern Finnish Lapland, a bright aurora was visible with an unusually high degree of detail, range of colors, and breadth across the sky. The vivid yellow, green, red and purple auroral colors are caused by oxygen and nitrogen atoms high in Earth's atmosphere reacting to incoming electrons. Open Science: Browse 3,000+ codes in the Astrophysics Source Code Library"
 
     try:
         sentences = re.split(r"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s", answer)
@@ -103,7 +99,6 @@ def get_random_facts():
     response = requests.get(url)
     if response.status_code != 200:
         return "No random facts found"
-        # jsonify({"error": "Error getting stock service information"}), 500
 
     data = response.json()
     answer = "Here is a random fact that might be interesting for you: \n"
@@ -113,7 +108,6 @@ def get_random_facts():
             answer += ". "
         else:
             more_facts.append(fact["fact"])
-            # more_facts += ". "
 
     return answer
 
@@ -142,7 +136,6 @@ def get_books(book_genre):
     response = requests.get(url, params=params)
     if response.status_code != 200:
         return "No best sellers list found for the provided genre. "
-        # jsonify({"error": "Error getting stock service information"}), 500
 
     data = response.json()
     if not data:
@@ -228,12 +221,12 @@ def get_shoreleave():
 
 @app.route("/shoreleave/additional")
 def get_more_shoreleave():
-    """Additional scuttlebutt endpoint.
+    """Additional shore leave endpoint.
 
-    This endpoint provides additional news for the scuttlebutt use case.
+    This endpoint provides additional information for the shore leave use case.
 
     Returns:
-        Additional news for the scuttlebutt use case.
+        Additional information for the shore leave use case.
     """
 
     name = "shoreleave"
@@ -255,7 +248,3 @@ def get_more_shoreleave():
         return jsonify(
             {"_name": name, "text": "Sorry, there is no additional information"}
         )
-
-
-if __name__ == "__main__":
-    app.run()

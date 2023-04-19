@@ -31,15 +31,13 @@ def get_weather(user_coordinates):
         Information about the weather for the given coordinates or an explanatory string if no weather information could be retrieved.
     """
 
-    # TODO: Why this instead of just passing the coordinates?
     user_location = {"lat": user_coordinates[0], "lon": user_coordinates[1]}
 
     url = f"http://weather:5000/weather"
     params = {"lat": user_location["lat"], "lon": user_location["lon"]}
     response = requests.get(url, params)
     if response.status_code != 200:
-        return "No weather information found for the provided coordinates."
-        # jsonify({"error": "Error getting weather information"}), 500
+        return "No weather information found for the provided coordinates. "
 
     data = response.json()
     max_temp = data["list"][0]["temp"]["max"]
@@ -75,8 +73,7 @@ def get_news(news_cateogories):
     url = f"http://news:5000/tagesschau/homepage"
     response = requests.get(url)
     if response.status_code != 200:
-        return "No news found for the provided categories."
-        # jsonify({"error": "Error getting weather information"}), 500
+        return "No news found for the provided categories. "
 
     data = response.json()
     compromised_data = []
@@ -110,7 +107,7 @@ def get_news(news_cateogories):
             )
         return answer
     else:
-        return "no data found in Scuttlebut!"
+        return "no data found in Scuttlebutt. "
 
 
 def get_stocks(stocks):
@@ -132,10 +129,8 @@ def get_stocks(stocks):
     response = requests.get(url, params)
     if response.status_code != 200:
         return "No quotes found for the provided stocks."
-        # jsonify({"error": "Error getting stock service information"}), 500
 
     data = response.json()
-    # TODO: Implement string building
 
     return data
 
@@ -189,7 +184,7 @@ def get_stock_news(stocks):
     params = {"symbols": symbols}
     response = requests.get(url, params)
     if response.status_code != 200:
-        return "No news found for the provided stocks."
+        return "No news found for the provided stocks. "
 
     data = response.json()
 
@@ -291,7 +286,3 @@ def get_more_scuttlebutt():
         return jsonify({"text": more_news})
     else:
         return jsonify({"error": "Error getting additional information"}), 500
-
-
-if __name__ == "__main__":
-    app.run()
