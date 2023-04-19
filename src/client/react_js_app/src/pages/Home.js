@@ -234,8 +234,67 @@ export function Home() {
     
   }
 
+  async function listenForSpeech2() {
 
-  function listenForSpeech() {
+
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) 
+        {
+          console.log("speech recognition API supported");
+        } 
+        else 
+        {
+          console.log("speech recognition API not supported")
+        }
+
+
+    const recognition = new window.webkitSpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = event => {
+      let interimTranscript = '';
+      let finalTranscript = '';
+
+      console.log("event",event)
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        let transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript + ' ';
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+
+      globalTranscript = finalTranscript.trim();
+    };
+
+    recognition.onerror = event => {
+      console.error('Speech recognition error:', event);
+    };
+
+    return new Promise((resolve, reject) => {
+      recognition.start();
+
+      let timeoutId = setTimeout(() => {
+        recognition.stop();
+        resolve(globalTranscript.trim());
+      }, 5000);
+
+      recognition.onend = () => {
+        clearTimeout(timeoutId);
+        resolve(globalTranscript.trim());
+      };
+
+      recognition.onerror = () => {
+        clearTimeout(timeoutId);
+        reject('Speech recognition error');
+      };
+    });
+  }
+
+  async function listenForSpeech() {
     return new Promise((resolve, reject) => {
       console.log("in listen For Speech")
       startListening()
@@ -255,6 +314,16 @@ export function Home() {
   const transcriptRef = useRef("");
 
   const startListening = () => {
+
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) 
+        {
+          console.log("speech recognition API supported");
+        } 
+        else 
+        {
+          console.log("speech recognition API not supported")
+        }
+
     const recognition = new window.webkitSpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
@@ -552,9 +621,9 @@ export function Home() {
         <input type="text" value={text} onChange={handleChange} onClick={() => setShowPopup(false)}
           placeholder="Search..." />
 
-        <button type="button" class="ios-button" onClick={() => handleSubmit()}>&#127929;</button>
+        <button type="button" className="ios-button" onClick={() => handleSubmit()}>&#127929;</button>
 
-        <button class="ios-button"  style={{ backgroundColor: buttonColor,  }} onClick={() => handleClick()}  onMouseEnter={() => setButtonColor("#007aff")}  onMouseLeave={() =>setButtonColor(isASelected ? "#ff3b30" : "transparent")}> &#128483; </button>
+        <button className="ios-button"  style={{ backgroundColor: buttonColor,  }} onClick={() => handleClick()}  onMouseEnter={() => setButtonColor("#007aff")}  onMouseLeave={() =>setButtonColor(isASelected ? "#ff3b30" : "transparent")}> &#128483; </button>
         
         <div className="settings-button-container">
 
@@ -580,10 +649,10 @@ export function Home() {
         <div className="notification-centerNew">
         <div className={"notification-containerNew"}>
             {notifications.map((notification, index) => (
-              <div key={index} className={`notificationNew ${notification.color} ${!expanded ? 'expanded' : ''}`} onClick={() => setExpanded(!expanded)}>
+              <div key={index} className={`notificationNew ${notification.color}`} onClick={() => setExpanded(!expanded)}>
                 <div className={`notification-iconNew`} style={{ backgroundColor: notification.color }}></div>
                 <div className="notification-textNew">{notification.message}</div>
-                <button onClick={() => removeNotification(index)} className="notification-closeNew">×</button>
+                <button className="notification-closeNew" onClick={() => removeNotification(index)} >×</button>
               </div>
             ))}
           </div>
