@@ -31,7 +31,11 @@ def get_intent():
 
     response = requests.get(url, params=params)
     if response.status_code == 200:
-        return {"intent": response.json().get("intent")}
+        return {"intent": response.json().get("intent"), "date_time": response.json().get("date_time"), "artist": response.json().get("artist"), "service": response.json().get("service")}
+
     else:
         print(response.status_code)
         raise ValueError("Failed to get intent from transcript")
+    
+if __name__ == '__main__':
+    app.run(debug=True, port=5021)
