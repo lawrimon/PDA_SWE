@@ -70,24 +70,26 @@ def get_events(location, keyword_list, enddate):
     data = response.json()
     if not data:
         return "No events found in your area basedo on your favorite artists."
-    answer = "Here are some event suggestions based on your favorite artists: "
-    for event in data:
-        answer += (
-            "On the "
-            + event["date"]
-            + " in "
-            + event["location"]
-            + " you can see "
-            + event["name"]
-            + ". "
-            + " The price is "
-            + event["price"]
-            + " and the genre of the event is "
-            + event["topic"]
-            + " ."
-        )
+    
+    else:
+        answer = "Here are some event suggestions based on your favorite artists: "
+        for event in data:
+            answer += (
+                "On the "
+                + event["date"]
+                + " in "
+                + event["location"]
+                + " you can see "
+                + event["name"]
+                + ". "
+                + " The price is "
+                + event["price"]
+                + " and the genre of the event is "
+                + event["topic"]
+                + " ."
+            )
 
-    return answer
+        return answer
 
 
 def get_sports(club_ids, clubs):
@@ -111,7 +113,7 @@ def get_sports(club_ids, clubs):
         url = f"http://sports:5000/football/fixture"
         response = requests.get(url, params)
         if response.status_code != 200:
-            return "No sports fixtures found for the provided team. "
+            return "No sports fixtures found for the provided team."
             # jsonify({"error": "Error getting weather information"}), 500
 
         data = response.json()
