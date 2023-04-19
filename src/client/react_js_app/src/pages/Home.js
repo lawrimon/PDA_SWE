@@ -217,23 +217,26 @@ export function Home() {
     setText(event.target.value);
   };
 
-  async function  handleSubmit () {
+  async function handleSubmit() {
+    let intent1 = "";
     const url = `http://localhost:5021/dialogflow/get_intent?transcript=${text}`;
     await fetch(url)
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         console.log(data.intent);
         console.log(data.service);
         console.log(data.artist);
         setIntent(data.intent);
         setService(data.service);
+        intent1 = data.intent;
+        return data;
       })
-      .then(daten =>{
-        console.log(intent)
-        say_use_case(intent);
+      .then((daten) => {
+        say_use_case(intent1);
       })
-      .catch(error => console.error(error));
+      .catch((error) => console.error(error));
   }
+  
   
   function changeColor(div) {
     var button = document.getElementById(div);
@@ -399,6 +402,7 @@ export function Home() {
   }
 
   async function say_use_case(use_case, speaking_text = "") {
+    console.log(use_case, "usecase")
     var text = null;
     var tmp_use_case = use_case
     if (use_case === "rabbit"){
