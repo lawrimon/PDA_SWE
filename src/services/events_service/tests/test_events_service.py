@@ -59,6 +59,7 @@ def test_get_events_artists(
         assert "error" in data
         assert data["error"] == expected_error
 
+
 @pytest.mark.parametrize(
     "artists, location, enddate, expected_status_code, expected_error",
     [
@@ -69,7 +70,7 @@ def test_get_events_artists(
 )
 def test_get_events(
     client, artists, location, enddate, expected_status_code, expected_error
-    )  :
+):
     """Test the event endpoint.
 
     This test checks if the event endpoint returns the correct status code and error message.
