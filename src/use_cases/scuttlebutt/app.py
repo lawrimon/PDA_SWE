@@ -250,6 +250,7 @@ def get_scuttlebutt():
         The scuttlebutt use case response containing news, weather, stock quotes and stock news.
     """
 
+    more_news = []
     if not request.args.get("user"):
         return jsonify({"error": "Missing parameters"}), 400
 

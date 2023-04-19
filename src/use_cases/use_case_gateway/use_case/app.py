@@ -236,7 +236,41 @@ def notify_shoreleave():
 
 
 def notify_racktime():
-    pass
+    """
+    This function retrieves the events near the user's location and checks if they
+    interfere with any appointments of the user. If the requirements are met, it
+    publishes the event to a RabbitMQ queue.
+    """
+
+    users = get_all_user()
+
+    connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST))
+    channel = connection.channel()
+    channel.exchange_declare(exchange="notifications", exchange_type="direct")
+
+    # check that there is at least one user
+    if users:
+        for user in users:
+            print(user)
+            user_id = user
+
+            channel.queue_declare(queue=user_id)
+            channel.queue_bind(
+                exchange="notifications", queue=user_id, routing_key=user_id
+            )
+
+            message = get_racktime(user_id)
+
+            if message:
+                print("Message from shoreleave received")
+                # convert the event object to a string before publishing
+                event_str = json.dumps(message)
+                # publish the event to the queue
+                channel.basic_publish(
+                    exchange="notifications", routing_key=user_id, body=event_str
+                )
+            else:
+                print("No users found!")
 
 
 # publish every 7 seconds
@@ -245,9 +279,9 @@ scheduler = BackgroundScheduler(daemon=True)
 
 # schedule every x minutes
 
-# scheduler.add_job(func=notify_scuttlebutt, trigger="interval", seconds=60)
-scheduler.add_job(func=notify_lookout, trigger="interval", minutes=30)
-scheduler.add_job(func=notify_shoreleave, trigger="interval", minutes=30)
+scheduler.add_job(func=notify_racktime, trigger="interval", seconds=60)
+scheduler.add_job(func=notify_lookout, trigger="interval", minutes=1)
+scheduler.add_job(func=notify_shoreleave, trigger="interval", minutes=1)
 
 
 # schedule on day time (T-2h inside Docker)
