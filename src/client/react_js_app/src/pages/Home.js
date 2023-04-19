@@ -3,7 +3,7 @@ import './NotificationCenter.css'
 import logo from '../resources/cAPItan_Logo.jpg';
 import logo2 from '../resources/spongie2.gif';
 import React, { useState, useEffect, useRef } from 'react';
-
+import { speak, stopListening, startListening, listenForSpeech } from '../components/SpeechFunctions';
 import { Link } from 'react-router-dom';
 import { getUserId, setUserId, user_id } from '../components/User.js';
 import io from 'socket.io-client';
@@ -11,47 +11,45 @@ import io from 'socket.io-client';
 
 export function Home() {
   var originalColor;
-
-  const useridRef = useRef(null);
   const [notifications, setNotifications] = useState([]);
-
   const [logoSrc, setLogoSrc] = useState(logo);
-
-  // Rabbit
   const [queueName, setQueueName] = useState(null);
-  const socketRef = useRef(null);
-  const [message, setMessage] = useState(""); //  do we need this ?
-  const deliveryTagRef = useRef("");
   const [text, setText] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [isASelected, setIsASelected] = useState(false);
+  const [buttonColor, setButtonColor] = useState('transparent');
+
+  const useridRef = useRef(null);
+  const socketRef = useRef(null);
+  const deliveryTagRef = useRef('');
 
   const ENDPOINT = 'http://localhost:5010/';
-  var globalTranscript = ""
-  var next_message = false;
-  var connected = false;
+  let next_message = false;
+  let connected = false;
 
   const NotificationColors = {
-    scuttlebutt: "gray",
-    shoreleave: "lightpink",
-    lookout: "lightgreen",
-    racktime: "brown"
+    scuttlebutt: 'gray',
+    shoreleave: 'lightpink',
+    lookout: 'lightgreen',
+    racktime: 'brown',
   };
 
   const UsecasePorts = {
-    shoreleave: "13",
-    lookout: "19",
-    scuttlebutt: "08",
-    racktime: "16"
-  }
+    shoreleave: '13',
+    lookout: '19',
+    scuttlebutt: '08',
+    racktime: '16',
+  };
 
   // set to true to avoid long TTS
-  var debug = false
+  const debug = false;
 
-  //intent returned by dialogflow
-  const [intent, setIntent] = useState(null);
-  const [service, setService] = useState(null);
+  // function to update delivery tag
+  const updateDeliveryTag = (tag) => {
+    deliveryTagRef.current = tag;
+  };
 
   // function to update delivery tag
   function updateDeliveryTag(tag) {
@@ -60,7 +58,7 @@ export function Home() {
 
   const addNotification = (message, color) => {
     setNotifications(notifications => [...notifications, { message, color }]);
-};
+  };
 
   const removeNotification = (index) => {
     const newNotifications = [...notifications];
@@ -79,9 +77,6 @@ export function Home() {
       console.log("Userid: ", useridRef.current);
       setUserId(useridRef.current)
       setQueueName(storedUserId)
-
-      // connect to websocket server on mount
-      // handleConnect()
     }
 
     // invalid login user
@@ -89,25 +84,20 @@ export function Home() {
       // disconnect current socket
       handleDisconnect()
       Logout()
-
     }
 
     // disconnect socket on unmount
     return () => {
-      if (socketRef.current) {
-        console.log(`Disconnected from ${queueName} room Print4`);
-        socketRef.current.disconnect();
-        socketRef.current = null;
-      }
+      handleDisconnect()
     };
   }, [getUserId()]);
 
-  async function buttonConnect(){
-    if (connected){
+  function buttonConnect() {
+    if (connected) {
       connected = false
       handleConnect();
     }
-    else{
+    else {
       connected = true
       handleDisconnect();
     }
@@ -141,13 +131,13 @@ export function Home() {
     };
   };
 
-  function handleDisconnect(){
+  function handleDisconnect() {
 
     // disconnect from websocket server
     if (socketRef.current) {
 
       // acknowledge message before disconnecting
-      if(deliveryTagRef.current){
+      if (deliveryTagRef.current) {
         handleAcknowledge(deliveryTagRef.current)
       }
       console.log(`Disconnected from ${queueName} room Print1`);
@@ -168,8 +158,6 @@ export function Home() {
         socketRef.current.emit('ack', { delivery_tag: deliveryTag });
 
         // Remove acknowledged message from messages array
-        console.log("Message Acknowledged")
-        setMessage("");
         deliveryTagRef.current = null
       } else {
         console.error('Invalid delivery tag:', deliveryTag);
@@ -184,7 +172,6 @@ export function Home() {
     console.log('Message received', message);
     // Add message to messages state
     updateDeliveryTag(message.delivery_tag)
-    console.log("Delivery Tag", deliveryTagRef.current)
     say_use_case("rabbit", message.message)
       .then(() => {
         if (deliveryTagRef.current && next_message) {
@@ -196,9 +183,9 @@ export function Home() {
 
 
   // asking user for additional information
-  async function handleAdditional(){
+  async function handleAdditional() {
     const question_text = "Thank you for listening. Do you want any additional information? "
-    await say_text(question_text)
+    await speak(question_text)
   }
 
 
@@ -207,7 +194,6 @@ export function Home() {
   };
 
   const Logout = () => {
-    console.log("Logging out!");
     setUserId("")
     localStorage.clear()
     window.location.href = '/login';
@@ -223,21 +209,15 @@ export function Home() {
     await fetch(url)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data.intent);
-        console.log(data.service);
-        console.log(data.artist);
         setIntent(data.intent);
         setService(data.service);
         intent1 = data.intent;
-        return data;
-      })
-      .then((daten) => {
         say_use_case(intent1);
       })
       .catch((error) => console.error(error));
   }
-  
-  
+
+
   function changeColor(div) {
     var button = document.getElementById(div);
     if (!button.classList.contains('red')) {
@@ -248,146 +228,13 @@ export function Home() {
 
   function setColor(div) {
     var button = document.getElementById(div);
-      button.style.backgroundColor = originalColor;
-    
+    button.style.backgroundColor = originalColor;
   }
-
-  async function listenForSpeech2() {
-
-
-    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) 
-        {
-          console.log("speech recognition API supported");
-        } 
-        else 
-        {
-          console.log("speech recognition API not supported")
-        }
-
-
-    const recognition = new window.webkitSpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
-
-    recognition.onresult = event => {
-      let interimTranscript = '';
-      let finalTranscript = '';
-
-      console.log("event",event)
-
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        let transcript = event.results[i][0].transcript;
-        if (event.results[i].isFinal) {
-          finalTranscript += transcript + ' ';
-        } else {
-          interimTranscript += transcript;
-        }
-      }
-
-      globalTranscript = finalTranscript.trim();
-    };
-
-    recognition.onerror = event => {
-      console.error('Speech recognition error:', event);
-    };
-
-    return new Promise((resolve, reject) => {
-      recognition.start();
-
-      let timeoutId = setTimeout(() => {
-        recognition.stop();
-        resolve(globalTranscript.trim());
-      }, 5000);
-
-      recognition.onend = () => {
-        clearTimeout(timeoutId);
-        resolve(globalTranscript.trim());
-      };
-
-      recognition.onerror = () => {
-        clearTimeout(timeoutId);
-        reject('Speech recognition error');
-      };
-    });
-  }
-
-  function listenForSpeech() {
-    return new Promise((resolve, reject) => {
-      console.log("in listen For Speech")
-      startListening()
-        let finalTranscript = "";
-        const timeoutId = setTimeout(() => {
-          finalTranscript = stopListening();
-          console.log("finaltrans", finalTranscript);
-          resolve(finalTranscript);
-        }, 5000);
-      })
-  }
-  
-  
-  const [isASelected, setIsASelected] = useState(false);
-  const [buttonColor, setButtonColor] = useState("transparent");
-  const recognitionRef = useRef(null);
-  const transcriptRef = useRef("");
-
-  const startListening = () => {
-
-    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) 
-        {
-          console.log("speech recognition API supported");
-        } 
-        else 
-        {
-          console.log("speech recognition API not supported")
-        }
-
-    const recognition = new window.webkitSpeechRecognition();
-    recognition.continuous = true;
-    recognition.lang = 'en-US';
-    recognition.interimResults = true;
-    recognitionRef.current = recognition;
-
-    recognition.onresult = (event) => {
-      let interimTranscript = "";
-      let finalTranscript = "";
-
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
-        if (event.results[i].isFinal) {
-          finalTranscript += transcript;
-        } else {
-          interimTranscript += transcript;
-        }
-      }
-      console.log(interimTranscript);
-
-
-      transcriptRef.current = interimTranscript + finalTranscript;
-    };
-
-    recognition.start();
-    console.log("listening started");
-    
-
-  };
-
-  const stopListening = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      console.log("listening stopped");
-      console.log("final transcript:", transcriptRef.current);
-      let transcript = transcriptRef.current
-      setText(transcriptRef.current)
-      transcriptRef.current = "";
-      return transcript
-    }
-  };
 
   const handleClick = () => {
     if (isASelected) {
       setButtonColor("transparent");
-      stopListening();
+      setText(stopListening());
     } else {
       setButtonColor("#F62817");
       startListening();
@@ -402,238 +249,126 @@ export function Home() {
   }
 
   async function say_use_case(use_case, speaking_text = "") {
-    console.log(use_case, "usecase")
-    var text = null;
-    var tmp_use_case = use_case
-    if (use_case === "rabbit"){
-      tmp_use_case = speaking_text._name
+    try {
+      let text;
+      let tmp_use_case = use_case;
+
+      if (use_case === "rabbit") {
+        tmp_use_case = speaking_text._name;
+        text = speaking_text;
+      } else {
+        switch (use_case) {
+          case "scuttlebutt":
+            text = await getScuttlebutt();
+            break;
+          case "lookout":
+            text = await getLooktout();
+            break;
+          case "racktime":
+            text = await getRackTime();
+            break;
+          case "shoreleave":
+            text = await getShoreleave();
+            break;
+          default:
+            return;
+        }
+      }
+
+      const name = text._name;
+      delete text._name;
+      const keysInOrder = Object.keys(text);
+
+      if (debug) {
+        const textToSay = "This is a little example text";
+        const use_case = "scuttlebutt";
+        addNotification(textToSay, NotificationColors[use_case]);
+        await speak(textToSay);
+      } else {
+        handleLogo(logo2);
+        changeColor(name);
+
+        for (const key of keysInOrder) {
+          const value = text[key];
+          addNotification(value, NotificationColors[name]);
+          await speak(value);
+        }
+      }
+
+      // pause for 2 seconds using Promises
+      await delay(2000);
+      handleLogo(logo);
+      setColor(name);
+
+      if (tmp_use_case === "scuttlebutt" || tmp_use_case === "shoreleave") {
+        const tmp_transcript = await listenForSpeech();
+        await handleTranscript(tmp_transcript, name);
+      }
+
+      // acknowledge message so that next message can be consumed
+      if (deliveryTagRef.current) {
+        handleAcknowledge(deliveryTagRef.current);
+      }
+    } catch (error) {
+      console.error("Error in say_use_case:", error);
     }
-    
-    // get the right data to spreak
-    if (use_case === "scuttlebutt") {
-      text = await getScuttlebutt();
-    } else if (use_case === "lookout") {
-      text = await getLooktout();
-    } else if (use_case === "racktime") {
-      console.log("in racktime")
-      text = await getRackTime();
-    } else if (use_case === "shoreleave") {
-      text = await getShoreleave();
-    } else if (use_case === "rabbit") {
-      text = speaking_text;
-    } else {
-      // handle the case where use_case is not recognized
+  }
+
+  async function handleTranscript(transcript, usecase) {
+    if (transcript.toLowerCase().includes("no")) {
+      logger.info("Alright, have a nice day!");
       return;
     }
 
-
-    console.log("Starts speaking...");
-    console.log(tmp_use_case, "usecase")
-    console.log(text)
-
-    let name = text._name
-    delete text._name
-    const keysInOrder = Object.keys(text);
-    
-    if (debug){
-      let textToSay = "this is a little example text"
-      let use_case  = "scuttlebutt"
-      addNotification(textToSay, NotificationColors[use_case])
-      await say_text(textToSay)
+    if (transcript.toLowerCase().length <= 2) {
+      logger.info("User did not request more information.");
+      return;
     }
-    else {
-    let i = 0;
-    handleLogo(logo2)
-    changeColor(name)
-    for (const key of keysInOrder) {
-      const value = text[key];
-      addNotification(value, NotificationColors[name])
-      await say_text(value)
-      i += 1;
+
+    try {
+      const response = await fetch(`http://127.0.0.1:50${UsecasePorts[usecase]}/${usecase}/additional`);
+      const data = await response.json();
+
+      if (response.status !== 200) {
+        logger.error("Error in response from Scuttlebut");
+        return;
       }
-    }
 
-    // pause for 1 seconds using Promises
-    delay(2000).then(() => {});
-    
-    handleLogo(logo)
-    setColor(name)
-    if(tmp_use_case === "scuttlebutt" || tmp_use_case === "shoreleave" ){
-      try {
-        await handleAdditional()
-        console.log("Listening...");
-        const tmp_transcript = await listenForSpeech();
-        console.log("Recording ended")
-        console.log("Transcript:", tmp_transcript);
-        await handleTranscript(tmp_transcript, name);
-        
-        // reset transcript
-        globalTranscript = ""
-      } catch (error) {
-        console.error("Speech recognition error:", error);
-      }
-    }
-    // acknowledge message so that next message can be consumed
-    if (deliveryTagRef.current){
-      handleAcknowledge(deliveryTagRef.current)
+      const additionalText = data.text.join("");
+      addNotification(additionalText, NotificationColors[usecase]);
+      await speak(additionalText);
+    } catch (error) {
+      logger.error(error);
+      logger.error("Sorry, there was an error getting more information.");
     }
   }
 
-  async function say_text(text) {
-
-    speechSynthesis.cancel()
-    var utterance = new SpeechSynthesisUtterance(text);
-    // utterance.voice = voices.find((voice) => voice.name === 'Google UK English Female');
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    utterance.lang = 'en-US';
-
-    await new Promise((resolve, reject) => {
-      utterance.addEventListener('start', function () {
-        setMessage(text)
-        console.log("speaking")
-      })
-      utterance.addEventListener("error", (event) => {
-        console.log("Error: rejected");
-        reject();
-      });
-
-      utterance.addEventListener('end', function () {
-        resolve();
-      })
-
-      utterance.onend = function (event) {
-        console.log('Speech finished after ' + event.elapsedTime + ' seconds.');
-        // Do something here after the speech has finished
-        resolve();
-      };
-      speechSynthesis.cancel()
-      speechSynthesis.speak(utterance);
-    });
-  }
-
-  async function say_text(text) {
-
-    speechSynthesis.cancel()
-    var utterance = new SpeechSynthesisUtterance(text);
-    // utterance.voice = voices.find((voice) => voice.name === 'Google UK English Female');
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    utterance.lang = 'en-US';
-
-    await new Promise((resolve, reject) => {
-      utterance.addEventListener('start', function () {
-        setMessage(text)
-        console.log("speaking")
-      })
-      utterance.addEventListener("error", (event) => {
-        console.log("Error: rejected");
-        reject();
-      });
-
-      utterance.addEventListener('end', function () {
-        resolve();
-      })
-
-      utterance.onend = function (event) {
-        console.log('Speech finished after ' + event.elapsedTime + ' seconds.');
-        // Do something here after the speech has finished
-        resolve();
-      };
-      speechSynthesis.cancel()
-      speechSynthesis.speak(utterance);
-    });
-  }
-
-
-  async function handleTranscript(transcript, usecase) {
-    console.log("in handle Transcript")
-    console.log(usecase)
-    if (transcript.toLowerCase().includes("no")) {
-      console.log("Alright, have a nice day!");
-      await say_text("Alright, have a nice day!")
-      // check if user said something -> intend recognition here
-    } else if (transcript.toLowerCase().length > 2) {
-      console.log("provide more information");
-      try {
-        console.log('http://127.0.0.1:50'+ UsecasePorts[usecase] + '/'+ usecase + '/additional')
-        const response = await fetch('http://127.0.0.1:50'+ UsecasePorts[usecase] + '/'+ usecase + '/additional');
-        const data = await response.json();
-        if (response.status != 200){
-          console.log("Error in response from Scuttlebut")
-        }
-        else{
-        let addtional_text = ""
-        for (const part of data["text"]) {
-          addtional_text += part.toString()
-        }
-
-        if (debug){
-          const slice1 = addtional_text.slice(0,10)
-          console.log("Additional Message:", slice1);
-          addNotification(slice1, NotificationColors[usecase])
-
-          await say_text(slice1)
-        }
-        else{
-          const slice1 = addtional_text.slice(0,10)
-          console.log("Additional Message:", slice1);
-          addNotification(addtional_text, NotificationColors[usecase])
-
-          await say_text(addtional_text)
-        }
-        
-        }
-      } catch (error) {
-        console.error(error);
-        console.log("Sorry, there was an error getting more information.");
-      }
-    } else {
-      console.log("User did not request more information.");
+  async function fetchData(url) {
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data) {
+      return data;
     }
   }
 
   async function getScuttlebutt() {
-    const response = await fetch('http://127.0.0.1:5008/scuttlebutt?user=' + useridRef.current)
-    const data = await response.json();
-    console.log("this data", data)
-    if (data) {
-      setMessage(data)    
-      return data
-    }
-  };
+    const url = `http://127.0.0.1:5008/scuttlebutt?user=${useridRef.current}`;
+    return fetchData(url);
+  }
 
   async function getShoreleave() {
-
-    const response = await fetch('http://127.0.0.1:5013/shoreleave?user=' + user_id)
-    const data = await response.json();
-    console.log("this data", data)
-
-    if (data) {
-      setMessage(data)
-      return data
-    }
+    const url = `http://127.0.0.1:5013/shoreleave?user=${user_id}`;
+    return fetchData(url);
   }
 
   async function getLooktout() {
-    const response = await fetch('http://127.0.0.1:5016/lookout?user=' + user_id)
-    const data = await response.json();
-
-    console.log("this data", data)
-    if (data) {
-      setMessage(data)
-      return data
-    }
+    const url = `http://127.0.0.1:5016/lookout?user=${user_id}`;
+    return fetchData(url);
   }
 
   async function getRackTime() {
-    const response = await fetch('http://127.0.0.1:5019/racktime?user=' + user_id)
-    const data = await response.json();
-    console.log("this data", data)
-    if (data) {
-      setMessage(data)
-      return data
-    }
+    const url = `http://127.0.0.1:5019/racktime?user=${user_id}`;
+    return fetchData(url);
   }
 
 
@@ -645,37 +380,24 @@ export function Home() {
       <h1 style={{ color: "white", paddingTop: "1%" }}>cAPItan</h1>
       <div className="search-container">
         <input type="text" value={text} onChange={handleChange} onClick={() => setShowPopup(false)}
-          placeholder="Search..." />
-
-        
+          placeholder="Try: When should I go to bed ?" />
         <button type="button" className="ios-button" onClick={() => handleSubmit()}>&#127929;</button>
-
-        <button className="ios-button"  style={{ backgroundColor: buttonColor,  }} onClick={() => handleClick()}  onMouseEnter={() => setButtonColor("#007aff")}  onMouseLeave={() =>setButtonColor(isASelected ? "#ff3b30" : "transparent")}> &#128483; </button>
-        
+        <button className="ios-button" style={{ backgroundColor: buttonColor, }} onClick={() => handleClick()} onMouseEnter={() => setButtonColor("#007aff")} onMouseLeave={() => setButtonColor(isASelected ? "#ff3b30" : "transparent")}> &#128483; </button>
         <div className="settings-button-container">
-
           <Link to="/settings">
             <button type="button" className="settings-button">&#9881;</button>
           </Link>
-
-          <button type="button" id="rabbit" onClick={() => buttonConnect()}  className="rabbit">&#128048;</button>
-
+          <button type="button" id="rabbit" onClick={() => buttonConnect()} className="rabbit">&#128048;</button>
           <button type="button" id="scuttlebutt" onClick={() => say_use_case("scuttlebutt")} className="scuttlebutt">&#128240;</button>
-
           <button type="button" id="shoreleave" onClick={() => say_use_case("shoreleave")} className="shoreleave">&#127861;</button>
-
-          <button type="button" id="lookout" onClick={() => say_use_case("lookout")}  className="lookout">&#128065;</button>
-          
-          <button type="button" id= "racktime" onClick={() => say_use_case("racktime")} className="racktime">&#128164;</button>
-
+          <button type="button" id="lookout" onClick={() => say_use_case("lookout")} className="lookout">&#128065;</button>
+          <button type="button" id="racktime" onClick={() => say_use_case("racktime")} className="racktime">&#128164;</button>
           <button type="button" id="Logout" onClick={() => Logout()} className="settings-button">&#x23FB;</button>
-
         </div>
       </div>
-
       <div className="nots">
         <div className="notification-centerNew">
-        <div className={"notification-containerNew"}>
+          <div className={"notification-containerNew"}>
             {notifications.map((notification, index) => (
               <div key={index} className={`notificationNew ${notification.color}`} onClick={() => setExpanded(!expanded)}>
                 <div className={`notification-iconNew`} style={{ backgroundColor: notification.color }}></div>
@@ -686,7 +408,6 @@ export function Home() {
           </div>
         </div>
       </div>
-
     </div>
 
 
