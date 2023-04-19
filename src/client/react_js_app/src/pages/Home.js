@@ -435,19 +435,20 @@ export function Home() {
     console.log("Finishxed Speaking");
     handleLogo(logo)
     setColor(name)
-    try {
-      console.log("Listening...");
-      const tmp_transcript = await listenForSpeech();
-      console.log("after Speech")
-      console.log("Transcript:", tmp_transcript);
-      await handleTranscript(tmp_transcript, name);
-      
-      // reset transcript
-      globalTranscript = ""
-    } catch (error) {
-      console.error("Speech recognition error:", error);
+    if(use_case ==="scuttlebutt" || use_case ==="shoreleave" ){
+      try {
+        console.log("Listening...");
+        const tmp_transcript = await listenForSpeech();
+        console.log("after Speech")
+        console.log("Transcript:", tmp_transcript);
+        await handleTranscript(tmp_transcript, name);
+        
+        // reset transcript
+        globalTranscript = ""
+      } catch (error) {
+        console.error("Speech recognition error:", error);
+      }
     }
-
     // acknowledge message so that next message can be consumed
     if (deliveryTagRef.current){
       handleAcknowledge(deliveryTagRef.current)
