@@ -10,6 +10,8 @@ Typical endpoints usage:
     GET /events/all?location=location&artists=artists&enddate=enddate
 """
 
+
+
 from flask import Flask, jsonify, request
 import requests
 import dotenv
@@ -33,7 +35,7 @@ def missing_route_parameters(route_params: Dict) -> bool:
         "/events/artists": ["artists", "enddate"],
         "/events/all": ["location", "artists", "enddate"],
     }
-
+    
     route_path = request.path
     missing_params = [p for p in required_params[route_path] if p not in route_params]
 
@@ -60,6 +62,10 @@ def get_events_location():
 
     This endpoint provides the current events based on location.
 
+    Args:
+        Location: The location where the event is
+        Enddate: The latest date of an event
+
     Returns:
         Events based on the location
     """
@@ -77,13 +83,10 @@ def get_events_location():
 
         response = requests.get(url, params=params)
         if response.status_code != 200:
-            print(response.json())
             return jsonify({"error": "Error getting user location information"}), 500
 
         data = response.json()
-        # print(data)
         event_list = data["_embedded"]["events"]
-        print("here")
         for i in event_list:
             try:
                 event = {
@@ -108,15 +111,11 @@ def get_events_artists():
 
     This endpoint provides events based on artists
 
+    Args:
+        Artists: Artists that were set in preferences
+        
     Returns:
         The event information.
-
-
-    if missing_route_parameters(request.args):
-        return jsonify({"error": "Missing parameters"}), 400
-
-    if invalid_route_parameters(request.args):
-        return jsonify({"error": "Invalid parameters"}), 400
     """
 
     if missing_route_parameters(request.args):
@@ -129,30 +128,22 @@ def get_events_artists():
         return jsonify({"error": "Missing artists parameter"}), 400
     keyword_list = json.loads(keyword_list)
     enddate = request.args.get("enddate")
-    print(keyword_list, "keywordlist")
-    print(enddate, "enddate")
-    print(EVENTS_API_KEY, "APIKEY")
     events = []
     try:
         for keyword in keyword_list:
-            print("keyword", keyword)
             url = f"https://app.ticketmaster.com/discovery/v2/events.json"
             params = {
                 "apikey": EVENTS_API_KEY,
                 "keyword": keyword,
                 "endDateTime": enddate,
             }
-            print("before request")
             response = requests.get(url, params=params)
-            print(response)
             if response.status_code != 200:
                 return (
                     jsonify({"error": "Error getting user location information"}),
                     500,
                 )
-            print("lol")
             data = response.json()
-            print("this data", data)
             event_list = data["_embedded"]["events"]
             for i in event_list:
                 event = {
@@ -176,6 +167,11 @@ def get_events():
     """Event location and artist
 
     This endpoint provides the current events based on location and artsits.
+    
+    Args: 
+        Location: The location where the event is
+        Enddate: The latest date of an event
+        Artists: Artists that were set in preferences
 
     Returns:
         Events based on preferences
@@ -192,11 +188,9 @@ def get_events():
     keyword_list = request.args.get("artists")
     keyword_list = json.loads(keyword_list)
     enddate = request.args.get("enddate")
-    print(location, keyword_list, enddate)
     events = []
     try:
         for keyword in keyword_list:
-            print(keyword)
             url = f"https://app.ticketmaster.com/discovery/v2/events.json"
             params = {
                 "apikey": EVENTS_API_KEY,
