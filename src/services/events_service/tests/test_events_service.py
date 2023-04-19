@@ -13,7 +13,7 @@ def client():
     "location, enddate, expected_status_code, expected_error",
     [
         ("Stuttgart", "2023-05-01T14:00:00Z", 200, None),
-        (None, None, 400, "Missing route parameters"),
+        (None, None, 400, "Missing parameters"),
     ],
 )
 def test_get_events_location(
@@ -38,8 +38,8 @@ def test_get_events_location(
     "artists, enddate, expected_status_code, expected_error",
     [
         ('["Avril Lavigne"]', "2023-05-01T14:00:00Z", 200, None),
-        (None, None, 400, "Missing route parameters"),
-        ([], None, 400, "Missing route parameters"),
+        (None, None, 400, "Missing parameters"),
+        ([], None, 400, "Missing parameters"),
     ],
 )
 def test_get_events_artists(
@@ -64,8 +64,8 @@ def test_get_events_artists(
     "artists, location, enddate, expected_status_code, expected_error",
     [
         ('["Avril Lavigne"]', "Stuttgart", "2023-05-01T14:00:00Z", 200, None),
-        (None, None, None, 400, "Missing route parameters"),
-        ([], None, None, 400, "Missing route parameters"),
+        (None, None, None, 400, "Missing parameters"),
+        ([], None, None, 400, "Missing parameters"),
     ],
 )
 def test_get_events(

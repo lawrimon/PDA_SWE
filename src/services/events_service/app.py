@@ -11,7 +11,6 @@ Typical endpoints usage:
 """
 
 
-
 from flask import Flask, jsonify, request
 import requests
 import dotenv
@@ -26,64 +25,38 @@ dotenv.load_dotenv()
 EVENTS_API_KEY = os.getenv("EVENTS_API_KEY")
 
 
-def missing_route_parameters(route_params: Dict) -> bool:
-    """
-    Returns True if required parameters are missing from the route params.
-    """
-    required_params = {
-        "/events/location": ["location", "enddate"],
-        "/events/artists": ["artists", "enddate"],
-        "/events/all": ["location", "artists", "enddate"],
-    }
-    
-    route_path = request.path
-    missing_params = [p for p in required_params[route_path] if p not in route_params]
-
-    if missing_params:
-        print(f"Missing route parameters: {missing_params}")
-        return True
-    return False
-
-
-def invalid_route_parameters(route_params: Dict) -> bool:
-    """
-    Returns True if any of the route params are invalid.
-    """
-    for param, value in route_params.items():
-        if not value:
-            print(f"Invalid route parameter '{param}': {value}")
-            return True
-    return False
-
-
 @app.route("/events/location")
 def get_events_location():
-    """Event location endpoint.
+    """Event endpoint based on location.
 
-    This endpoint provides the current events based on location.
+    This endpoint provides the current events based on the location
 
     Args:
-        Location: The location where the event is
-        Enddate: The latest date of an event
+        location: The location of the event.
+        enddate: The end date of the event search.
 
     Returns:
-        Events based on the location
+        Information about the found events.
     """
-    if missing_route_parameters(request.args):
-        return jsonify({"error": "Missing route parameters"}), 400
-    if invalid_route_parameters(request.args):
-        return jsonify({"error": "Invalid route parameters"}), 400
-    events = []
+
+    if missing_event_parameters(request.args):
+        return jsonify({"error": "Missing parameters"}), 400
+    
+    if invalid_event_parameters(request.args):
+        return jsonify({"error": "Invalid  parameters"}), 400
+    
 
     location = request.args.get("location")
     enddate = request.args.get("enddate")
+
+    events = []
     try:
         url = f"https://app.ticketmaster.com/discovery/v2/events.json"
         params = {"apikey": EVENTS_API_KEY, "city": location, "endDateTime": enddate}
 
         response = requests.get(url, params=params)
         if response.status_code != 200:
-            return jsonify({"error": "Error getting user location information"}), 500
+            return jsonify({"error": "Error getting event information"}), 500
 
         data = response.json()
         event_list = data["_embedded"]["events"]
@@ -103,31 +76,34 @@ def get_events_location():
 
     except Exception as e:
         print(e)
+        return jsonify({"error": "Error getting event information"}), 500
 
 
 @app.route("/events/artists")
 def get_events_artists():
-    """Artist endpoint.
+    """Artist endpoint based on artists.
 
-    This endpoint provides events based on artists
+    This endpoint provides events based on artists.
 
     Args:
-        Artists: Artists that were set in preferences
+        artists: The artists of the event.
+        enddate: The end date of the event search.
         
     Returns:
-        The event information.
+        Information about the found events.
     """
 
-    if missing_route_parameters(request.args):
-        return jsonify({"error": "Missing route parameters"}), 400
-    if invalid_route_parameters(request.args):
-        return jsonify({"error": "Invalid route parameters"}), 400
+    if missing_event_parameters(request.args):
+        return jsonify({"error": "Missing parameters"}), 400
+    
+    if invalid_event_parameters(request.args):
+        return jsonify({"error": "Invalid parameters"}), 400
 
     keyword_list = request.args.get("artists")
-    if keyword_list is None:
-        return jsonify({"error": "Missing artists parameter"}), 400
+    
     keyword_list = json.loads(keyword_list)
     enddate = request.args.get("enddate")
+
     events = []
     try:
         for keyword in keyword_list:
@@ -140,7 +116,7 @@ def get_events_artists():
             response = requests.get(url, params=params)
             if response.status_code != 200:
                 return (
-                    jsonify({"error": "Error getting user location information"}),
+                    jsonify({"error": "Error getting event information"}),
                     500,
                 )
             data = response.json()
@@ -159,35 +135,34 @@ def get_events_artists():
 
     except Exception as e:
         print(e)
-        return None
+        return jsonify({"error": "Error getting event information"}), 500
 
 
 @app.route("/events/all")
 def get_events():
-    """Event location and artist
+    """Event endpoint based on location and artists.
 
-    This endpoint provides the current events based on location and artsits.
+    This endpoint provides events based on the location and artists.
     
     Args: 
-        Location: The location where the event is
-        Enddate: The latest date of an event
-        Artists: Artists that were set in preferences
+        location: The location of the event.
+        artists: The artists of the event.
+        enddate: The end date of the event search.
 
     Returns:
-        Events based on preferences
-
+        Information about the found events.
     """
-    if missing_route_parameters(request.args):
-        return jsonify({"error": "Missing route parameters"}), 400
-    if invalid_route_parameters(request.args):
-        return jsonify({"error": "Invalid route parameters"}), 400
 
-    events = []
+    if missing_event_parameters(request.args):
+        return jsonify({"error": "Missing parameters"}), 400
+    if invalid_event_parameters(request.args):
+        return jsonify({"error": "Invalid parameters"}), 400
 
     location = request.args.get("location")
     keyword_list = request.args.get("artists")
     keyword_list = json.loads(keyword_list)
     enddate = request.args.get("enddate")
+
     events = []
     try:
         for keyword in keyword_list:
@@ -202,7 +177,7 @@ def get_events():
             response = requests.get(url, params=params)
             if response.status_code != 200:
                 return (
-                    jsonify({"error": "Error getting user location information"}),
+                    jsonify({"error": "Error getting evemt information"}),
                     500,
                 )
 
@@ -222,8 +197,49 @@ def get_events():
 
     except Exception as e:
         print(e)
-        return jsonify({"error": "Error getting user location information"}), 500
+        return jsonify({"error": "Error getting event information"}), 500
 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5014, debug=True)
+def missing_event_parameters(event_params: Dict) -> bool:
+    """Check if the required event parameters are missing.
+
+    Args:
+        args: The request arguments.
+
+    Returns:
+        True if a required parameter is missing, False otherwise.
+    """
+
+    required_params = {
+        "/events/location": ["location", "enddate"],
+        "/events/artists": ["artists", "enddate"],
+        "/events/all": ["location", "artists", "enddate"],
+    }
+    
+    route_path = request.path
+    missing_params = [p for p in required_params[route_path] if p not in event_params]
+
+    if missing_params:
+        print(f"Missing parameters: {missing_params}")
+        return True
+    
+    return False
+
+
+def invalid_event_parameters(event_params: Dict) -> bool:
+    """Check if the required route parameters are missing.
+
+    Args:
+        args: The request arguments.
+
+    Returns:
+        True if a required parameter is missing, False otherwise.
+    
+    """
+
+    for param, value in event_params.items():
+        if not value:
+            print(f"Invalid parameters: '{param}': {value}")
+            return True
+        
+    return False
