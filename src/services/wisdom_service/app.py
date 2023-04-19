@@ -14,7 +14,6 @@ from flask import Flask, jsonify, request
 import requests
 import dotenv
 import os
-import re
 
 
 dotenv.load_dotenv()
@@ -103,8 +102,4 @@ def get_apod():
         )
 
     data = response.json()
-
-    sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', data)
-    sentences = sentences[:4] # limit to 4 sentences
-
     return jsonify(data)
