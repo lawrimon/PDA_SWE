@@ -112,6 +112,7 @@ export function Home() {
 
     // Listen for 'message' event and update messages state
     socket.on('message', (message) => {
+      console.log("message recieved", message)
       handleMessages(message)
     });
 
