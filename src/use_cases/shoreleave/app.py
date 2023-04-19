@@ -19,6 +19,7 @@ more_books = ""
 more_quotes = ""
 more_facts = ""
 
+
 def get_quotes():
     """Get quotes.
 
@@ -36,15 +37,23 @@ def get_quotes():
 
     data = response.json()
     answer = "Here is a famous quote: "
-    more_quotes=""
+    more_quotes = ""
     for ind, quote in enumerate(data):
         if ind < 1:
             answer += (
-                " " + quote["quote"] + ". This is from the author " + quote["author"] + ". "
+                " "
+                + quote["quote"]
+                + ". This is from the author "
+                + quote["author"]
+                + ". "
             )
         else:
-            more_quotes +=  (
-                " " + quote["quote"] + ". This is from the author " + quote["author"] + ". "
+            more_quotes += (
+                " "
+                + quote["quote"]
+                + ". This is from the author "
+                + quote["author"]
+                + ". "
             )
 
     return answer
@@ -91,14 +100,12 @@ def get_random_facts():
     answer = "Here is a random fact that might be interesting for you: \n"
     more_facts = ""
     for ind, fact in enumerate(data):
-        if ind <1:
+        if ind < 1:
             answer += fact["fact"]
             answer += ". "
         else:
             more_facts += fact["fact"]
             more_facts += ". "
-
-
 
     return answer
 

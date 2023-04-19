@@ -9,7 +9,8 @@ CORS(app)
 
 dotenv.load_dotenv()
 
-@app.route('/dialogflow/get_intent')
+
+@app.route("/dialogflow/get_intent")
 def get_intent():
     """
     Get intent from transcript endpoint
@@ -23,9 +24,9 @@ def get_intent():
         A JSON object containing the intent identified by Dialogflow API.
         If an error occurs while retrieving the intent, returns a 500 error with a JSON object containing the error message.
     """
-    
+
     transcript = request.args.get("transcript")
-    url = "https://capitan.azurewebsites.net/get_intent" 
+    url = "https://capitan.azurewebsites.net/get_intent"
     params = {"transcript": transcript, "key": os.getenv("DIALOGFLOW_KEY")}
 
     response = requests.get(url, params=params)
