@@ -1,17 +1,22 @@
 import pytest
 from calendar_service.app import app
 
+
 @pytest.fixture
 def client():
     """Create a test client for the app."""
     app.config["TESTING"] = True
     return app.test_client()
 
-@pytest.mark.parametrize("endpoint, status_code", [
-    ("/calendar/appointments/all", 200),
-    ("/calendar/appointments/tomorrow", 200),
-    ("/calendar/appointments/invalid_date", 400),
-])
+
+@pytest.mark.parametrize(
+    "endpoint, status_code",
+    [
+        ("/calendar/appointments/all", 200),
+        ("/calendar/appointments/tomorrow", 200),
+        ("/calendar/appointments/invalid_date", 400),
+    ],
+)
 def test_get_calendar_appointments(client, endpoint, status_code):
     """Test the get_calendar_appointments endpoint.
 
@@ -20,6 +25,7 @@ def test_get_calendar_appointments(client, endpoint, status_code):
     response = client.get(endpoint)
     assert response.status_code == status_code
     assert response.content_type == "application/json"
+
 
 def test_get_calendar_appointments_empty(client):
     """Test the get_calendar_appointments endpoint with an empty calendar.
@@ -32,28 +38,32 @@ def test_get_calendar_appointments_empty(client):
     assert response.content_type == "application/json"
     assert response.data == b"[]"
 
-@pytest.mark.parametrize("data, expected_status, expected_response", [
-    (
-        {
-            "title": "Meeting",
-            "description": "Discuss project",
-            "start_time": "2023-04-20T09:00:00",
-            "end_time": "2023-04-20T10:00:00"
-        },
-        201,
-        b"Meeting"
-    ),
-    (
-        {
-            "title": "Meeting",
-            "description": "Discuss project",
-            "start_time": "2023-04-20T09:00:00",
-            "end_time": "2023-04-20T10:00:00"
-        },
-        409,
-        b"Conflict"
-    ),
-])
+
+@pytest.mark.parametrize(
+    "data, expected_status, expected_response",
+    [
+        (
+            {
+                "title": "Meeting",
+                "description": "Discuss project",
+                "start_time": "2023-04-20T09:00:00",
+                "end_time": "2023-04-20T10:00:00",
+            },
+            201,
+            b"Meeting",
+        ),
+        (
+            {
+                "title": "Meeting",
+                "description": "Discuss project",
+                "start_time": "2023-04-20T09:00:00",
+                "end_time": "2023-04-20T10:00:00",
+            },
+            409,
+            b"Conflict",
+        ),
+    ],
+)
 def test_add_calendar_appointment(client, data, expected_status, expected_response):
     """Test the add_calendar_appointment endpoint.
 
@@ -66,7 +76,7 @@ def test_add_calendar_appointment(client, data, expected_status, expected_respon
                 "title": "Busy",
                 "description": "",
                 "start_time": "2023-04-20T08:00:00",
-                "end_time": "2023-04-20T09:30:00"
+                "end_time": "2023-04-20T09:30:00",
             }
         ]
     }

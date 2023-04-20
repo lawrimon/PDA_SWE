@@ -193,7 +193,6 @@ def get_shoreleave():
         The shore leave information containing quotes, NASA fact of the day, random facts and books best sellers list.
     """
 
-
     more_books = []
     more_quotes = []
     more_facts = []
@@ -238,16 +237,9 @@ def get_more_shoreleave():
     quotes = more_quotes[0]
     random_facts = more_facts[0]
     # books = more_books[0]
-    text = (
-        "Some more quotes: "
-        + quotes
-        + ". Another random fact "
-        + random_facts
-
-    )
+    text = "Some more quotes: " + quotes + ". Another random fact " + random_facts
 
     return jsonify({"_name": name, "text": text})
-    
 
 
 if __name__ == "__main__":

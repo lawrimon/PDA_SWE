@@ -247,7 +247,6 @@ def get_racktime():
     mode = user_preferences["transportation"]
 
     events_tomorrow = get_calendar_events_tomorrow(calendar_user)
-    
 
     if events_tomorrow:
         event_locations = parse_event_locations(events_tomorrow)
